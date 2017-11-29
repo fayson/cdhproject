@@ -1,0 +1,4 @@
+com/cloudera/solr/KBSolrTest.class
+com/cloudera/utils/SolrUtils.class
+com/cloudera/bean/Message.class
+com/cloudera/solr/NoneKBSolrTest.class

@@ -22,6 +22,7 @@ import java.sql.*;
 public class KBSimple {
 
     private static String JDBC_DRIVER = "com.cloudera.impala.jdbc41.Driver";
+    //impala/ip-172-31-21-45.ap-southeast-1.compute.internal@CLOUDERA.COM
     private static String CONNECTION_URL = "jdbc:impala://13.229.60.149:21050/default;AuthMech=1;KrbRealm=CLOUDERA.COM;KrbHostFQDN=ip-172-31-26-102.ap-southeast-1.compute.internal;KrbServiceName=impala";
 
     static {

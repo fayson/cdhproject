@@ -1,0 +1,6 @@
+com/cloudera/hivejdbc/NoneKBSimple.class
+com/cloudera/impalajdbc/NoneKBSimple.class
+com/cloudera/impalajdbc/KBSimple$1.class
+com/cloudera/hivejdbc/KBSimple.class
+com/cloudera/impalajdbc/KBSimple.class
+com/cloudera/utils/JDBCUtils.class

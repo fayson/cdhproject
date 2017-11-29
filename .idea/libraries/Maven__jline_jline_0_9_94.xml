@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: jline:jline:0.9.94">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/software/repo/jline/jline/0.9.94/jline-0.9.94.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/software/repo/jline/jline/0.9.94/jline-0.9.94-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/software/repo/jline/jline/0.9.94/jline-0.9.94-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

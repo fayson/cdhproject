@@ -30,6 +30,7 @@ public class NoneKBSimple {
     }
 
     public static void main(String[] args) {
+        System.out.println("通过JDBC连接非Kerberos环境下的HiveServer2");
         Connection connection = null;
         ResultSet rs = null;
         PreparedStatement ps = null;
