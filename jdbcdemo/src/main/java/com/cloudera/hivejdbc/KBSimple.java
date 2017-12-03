@@ -1,6 +1,7 @@
 package com.cloudera.hivejdbc;
 
 import com.cloudera.utils.JDBCUtils;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 
@@ -38,7 +39,7 @@ public class KBSimple {
         configuration.set("hadoop.security.authentication" , "Kerberos" );
         UserGroupInformation. setConfiguration(configuration);
         UserGroupInformation.loginUserFromKeytab("fayson@CLOUDERA.COM", "/Volumes/Transcend/keytab/fayson.keytab");
-        UserGroupInformation.getLoginUser().checkTGTAndReloginFromKeytab();
+        System.out.println(UserGroupInformation.getLoginUser());
 
         Connection connection = null;
         ResultSet rs = null;

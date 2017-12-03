@@ -9,6 +9,9 @@
     <module>jdbcdemo</module>
     <module>solrdemo</module>
       <module>mrdemo</module>
+    <module>hbasedemo</module>
+    <module>kafkademo</module>
+    <module>hdfsdemo</module>
   </modules>
   <packaging>pom</packaging>
 
