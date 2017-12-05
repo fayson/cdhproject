@@ -1,7 +1,6 @@
 package com.cloudera.hivejdbc;
 
 import com.cloudera.utils.JDBCUtils;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 
