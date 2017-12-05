@@ -1,0 +1,10 @@
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/MRInter.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/utils/LoginUtil.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/WordCountRunner.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/BeanMapCDH.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/utils/RemoteHadoopUtil.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/WordCountMapper.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/WordCountReducer.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/BeanReduceCDH.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/utils/BeanAndFile.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/MrCommitCDH.java

@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
  * 1.实现运行时加载指定文件夹下的配置文件
  * 2.运行时打Jar包
  */
-public class RemoteHadoopUtil {
+public class BuildJarUtil {
     /**
      * 加载配置文件
      */
@@ -48,8 +48,7 @@ public class RemoteHadoopUtil {
 
         JarOutputStream out = null;
         File cf = new File(inpath);
-        final File jar = File.createTempFile("HadoopRunningJar-", ".jar", cf);
-        System.out.println(jar.getAbsolutePath());
+        final File jar = File.createTempFile("HadoopRunningJar-" + clazz.getName(), ".jar", cf);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 jar.delete();
@@ -59,7 +58,7 @@ public class RemoteHadoopUtil {
             File path = new File(root.toURI());
             Manifest manifest = new Manifest();
             manifest.getMainAttributes().putValue("Manifest-Version", "1.0");
-            manifest.getMainAttributes().putValue("Created-By", "RemoteHadoopUtil");
+            manifest.getMainAttributes().putValue("Created-By", "BuildJarUtil");
             out = new JarOutputStream(new FileOutputStream(jar), manifest);
             writeBaseFile(out, path, base);
         } finally {

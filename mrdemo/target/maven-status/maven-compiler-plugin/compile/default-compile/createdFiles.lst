@@ -1,0 +1,7 @@
+com/cloudera/utils/RemoteHadoopUtil.class
+com/cloudera/mr/WordCountReducer.class
+com/cloudera/utils/RemoteHadoopUtil$1.class
+com/cloudera/utils/BeanAndFile.class
+com/cloudera/utils/LoginUtil.class
+com/cloudera/mr/WordCountMapper.class
+com/cloudera/mr/WordCountRunner.class
