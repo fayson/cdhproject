@@ -1,7 +1,9 @@
-com/cloudera/utils/RemoteHadoopUtil.class
+com/cloudera/mr/WordCount.class
+com/cloudera/utils/BuildJarUtil$1.class
 com/cloudera/mr/WordCountReducer.class
-com/cloudera/utils/RemoteHadoopUtil$1.class
-com/cloudera/utils/BeanAndFile.class
-com/cloudera/utils/LoginUtil.class
+com/cloudera/utils/BuildJarUtil.class
+com/cloudera/utils/ConfigurationUtil.class
 com/cloudera/mr/WordCountMapper.class
-com/cloudera/mr/WordCountRunner.class
+com/cloudera/mr/NodeKBMRTest.class
+com/cloudera/mr/InitMapReduceJob.class
+com/cloudera/mr/KBMRTest.class

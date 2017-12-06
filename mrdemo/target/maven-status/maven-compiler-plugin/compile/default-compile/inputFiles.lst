@@ -1,10 +1,8 @@
-/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/MRInter.java
-/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/utils/LoginUtil.java
-/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/WordCountRunner.java
-/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/BeanMapCDH.java
-/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/utils/RemoteHadoopUtil.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/KBMRTest.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/utils/ConfigurationUtil.java
 /Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/WordCountMapper.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/utils/BuildJarUtil.java
 /Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/WordCountReducer.java
-/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/BeanReduceCDH.java
-/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/utils/BeanAndFile.java
-/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/MrCommitCDH.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/InitMapReduceJob.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/NodeKBMRTest.java
+/Volumes/Transcend/work/cdhproject/mrdemo/src/main/java/com/cloudera/mr/WordCount.java

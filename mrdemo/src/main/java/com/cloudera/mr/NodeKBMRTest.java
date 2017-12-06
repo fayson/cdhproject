@@ -3,13 +3,12 @@ package com.cloudera.mr;
 import com.cloudera.utils.ConfigurationUtil;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.security.UserGroupInformation;
 
 import java.io.File;
 
 /**
  * package: com.cloudera.mr
- * describe: TODO
+ * describe: Kerberos环境下访问Impala
  * creat_user: Fayson
  * email: htechinfo@163.com
  * creat_date: 2017/12/4
