@@ -10,4 +10,4 @@ done
 export CLASSPATH
 
 
-${JAVA_HOME}/bin/java com.cloudera.mr.KBMRTest
+${JAVA_HOME}/bin/java com.cloudera.mr.NodeKBMRTest

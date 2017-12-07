@@ -9,7 +9,7 @@ import java.io.File;
 
 /**
  * package: com.cloudera.mr
- * describe: TODO
+ * describe: 向Kerberos集群提交MR作业
  * creat_user: Fayson
  * email: htechinfo@163.com
  * creat_date: 2017/12/4
@@ -18,20 +18,25 @@ import java.io.File;
  */
 public class KBMRTest {
 
-    private static String confPath = System.getProperty("user.dir") + File.separator + "mrdemo" + File.separator + "conf";
+    public static String confPath = System.getProperty("user.dir") + File.separator + "kb-yarn-conf";
 
     public static void main(String[] args) {
         try {
-            System.setProperty("java.security.krb5.conf", "/Volumes/Transcend/keytab/krb5.conf");
+            String krb5conf = confPath + File.separator + "krb5.conf";
+            String keytab = confPath + File.separator + "fayson.keytab";
+
+            System.setProperty("java.security.krb5.conf", krb5conf);
             System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
-            System.setProperty("sun.security.krb5.debug", "true"); //Kerberos Debug模式
+//            System.setProperty("sun.security.krb5.debug", "true"); //Kerberos Debug模式
 
             Configuration conf = ConfigurationUtil.getConfiguration(confPath);
 
             //登录Kerberos账号
             UserGroupInformation.setConfiguration(conf);
-            UserGroupInformation.loginUserFromKeytab("fayson@CLOUDERA.COM", "/Volumes/Transcend/keytab/fayson.keytab");
+            UserGroupInformation.loginUserFromKeytab("fayson@CLOUDERA.COM", keytab);
             UserGroupInformation userGroupInformation = UserGroupInformation.getCurrentUser();
+
+            userGroupInformation.reloginFromKeytab();
 
             Job wcjob = InitMapReduceJob.initWordCountJob(conf);
             wcjob.setJarByClass(KBMRTest.class);

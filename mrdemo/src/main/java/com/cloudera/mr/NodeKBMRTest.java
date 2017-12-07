@@ -8,7 +8,7 @@ import java.io.File;
 
 /**
  * package: com.cloudera.mr
- * describe: Kerberos环境下访问Impala
+ * describe: 向非Kerberos集群提交MR作业
  * creat_user: Fayson
  * email: htechinfo@163.com
  * creat_date: 2017/12/4
@@ -17,7 +17,7 @@ import java.io.File;
  */
 public class NodeKBMRTest {
 
-    private static String confPath = System.getProperty("user.dir") + File.separator + "mrdemo" + File.separator + "nonekb-conf";
+    private static String confPath = System.getProperty("user.dir") + File.separator + "nonekb-yarn-conf";
 
     public static void main(String[] args) {
 

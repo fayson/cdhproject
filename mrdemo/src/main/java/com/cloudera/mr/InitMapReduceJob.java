@@ -25,7 +25,7 @@ public class InitMapReduceJob {
         try {
             conf.setBoolean("mapreduce.app-submission.cross-platform", true);  //设置跨平台提交作业
             //设置job所使用的jar包,使用Configuration对象调用set()方法，设置mapreduce.job.jar wcount.jar
-            conf.set("mapred.jar", "C:\\Users\\Administrator\\IdeaProjects\\hbasedevelop\\target\\hbase-develop-1.0-SNAPSHOT.jar");
+            conf.set("mapred.jar", System.getProperty("user.dir") + "/lib/mr-demo-1.0-SNAPSHOT.jar");
             //创建job对象需要conf对象，conf对象包含的信息是：所用的jar包
             wcjob = Job.getInstance(conf);
             wcjob.setJobName("MyWordCount");
