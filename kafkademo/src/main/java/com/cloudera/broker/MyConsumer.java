@@ -1,4 +1,4 @@
-package com.cloudera;
+package com.cloudera.broker;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -10,7 +10,13 @@ import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * Created by fayson on 2017/10/24.
+ * package: com.cloudera
+ * describe: Kerberos环境下通过Kafka的Bootstrap.Server消费数据
+ * creat_user: Fayson
+ * email: htechinfo@163.com
+ * creat_date: 2017/12/12
+ * creat_time: 下午3:35
+ * 公众号：Hadoop实操
  */
 public class MyConsumer {
 
@@ -20,9 +26,10 @@ public class MyConsumer {
         System.setProperty("java.security.krb5.conf", "/Volumes/Transcend/keytab/krb5.conf");
         System.setProperty("java.security.auth.login.config", "/Volumes/Transcend/keytab/jaas-cache.conf");
         System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+//        System.setProperty("sun.security.krb5.debug", "true");
 
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "ip-172-31-21-45.ap-southeast-1.compute.internal:9092,ip-172-31-26-102.ap-southeast-1.compute.internal:9020,ip-172-31-26-80.ap-southeast-1.compute.internal:9020");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "ip-172-31-21-45.ap-southeast-1.compute.internal:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "DemoConsumer");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");

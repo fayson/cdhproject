@@ -39,6 +39,7 @@ public class MyProducer {
             System.out.println(key + "----" + message);
         }
 
+        producer.flush();
         producer.close();
     }
 }
