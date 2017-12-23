@@ -29,7 +29,7 @@ public class HttpFSDemo {
             webHdfsFileSystem.initialize(new URI("http://52.221.198.3:14000"), configuration);
             System.out.println(webHdfsFileSystem.getUri());
             //向HDFS Put文件
-            webHdfsFileSystem.copyFromLocalFile(new Path("/Users/zoulihan/Desktop/run-kafka/"), new Path("/fayson1-httpfs"));
+            webHdfsFileSystem.copyFromLocalFile(new Path("/Users/fayson/Desktop/run-kafka/"), new Path("/fayson1-httpfs"));
 
             //列出HDFS根目录下的所有文件
             FileStatus[] fileStatuses =  webHdfsFileSystem.listStatus(new Path("/"));

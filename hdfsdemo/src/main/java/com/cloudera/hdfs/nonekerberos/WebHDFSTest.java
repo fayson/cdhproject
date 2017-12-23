@@ -27,10 +27,10 @@ public class WebHDFSTest {
         WebHdfsFileSystem webHdfsFileSystem = new WebHdfsFileSystem();
 
         try {
-            webHdfsFileSystem.initialize(new URI("http://52.221.198.3:50070"), configuration);
+            webHdfsFileSystem.initialize(new URI("http://13.250.102.77:50070"), configuration);
             System.out.println(webHdfsFileSystem.getUri());
             //向HDFS Put文件
-            webHdfsFileSystem.copyFromLocalFile(new Path("/Users/zoulihan/Desktop/run-kafka/"), new Path("/fayson1"));
+            webHdfsFileSystem.copyFromLocalFile(new Path("/Users/fayson/Desktop/run-kafka/"), new Path("/fayson1"));
 
             //列出HDFS根目录下的所有文件
             FileStatus[] fileStatuses =  webHdfsFileSystem.listStatus(new Path("/"));
