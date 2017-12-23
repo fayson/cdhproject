@@ -26,20 +26,23 @@ public class NoneKBHDFSTest {
         try {
             FileSystem fileSystem = FileSystem.get(configuration);
 
+
             //创建目录
-//            HDFSUtils.mkdir(fileSystem, "/fayson");
+            HDFSUtils.mkdir(fileSystem, "/fayson1");
+
+            HDFSUtils.uploadFile(fileSystem , "/Volumes/Transcend/work/cdhproject/kafkademo", "/fayson1");
 
             //创建文件
-            HDFSUtils.createFile(fileSystem, "/fayson/test.txt", "123testaaaaaaaaaa");
+            HDFSUtils.createFile(fileSystem, "/fayson1/test.txt", "123testaaaaaaaaaa");
 
             //文件重命名
-            HDFSUtils.rename(fileSystem, "/fayson/test.txt", "/fayson/fayson.txt");
+            HDFSUtils.rename(fileSystem, "/fayson1/test.txt", "/fayson/fayson.txt");
 
             //查看文件
-            HDFSUtils.readFile(fileSystem, "/fayson/fayson.txt");
+            HDFSUtils.readFile(fileSystem, "/fayson1/fayson.txt");
 
             //删除文件
-            HDFSUtils.delete(fileSystem, "/fayson/fayson.txt");
+            HDFSUtils.delete(fileSystem, "/fayson1/fayson.txt");
 
             fileSystem.close();
 
