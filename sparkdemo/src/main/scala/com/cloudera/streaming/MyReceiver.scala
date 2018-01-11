@@ -3,14 +3,13 @@ package com.cloudera.streaming
 import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.hadoop.hbase.client.{ConnectionFactory, HTable, Scan}
 import org.apache.hadoop.hbase.util.Bytes
-import org.apache.spark.{Logging, SparkContext}
-import org.apache.spark.rdd.RDD
+import org.apache.spark.{Logging}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.receiver.Receiver
 
 /**
   * package: com.cloudera.streaming
-  * describe: TODO
+  * describe: 自定义Receiver类用于提供SparkStreaming的DataStream数据源
   * creat_user: Fayson 
   * email: htechinfo@163.com
   * creat_date: 2018/1/9
@@ -19,32 +18,9 @@ import org.apache.spark.streaming.receiver.Receiver
   */
 class MyReceiver(zkHost: String, zkPort: String) extends Receiver[String](StorageLevel.MEMORY_AND_DISK_2) with Logging {
 
-
-//  override def onStart(): Unit =  {
-//    new Thread("Socket Receiver") {
-//      override def run() {
-//        receive()
-//      }
-//    }.start()
-//  }
-//
-//  override def onStop(): Unit = {
-//
-//  }
-//
-//  private def receive(): Unit =  {
-//    val reuslt = Test.readHbase(sc)
-//    store(reuslt)
-//    restart("Trying to connect again")
-//  }
-override def onStart(): Unit =  {
-  new Thread("Socket Receiver") {
-    override def run() {
-      Thread.sleep(10* 1000)
-      receive()
-    }
-  }.start()
-}
+  override def onStart(): Unit =  {
+    receive()
+  }
 
   override def onStop(): Unit = {
 
@@ -85,4 +61,5 @@ override def onStart(): Unit =  {
     restart("Trying to connect again")
     table.close()
     connection.close()
-  }}
+  }
+}
