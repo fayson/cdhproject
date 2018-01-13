@@ -1,11 +1,11 @@
-package com.cloudera.streaming
+package hbase
 
 import com.cloudera.spark.hbase.HBaseContext
 import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.hadoop.hbase.client.Scan
 import org.apache.hadoop.hbase.util.Bytes
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
 
 
 /**
