@@ -9,17 +9,19 @@ import java.sql.ResultSet;
 
 /**
  * package: com.cloudera.hivejdbc
- * describe: 该事例主要讲述通过JDBC连接非Kerberos环境下的Hive
+ * describe: 集群中只启用了Sentry服务如何访问Hive
  * creat_user: Fayson
  * email: htechinfo@163.com
+ * creat_date: 2018/1/15
+ * creat_time: 下午8:57
  * 公众号：Hadoop实操
- * creat_date: 2017/11/21
- * creat_time: 下午9:03
  */
-public class NoneKBSimple {
+public class SentryOnlyDemo {
 
     private static String JDBC_DRIVER = "org.apache.hive.jdbc.HiveDriver";
-    private static String CONNECTION_URL ="jdbc:hive2://13.250.122.111:10000/";
+    private static String CONNECTION_URL ="jdbc:hive2://ip-172-31-6-148.fayson.com:10000/";
+    private static String username = "faysontest";
+    private static String password = "";
 
     static {
         try {
@@ -30,16 +32,16 @@ public class NoneKBSimple {
     }
 
     public static void main(String[] args) {
-        System.out.println("通过JDBC连接非Kerberos环境下的HiveServer2");
+        System.out.println("集群中只启用了Sentry服务访问Hive");
         Connection connection = null;
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            connection = DriverManager.getConnection(CONNECTION_URL);
-            ps = connection.prepareStatement("select * from test_table");
+            connection = DriverManager.getConnection(CONNECTION_URL, username, password);
+            ps = connection.prepareStatement("show databases");
             rs = ps.executeQuery();
             while (rs.next()) {
-                System.out.println(rs.getInt(1) + "-------" + rs.getString(2));
+                System.out.println(rs.getString(1));
             }
 
         } catch (Exception e) {
