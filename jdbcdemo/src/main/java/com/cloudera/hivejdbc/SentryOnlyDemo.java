@@ -20,7 +20,7 @@ public class SentryOnlyDemo {
 
     private static String JDBC_DRIVER = "org.apache.hive.jdbc.HiveDriver";
     private static String CONNECTION_URL ="jdbc:hive2://ip-172-31-6-148.fayson.com:10000/";
-    private static String username = "faysontest";
+    private static String username = "hive";
     private static String password = "";
 
     static {
