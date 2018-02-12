@@ -1,0 +1,12 @@
+
+
+{
+  "id": 4,
+  "state": "success",
+  "appId": "application_1518401384543_0008",
+  "appInfo": {
+    "driverLogUrl": null,
+    "sparkUiUrl": "http://ip-172-31-6-148.fayson.com:8088/proxy/application_1518401384543_0008/"
+  },
+  "log": ["stdout: ", "WARNING: User-defined SPARK_HOME (/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/spark) overrides detected (/opt/cloudera/parcels/CDH/lib/spark).", "WARNING: Running spark-class from user-defined location.", "\nstderr: ", "\nYARN Diagnostics: "]
+}
