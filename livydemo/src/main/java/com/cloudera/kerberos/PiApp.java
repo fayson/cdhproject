@@ -18,7 +18,7 @@ import java.util.Properties;
  * 公众号：Hadoop实操
  */
 public class PiApp {
-    private static String LIVY_HOST = "http://ip-172-31-16-68.ap-southeast-1.compute.internal:8998";
+    private static String LIVY_HOST = "http://ip-172-31-21-83.ap-southeast-1.compute.internal:8998";
     public static void main(String[] args) throws Exception {
 //        if (args.length != 2) {
 //            System.err.println("Usage: PiJob <livy url> <slices>");
