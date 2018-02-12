@@ -17,11 +17,27 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>maven2</id>
+            <url>http://repository.jspresso.org/maven2/</url>
+            <name>Maven2 Repositories</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.4</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.spnego</groupId>
+            <artifactId>spnego</artifactId>
+            <version>7.0</version>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>com.cloudera.livy</groupId>-->

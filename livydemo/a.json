@@ -1,12 +1,10 @@
-
-
 {
-  "id": 4,
+  "id": 14,
   "state": "success",
-  "appId": "application_1518401384543_0008",
+  "appId": "application_1518423607906_0006",
   "appInfo": {
     "driverLogUrl": null,
-    "sparkUiUrl": "http://ip-172-31-6-148.fayson.com:8088/proxy/application_1518401384543_0008/"
+    "sparkUiUrl": "http://ip-172-31-16-68.ap-southeast-1.compute.internal:8088/proxy/application_1518423607906_0006/"
   },
-  "log": ["stdout: ", "WARNING: User-defined SPARK_HOME (/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/spark) overrides detected (/opt/cloudera/parcels/CDH/lib/spark).", "WARNING: Running spark-class from user-defined location.", "\nstderr: ", "\nYARN Diagnostics: "]
+  "log": ["\t ApplicationMaster RPC port: -1", "\t queue: root.users.fayson", "\t start time: 1518428233280", "\t final status: UNDEFINED", "\t tracking URL: http://ip-172-31-16-68.ap-southeast-1.compute.internal:8088/proxy/application_1518423607906_0006/", "\t user: fayson", "18/02/12 04:37:13 INFO util.ShutdownHookManager: Shutdown hook called", "18/02/12 04:37:13 INFO util.ShutdownHookManager: Deleting directory /tmp/spark-6a934286-5db7-4c6a-aa72-eefc294086a4", "\nstderr: ", "\nYARN Diagnostics: "]
 }
