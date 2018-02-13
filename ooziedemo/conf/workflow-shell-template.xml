@@ -1,0 +1,18 @@
+<workflow-app name="ShellWorkflow" xmlns="uri:oozie:workflow:0.5">
+    <start to="shell-d9b6"/>
+    <kill name="Kill">
+        <message>Action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <action name="shell-d9b6">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <exec>${exec}</exec>
+            <argument>${argument}</argument>
+            <capture-output/>
+        </shell>
+        <ok to="End"/>
+        <error to="Kill"/>
+    </action>
+    <end name="End"/>
+</workflow-app>
