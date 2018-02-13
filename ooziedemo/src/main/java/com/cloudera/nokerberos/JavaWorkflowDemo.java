@@ -1,7 +1,6 @@
 package com.cloudera.nokerberos;
 
 import org.apache.oozie.client.OozieClient;
-import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowAction;
 import org.apache.oozie.client.WorkflowJob;
 
@@ -10,35 +9,34 @@ import java.util.Properties;
 
 /**
  * package: com.cloudera.nokerberos
- * describe: 使用Oozie-client的API接口向非Kerberos集群提交Java程序
+ * describe: 使用Oozie-client的API接口向非Kerberos集群提交MapReduce作业
  * creat_user: Fayson
  * email: htechinfo@163.com
  * creat_date: 2018/2/13
- * creat_time: 下午3:55
+ * creat_time: 下午9:04
  * 公众号：Hadoop实操
  */
-public class SparkWorkflowDemo {
+public class JavaWorkflowDemo {
+
     private static String oozieURL = "http://ip-172-31-6-148.fayson.com:11000/oozie";
+
     public static void main(String[] args) {
+
         System.setProperty("user.name", "faysontest");
         OozieClient oozieClient = new OozieClient(oozieURL);
         try {
             System.out.println(oozieClient.getServerBuildVersion());
 
             Properties properties = oozieClient.createConfiguration();
-            properties.put("oozie.wf.application.path", "${nameNode}/user/faysontest/oozie/testoozie");
-            properties.put("name", "MyfirstSpark");
-            properties.put("nameNode", "hdfs://ip-172-31-10-118.fayson.com:8020");
+            properties.put("oozie.wf.application.path", "${nameNode}/user/faysontest/oozie/javaaction");
             properties.put("oozie.use.system.libpath", "True");
-            properties.put("master", "yarn-cluster");
-            properties.put("mode", "cluster");
-            properties.put("class", "org.apache.spark.examples.SparkPi");
-            properties.put("arg", "100");
-            properties.put("sparkOpts", "--num-executors 4 --driver-memory 2g --driver-cores 1 --executor-memory 2g --executor-cores 1");
-            properties.put("jar", "${nameNode}/faysontest/jars/spark-examples-1.6.0-cdh5.13.1-hadoop2.6.0-cdh5.13.1.jar");
-            properties.put("oozie.libpath", "${nameNode}/faysontest/jars");
+            properties.put("nameNode", "hdfs://ip-172-31-10-118.fayson.com:8020");
             properties.put("jobTracker", "ip-172-31-6-148.fayson.com:8032");
-            properties.put("file", "${nameNode}/faysontest/jars");
+            properties.put("mainClass", "org.apache.hadoop.examples.QuasiMonteCarlo");
+            properties.put("arg1", "10");
+            properties.put("arg2", "10");
+            properties.put("javaOpts", "-Xmx1000m");
+            properties.put("oozie.libpath", "${nameNode}/faysontest/jars/");
 
             //运行workflow
             String jobid = oozieClient.run(properties);
@@ -67,7 +65,7 @@ public class SparkWorkflowDemo {
                 System.out.println(action.getExternalId());
             }
 
-        } catch (OozieClientException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
