@@ -1,0 +1,23 @@
+<workflow-app name="My Workflow" xmlns="uri:oozie:workflow:0.5">
+    <start to="spark-989b"/>
+    <kill name="Kill">
+        <message>Action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <action name="spark-989b">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <master>${master}</master>
+            <mode>${mode}</mode>
+            <name>${name}</name>
+            <class>${class}</class>
+            <jar>${jar}</jar>
+            <spark-opts>${sparkOpts}</spark-opts>
+            <arg>${arg}</arg>
+            <file>${file}</file>
+        </spark>
+        <ok to="End"/>
+        <error to="Kill"/>
+    </action>
+    <end name="End"/>
+</workflow-app>
