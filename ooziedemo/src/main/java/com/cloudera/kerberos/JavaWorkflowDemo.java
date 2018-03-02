@@ -25,7 +25,6 @@ public class JavaWorkflowDemo {
         System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
         System.setProperty("ssun.security.jgss.debug", "true"); //Kerberos Debug模式
         System.setProperty("java.security.auth.login.config", "/Volumes/Transcend/keytab/oozie-login.conf");
-        System.setProperty("user.name", "fayson");
 
         AuthOozieClient oozieClient = new AuthOozieClient(oozieURL, AuthOozieClient.AuthType.KERBEROS.name());
         oozieClient.setDebugMode(1);
