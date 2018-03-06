@@ -8,10 +8,16 @@
   <modules>
     <module>jdbcdemo</module>
     <module>solrdemo</module>
-      <module>mrdemo</module>
+    <module>mrdemo</module>
     <module>hbasedemo</module>
     <module>kafkademo</module>
     <module>hdfsdemo</module>
+    <module>sqoopdemo</module>
+    <module>sparkdemo</module>
+    <module>yarndemo</module>
+    <module>livydemo</module>
+    <module>ooziedemo</module>
+    <module>samldemo</module>
   </modules>
   <packaging>pom</packaging>
 
@@ -26,6 +32,18 @@
     <repository>
       <id>cloudera</id>
       <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+      <name>Cloudera Repositories</name>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>maven2</id>
+      <url>http://repository.jspresso.org/maven2/</url>
+      <name>Maven2 Repositories</name>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
   </repositories>
 
@@ -37,4 +55,17 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
