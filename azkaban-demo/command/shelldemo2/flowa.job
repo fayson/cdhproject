@@ -1,0 +1,4 @@
+#command
+type=command
+command=sh test.sh
+user.to.proxy=fayson

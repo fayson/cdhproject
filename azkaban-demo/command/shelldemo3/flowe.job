@@ -1,0 +1,4 @@
+#command
+type=flow
+flow.name=innerc
+dependencies=flowa

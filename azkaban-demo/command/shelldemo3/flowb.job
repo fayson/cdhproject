@@ -1,0 +1,5 @@
+#command
+type=command
+command=sh test2.sh
+dependencies=flowa
+user.to.proxy=fayson
