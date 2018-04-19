@@ -1,0 +1,134 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select dt.d_year,
+  item.i_brand_id brand_id,
+  item.i_brand brand,
+  sum(ss_ext_sales_price) ext_price
+from
+  date_dim dt,
+  store_sales,
+  item
+where
+  dt.d_date_sk = store_sales.ss_sold_date_sk
+  and store_sales.ss_item_sk = item.i_item_sk
+  and item.i_manager_id = 1
+  and dt.d_moy = 12
+  and dt.d_year = 1998
+  and ss_sold_date_sk between 2451149 and 2451179 -- added for partition pruning
+group by
+  dt.d_year,
+  item.i_brand,
+  item.i_brand_id
+order by
+  dt.d_year,
+  ext_price desc,
+  brand_id
+limit 100
+Query submitted at: 2018-04-19 06:50:10 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=3e453c8461293d52:c410dad400000000
+1998	2002001	importoimporto #1	199965.03
+1998	1003001	exportiamalg #1	168406.34
+1998	5001001	amalgscholar #1	157768.95
+1998	1001002	amalgamalg #2	148381.8
+1998	2001002	amalgimporto #2	140407.9
+1998	1004002	edu packamalg #2	136837.34
+1998	4004001	edu packedu pack #1	135081.98
+1998	5003001	exportischolar #1	130906.08
+1998	3004001	edu packexporti #1	124820.77
+1998	1001001	amalgamalg #1	108348.55
+1998	4003001	exportiedu pack #1	105096.03
+1998	3003001	exportiexporti #1	94761.99000000001
+1998	2003001	exportiimporto #1	92774.09
+1998	1003002	exportiamalg #2	91208.52
+1998	3002001	importoexporti #1	89889.09
+1998	5002001	importoscholar #1	88949.62
+1998	5003002	exportischolar #2	86914.89999999999
+1998	7016001	corpnameless #1	86591.92999999999
+1998	4001002	amalgedu pack #2	86458
+1998	4004002	edu packedu pack #2	78948.78
+1998	3003002	exportiexporti #2	77725.77
+1998	1002002	importoamalg #2	74181.06
+1998	2001001	amalgimporto #1	72985.61000000002
+1998	3001001	amalgexporti #1	69969.95000000001
+1998	1002001	importoamalg #1	69134.19
+1998	1004001	edu packamalg #1	65808.33
+1998	3002002	importoexporti #2	61955.21000000001
+1998	6008005	namelesscorp #5	59872.07999999999
+1998	9013009	exportiunivamalg #9	59278.42999999999
+1998	5002002	importoscholar #2	58427.99
+1998	7001005	amalgbrand #5	58213.45
+1998	4002001	importoedu pack #1	55119.77
+1998	2004002	edu packimporto #2	53440.92
+1998	9010009	univunivamalg #9	52971.45
+1998	6008002	namelesscorp #2	51775.91
+1998	10004004	edu packunivamalg #4	51462.9
+1998	7012003	importonameless #3	51238.88
+1998	2004001	edu packimporto #1	49707.34
+1998	8016006	corpmaxi #6	48439.77
+1998	7011001	amalgnameless #1	48071.54
+1998	4001001	amalgedu pack #1	47437.74999999999
+1998	6012007	importobrand #7	46358.65
+1998	6006003	corpcorp #3	45840.67
+1998	9014002	edu packunivamalg #2	44903.42000000001
+1998	6016003	corpbrand #3	44894.87
+1998	6007007	brandcorp #7	44853.71
+1998	9008005	namelessmaxi #5	44823.46
+1998	6009004	maxicorp #4	44029.42
+1998	8012005	importomaxi #5	42959.04000000001
+1998	6008007	namelesscorp #7	42606.92000000001
+1998	10016001	corpamalgamalg #1	42165.68
+1998	10016006	corpamalgamalg #6	41981.69
+1998	10014016	edu packamalgamalg #16	40723.06
+1998	5001002	amalgscholar #2	39943.54
+1998	8005005	scholarnameless #5	39184.66
+1998	6011008	amalgbrand #8	38965.93000000001
+1998	6005001	scholarcorp #1	38289.02
+1998	6011001	amalgbrand #1	38059.25
+1998	10009015	maxiunivamalg #15	38033.2
+1998	7003002	exportibrand #2	37921.77
+1998	10007012	brandunivamalg #12	36278.47
+1998	7004006	edu packbrand #6	35529.03999999999
+1998	8005008	scholarnameless #8	35487.43
+1998	3001002	amalgexporti #2	35335.99
+1998	8003010	exportinameless #10	35012.23
+1998	6002003	importocorp #3	34856.84
+1998	10012001	importoamalgamalg #1	34803.3
+1998	10004001	edu packunivamalg #1	34624.75
+1998	7015007	scholarnameless #7	34522.63
+1998	6006007	corpcorp #7	34509.76
+1998	7013001	exportinameless #1	34219.89
+1998	10003016	exportiunivamalg #16	34211.08
+1998	9012003	importounivamalg #3	33826.57
+1998	10001017	amalgunivamalg #17	33329.91
+1998	5004002	edu packscholar #2	32458.57
+1998	8007005	brandnameless #5	31340.47
+1998	7013007	exportinameless #7	31322.97
+1998	9016003	corpunivamalg #3	31239.14
+1998	2003002	exportiimporto #2	30853.67
+1998	7014001	edu packnameless #1	30762.76
+1998	10011009	amalgamalgamalg #9	29464.33
+1998	9008002	namelessmaxi #2	28912.6
+1998	7008009	namelessbrand #9	28781.85
+1998	7009010	maxibrand #10	28525.48
+1998	5004001	edu packscholar #1	28414.54
+1998	8013009	exportimaxi #9	28280.12
+1998	7016007	corpnameless #7	28226.78
+1998	8004009	edu packnameless #9	28184.3
+1998	6002005	importocorp #5	28089.16
+1998	9015009	scholarunivamalg #9	28022.35
+1998	10016003	corpamalgamalg #3	27693.78
+1998	9012008	importounivamalg #8	27578.6
+1998	6011005	amalgbrand #5	27028.01
+1998	6006004	corpcorp #4	26720.38
+1998	9003003	exportimaxi #3	25862.93
+1998	6002001	importocorp #1	25722.39
+1998	4002002	importoedu pack #2	25517.67
+1998	7007005	brandbrand #5	25320.14
+1998	10012017	importoamalgamalg #17	25286.27
+1998	8013007	exportimaxi #7	24983.17
+Fetched 100 row(s) in 1.58s

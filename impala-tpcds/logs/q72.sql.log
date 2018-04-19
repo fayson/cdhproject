@@ -1,0 +1,137 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select i_item_desc
+      ,w_warehouse_name
+      ,d1.d_week_seq
+      ,count(case when p_promo_sk is null then 1 else 0 end) no_promo
+      ,count(case when p_promo_sk is not null then 1 else 0 end) promo
+      ,count(*) total_cnt
+from catalog_sales
+join inventory on (cs_item_sk = inv_item_sk)
+join warehouse on (w_warehouse_sk=inv_warehouse_sk)
+join item on (i_item_sk = cs_item_sk)
+join customer_demographics on (cs_bill_cdemo_sk = cd_demo_sk)
+join household_demographics on (cs_bill_hdemo_sk = hd_demo_sk)
+join date_dim d1 on (cs_sold_date_sk = d1.d_date_sk)
+join date_dim d2 on (inv_date_sk = d2.d_date_sk)
+join date_dim d3 on (cs_ship_date_sk = d3.d_date_sk)
+left outer join promotion on (cs_promo_sk=p_promo_sk)
+left outer join catalog_returns on (cr_item_sk = cs_item_sk and cr_order_number = cs_order_number)
+where d1.d_week_seq = d2.d_week_seq
+  and cs_sold_date_sk between 2452276 and 2452640
+  and inv_quantity_on_hand < cs_quantity
+  and cast(d3.d_date as timestamp) > cast(d1.d_date as timestamp) + interval 5 days
+  and hd_buy_potential = '>10000'
+  and d1.d_year = 2002
+  and cd_marital_status = 'S'
+group by i_item_desc,w_warehouse_name,d1.d_week_seq
+order by total_cnt desc, i_item_desc, w_warehouse_name, d_week_seq
+limit 100
+Query submitted at: 2018-04-19 06:51:48 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=3748d571e1970699:ea60456a00000000
+All but huge buildings become then with a resources. Ideas see against the times. 	Doors canno	5359	2	2	2
+All dutch seats ask systems; around wrong feet include scales; very potential years dust somehow to a studies; years cannot use. Proposed, good properties ought to bolster even as industrial fo		5361	2	2	2
+Areas determine shares; physical books may li	Important issues liv	5364	2	2	2
+Available, open sections assist. Details help hurriedly black books. Incidentally safe circumstances ought to relax particularly	Doors canno	5354	2	2	2
+Awkward, typical places must not check only workers; bright parties restore studies. Men show about finally interested programmes; certainly economic soldiers meet there 	Conventional childr	5368	2	2	2
+Badly small sentences must make important, previous weapons. Back, economic careers stand despite a differences. 		5373	2	2	2
+Benefits see past, blue effects; as future symbols get well difficult friends; refugees break	Doors canno	5368	2	2	2
+Comprehensive, awful perceptio	Doors canno	5364	2	2	2
+Dark types dismiss surprisingly real, fashionable jews. Short proposals wo	Doors canno	5373	2	2	2
+Deep, interesting units play with a children. More democratic difficulties control however additional attitudes. Nearby, likely connecti	Bad cards must make.	5358	2	2	2
+Developers let also new lin	Bad cards must make.	5355	2	2	2
+Developers let also new lin	Conventional childr	5355	2	2	2
+Equally good problems might not understand. Great couples detail social stories. Limited police 	Doors canno	5336	2	2	2
+Even fashionable arms stop by a women. Workers used to clear main, crucial seasons. Processes protect for a problems. Slightly social effects shall sell. Globa	Doors canno	5333	2	2	2
+Fields generate. Universities get honest, fixed locations. Possible requirements might not see ideas. Communications visit continuous others. Stor	Doors canno	5371	2	2	2
+Gre	Conventional childr	5373	2	2	2
+Independent techniques leav	Doors canno	5373	2	2	2
+Mainly isolated ends justify from a shots; occupat	Bad cards must make.	5365	2	2	2
+Mammals find present, intellectual places. Psychological courses would leave sure. Contracts make employers. Young hands should show there advanced women. Ri	Doors canno	5373	2	2	2
+Ministers will no	Conventional childr	5370	2	2	2
+Minutes defeat finally truly causal terms. Regular, rel	Important issues liv	5371	2	2	2
+Months boost more. Standards enter certainly full, soft words. Catholic grounds might not reveal. Alike limited years mus	Doors canno	5373	2	2	2
+Never national procedures take therefore. Over ideal clients cost however changes; for example bloody plans experience huge, c	Bad cards must make.	5368	2	2	2
+Normal buildings look over stable cheeks. Only, handsome types would not pay then goods. Countries appear supposedly 	Important issues liv	5358	2	2	2
+Normal, important minutes compete years; able, foreign seats ought to act always new attacks. In general red programmes may crawl dealers. Extra losses ma	Doors canno	5367	2	2	2
+Over wonderful pounds see still in a enterprises; useful families follow strong conditions. Full o	Doors canno	5371	2	2	2
+Projects may show for a guns. Views sing persons. Often joint things		5373	2	2	2
+Running changes will not help already different benefits. Never external houses would not resign. Appearances demonstrate only rather than a jobs. Main year	Conventional childr	5359	2	2	2
+Sadly famous knees used to write also in addition to a techniques. Great, de		5369	2	2	2
+Sadly famous knees used to write also in addition to a techniques. Great, de	Doors canno	5369	2	2	2
+Single, middle th	Bad cards must make.	5369	2	2	2
+Single, middle th	Conventional childr	5369	2	2	2
+Slow sets should support over examples. Possible fears will penetrate; earnings like however welsh discipline	Important issues liv	5359	2	2	2
+Special memories accept letters. Long, consistent heads vary at least exhibitions. Missiles shall cover places. Beaches fight. Good, extra women change premises. E	Important issues liv	5368	2	2	2
+Suddenly sudden programmes suggest from a courts. Little, industrial women choose eyes. Local, black limits should live surely sometimes final families. Then rich forces think wars		5357	2	2	2
+Systems provide only particular companies. Also l	Doors canno	5346	2	2	2
+Terribly necessary systems take other, difficult improvements. Effective, simple places make at all. Minds might 	Doors canno	5370	2	2	2
+True, red 	Bad cards must make.	5369	2	2	2
+Vario	Conventional childr	5360	2	2	2
+Very big controls must get again on a comments. Also left hands should not know. Today important numbers get elsewhere similar governors. Emotional		5340	2	2	2
+Video-taped, unchanged days assess thus organisms. Funny, ready feet will read anyway dramatically high contracts. For certain overseas eggs will tal		5370	2	2	2
+Weapons imagine no longer glad, expensive levels. So christian classes may n		5350	2	2	2
+		5330	1	1	1
+	Bad cards must make.	5341	1	1	1
+	Bad cards must make.	5357	1	1	1
+	Bad cards must make.	5359	1	1	1
+	Doors canno	5368	1	1	1
+	Doors canno	5372	1	1	1
+	Important issues liv	5337	1	1	1
+	Important issues liv	5342	1	1	1
+	Important issues liv	5356	1	1	1
+	Important issues liv	5359	1	1	1
+	Important issues liv	5360	1	1	1
+A		5348	1	1	1
+A	Conventional childr	5354	1	1	1
+A bit good children used to support upper, agricultural properties. Late, arab variations may draw magistrates; very newspapers kill here in a be	Conventional childr	5361	1	1	1
+Ab		5367	1	1	1
+Ab	Conventional childr	5372	1	1	1
+Abilities approach. Affairs study now remarkable funds. Policies exercise considerable, recent 	Important issues liv	5353	1	1	1
+Able friends shall not question major, monthly things; new shots woul	Bad cards must make.	5372	1	1	1
+Able funds must not investigate distinct, short-term foundations. Sad, soft examples beli	Doors canno	5351	1	1	1
+Able funds must not investigate distinct, short-term foundations. Sad, soft examples beli	Important issues liv	5351	1	1	1
+Able levels may store changes. General reasons may not make mostly total copies. Knowingly different decades pass together organisa	Important issues liv	5341	1	1	1
+Able quarters open. Poor arms could eat for a potatoes. Quietly litt	Doors canno	5332	1	1	1
+Able quarters open. Poor arms could eat for a potatoes. Quietly litt	Doors canno	5337	1	1	1
+Able responses might think in a sciences. Really other prices start far by a issues. Alone fatal females increase important authorities; jobs could know o	Important issues liv	5369	1	1	1
+Able, great schools convene. Old problems may cut regularly top men. Young, basic departments would not seek very usual cases. Flexible events ban therefore 	Conventional childr	5367	1	1	1
+Able, plain approaches would break yet yesterday soci	Bad cards must make.	5373	1	1	1
+Able, so-called children make. White words enable permanent laws. Great patterns shed women. Firm, hard complaints set also onl		5352	1	1	1
+Able, so-called children make. White words enable permanent laws. Great patterns shed women. Firm, hard complaints set also onl	Bad cards must make.	5352	1	1	1
+Able, strong pictures understand especially. Similar years feed sometimes close, bri	Conventional childr	5369	1	1	1
+Able, wide emotions shall not hate for instance different, practical files; free, other	Bad cards must make.	5349	1	1	1
+Able, wide emotions shall not hate for instance different, practical files; free, other	Conventional childr	5349	1	1	1
+About interesting attitudes try. Home likely categories pull from a papers. As monetary	Important issues liv	5369	1	1	1
+About large glasses find	Conventional childr	5345	1	1	1
+About musical years survive sort of; often consid	Doors canno	5366	1	1	1
+About national forces offend	Conventional childr	5364	1	1	1
+About traditi	Important issues liv	5359	1	1	1
+Above local forces shall not delight generally away equal requests. Senior words shall go more. Designer		5325	1	1	1
+Above local inhabitants can take. Women harbour slightly with the children. Far new tasks promote under a children. Furious members specify thus new risks. Red looks cannot find quick		5371	1	1	1
+Above local inhabitants can take. Women harbour slightly with the children. Far new tasks promote under a children. Furious members specify thus new risks. Red looks cannot find quick	Bad cards must make.	5371	1	1	1
+Above local inhabitants can take. Women harbour slightly with the children. Far new tasks promote under a children. Furious members specify thus new risks. Red looks cannot find quick	Conventional childr	5358	1	1	1
+Above local inhabitants can take. Women harbour slightly with the children. Far new tasks promote under a children. Furious members specify thus new risks. Red looks cannot find quick	Doors canno	5358	1	1	1
+Above, old hours provide already sudden, national subjects. Neighbours 	Important issues liv	5369	1	1	1
+Absolute, coming facts discuss other stars. Urban times will think away dirty styles. Civil, new targets purchase conse		5365	1	1	1
+Absolute, coming facts discuss other stars. Urban times will think away dirty styles. Civil, new targets purchase conse	Bad cards must make.	5329	1	1	1
+Absolutely	Doors canno	5355	1	1	1
+Absolutely elegant women must gain well complete 	Bad cards must make.	5350	1	1	1
+Absolutely existing requirements r	Bad cards must make.	5373	1	1	1
+Absolutely existing requirements r	Conventional childr	5373	1	1	1
+Acceptable, contemporary values freeze probably tables. Other, lucky colleagues die clear by the computers; executi	Important issues liv	5354	1	1	1
+Acceptable, minut	Important issues liv	5345	1	1	1
+Accountants use sensitive, happy skills. Basic travellers clean losses. Nice, particular details shall wonder there local ministers. Hitherto personal exports find primarily therefore other	Important issues liv	5370	1	1	1
+Accounts run independent ships. Good, significant individuals might develop by the words. Already heavy functions woul	Doors canno	5338	1	1	1
+Accounts used to matter crucially. More than useful ha		5368	1	1	1
+Accurate deaths might starve today rigid comparisons. Prime, new studies react periods. Eyes	Bad cards must make.	5373	1	1	1
+Accurate institutions shall avoid also relative, broken cases. Effective, special citizens could answer there in a parties. Fre		5330	1	1	1
+Accurate organisations run firmly. English executives concern yet minutes. Political, weak occasions ask. Therefore gay years combine years; loo	Conventional childr	5355	1	1	1
+Accurate organisations run firmly. English executives concern yet minutes. Political, weak occasions ask. Therefore gay years combine years; loo	Doors canno	5355	1	1	1
+Accused, foreign hands would add values. Cloth	Important issues liv	5365	1	1	1
+Fetched 100 row(s) in 81.94s

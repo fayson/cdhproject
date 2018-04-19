@@ -1,0 +1,61 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select *
+from (select avg(ss_list_price) B1_LP
+            ,count(ss_list_price) B1_CNT
+            ,count(distinct ss_list_price) B1_CNTD
+      from store_sales
+      where ss_quantity between 0 and 5
+        and (ss_list_price between 17 and 17+10 
+             or ss_coupon_amt between 12531 and 12531+1000
+             or ss_wholesale_cost between 18 and 18+20)) B1,
+     (select avg(ss_list_price) B2_LP
+            ,count(ss_list_price) B2_CNT
+            ,count(distinct ss_list_price) B2_CNTD
+      from store_sales
+      where ss_quantity between 6 and 10
+        and (ss_list_price between 35 and 35+10
+          or ss_coupon_amt between 7094 and 7094+1000
+          or ss_wholesale_cost between 17 and 17+20)) B2,
+     (select avg(ss_list_price) B3_LP
+            ,count(ss_list_price) B3_CNT
+            ,count(distinct ss_list_price) B3_CNTD
+      from store_sales
+      where ss_quantity between 11 and 15
+        and (ss_list_price between 73 and 73+10
+          or ss_coupon_amt between 13075 and 13075+1000
+          or ss_wholesale_cost between 45 and 45+20)) B3,
+     (select avg(ss_list_price) B4_LP
+            ,count(ss_list_price) B4_CNT
+            ,count(distinct ss_list_price) B4_CNTD
+      from store_sales
+      where ss_quantity between 16 and 20
+        and (ss_list_price between 187 and 187+10
+          or ss_coupon_amt between 13279 and 13279+1000
+          or ss_wholesale_cost between 20 and 20+20)) B4,
+     (select avg(ss_list_price) B5_LP
+            ,count(ss_list_price) B5_CNT
+            ,count(distinct ss_list_price) B5_CNTD
+      from store_sales
+      where ss_quantity between 21 and 25
+        and (ss_list_price between 126 and 126+10
+          or ss_coupon_amt between 6015 and 6015+1000
+          or ss_wholesale_cost between 59 and 59+20)) B5,
+     (select avg(ss_list_price) B6_LP
+            ,count(ss_list_price) B6_CNT
+            ,count(distinct ss_list_price) B6_CNTD
+      from store_sales
+      where ss_quantity between 26 and 30
+        and (ss_list_price between 88 and 88+10
+          or ss_coupon_amt between 658 and 658+1000
+          or ss_wholesale_cost between 16 and 16+20)) B6
+limit 100
+Query submitted at: 2018-04-19 06:47:53 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=2640f4136ce48b39:ae11b93600000000
+37.82199016613274	67115	5637	40.51363477920644	56229	5370	81.8079267823969	62444	7873	48.12701615266284	54604	6258	106.380770749349	60279	9114	59.06371105270304	81039	11345
+Fetched 1 row(s) in 1.79s

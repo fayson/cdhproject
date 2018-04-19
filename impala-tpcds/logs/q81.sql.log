@@ -1,0 +1,137 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with customer_total_return as
+ (select cr_returning_customer_sk as ctr_customer_sk
+        ,ca_state as ctr_state, 
+ 	sum(cr_return_amt_inc_tax) as ctr_total_return
+ from catalog_returns
+     ,date_dim
+     ,customer_address
+ where cr_returned_date_sk = d_date_sk 
+   and cr_returned_date_sk between 2452276 and 2452640
+   and d_year =2002
+   and cr_returning_addr_sk = ca_address_sk 
+ group by cr_returning_customer_sk
+         ,ca_state )
+  select  c_customer_id,c_salutation,c_first_name,c_last_name,ca_street_number,ca_street_name
+                   ,ca_street_type,ca_suite_number,ca_city,ca_county,ca_state,ca_zip,ca_country,ca_gmt_offset
+                  ,ca_location_type,ctr_total_return
+ from customer_total_return ctr1
+     ,customer_address
+     ,customer
+ where ctr1.ctr_total_return > (select avg(ctr_total_return)*1.2
+ 			  from customer_total_return ctr2 
+                  	  where ctr1.ctr_state = ctr2.ctr_state)
+       and ca_address_sk = c_current_addr_sk
+       and ca_state = 'IN'
+       and ctr1.ctr_customer_sk = c_customer_sk
+ order by c_customer_id,c_salutation,c_first_name,c_last_name,ca_street_number,ca_street_name
+                   ,ca_street_type,ca_suite_number,ca_city,ca_county,ca_state,ca_zip,ca_country,ca_gmt_offset
+                  ,ca_location_type,ctr_total_return
+ limit 100
+AAAAAAAAAACKAAAA	Dr.	Rose	Ludwig	981	Oak 	Boulevard	Suite 300	Shiloh	Jay County	IN	49275	United States	-5	single family	6646.14
+AAAAAAAAABBIAAAA	Sir	Murray	Wynne	761	10th Mill	Dr.	Suite 360	Hillcrest	Owen County	IN	43003	United States	-5	single family	1899.3
+AAAAAAAAABIOBAAA		Marylou	Nichols	750	Fifth 3rd	Blvd	Suite L	Five Points	Boone County	IN	46098	United States	-5	apartment	2078.06
+AAAAAAAAACACAAAA	Miss	Carrie	Payne	160	Walnut 4th	ST	Suite E	Blanchard	Noble County	IN	45985	United States	-5	condo	1573.96
+AAAAAAAAACGFAAAA	Dr.	Magan	Whitehead	709	13th Franklin	Avenue	Suite 460	Oak Grove	Fayette County	IN	48370	United States	-5	single family	2039.09
+AAAAAAAAADANAAAA	Sir	John	Williams	441	Johnson Walnut	Blvd	Suite 440	Morris	Greene County	IN	46696	United States	-5	single family	5361.3
+AAAAAAAAADBLBAAA	Mr.	Mark	Patterson	690	Johnson 3rd	Court	Suite 160	Oakwood	Dubois County	IN	40169	United States	-5	apartment	3512.69
+AAAAAAAAAEDLBAAA	Mr.	Howard	Wells	545	Broadway 	Way	Suite 440	Greenfield	De Kalb County	IN	45038	United States	-5	condo	2448
+AAAAAAAAAEDLBAAA	Mr.	Howard	Wells	545	Broadway 	Way	Suite 440	Greenfield	De Kalb County	IN	45038	United States	-5	condo	2761.34
+AAAAAAAAAEKFBAAA	Mrs.	Tyesha	Cooper	631	Main 	Ln	Suite 260	Yorktown	Kosciusko County	IN	40732	United States	-5	apartment	4902.3
+AAAAAAAAAFGABAAA	Dr.	Michael	Roberts	451	Spring 	Wy	Suite 130	Deerfield	Kosciusko County	IN	49840	United States	-5	apartment	1714.08
+AAAAAAAAAFGABAAA	Dr.	Michael	Roberts	451	Spring 	Wy	Suite 130	Deerfield	Kosciusko County	IN	49840	United States	-5	apartment	3215.52
+AAAAAAAAAFGACAAA	Mrs.	June	Thatcher	640	Lee North	RD	Suite I	Farmington	Warrick County	IN	49145	United States	-5	single family	4260.18
+AAAAAAAAAGEPBAAA	Ms.	Cheryl	Mcknight	598	Adams Main	RD	Suite U	Richville	Jennings County	IN	45945	United States	-5	condo	3267.19
+AAAAAAAAAGLDAAAA	Mr.	Daniel	Olsen	241	Poplar 	Road	Suite 440	Whitesville	Lawrence County	IN	45903	United States	-5	apartment	3155.6
+AAAAAAAAAHIHBAAA	Ms.	Linda	Peterson	645	River Jackson	Wy	Suite 390	Wilson	La Porte County	IN	46971	United States	-5	condo	8133.47
+AAAAAAAAAHKFBAAA	Mr.	Jesse	Velez	78	View Smith	Circle	Suite G	Crossroads	Rush County	IN	40534	United States	-5	condo	2917.2
+AAAAAAAAAJDCAAAA	Ms.	Julie	Ayers	841	Cherry Spring	Dr.	Suite 60	Woodville	Putnam County	IN	44289	United States	-5	apartment	13029.46
+AAAAAAAAAJNEBAAA	Dr.	David	Hamilton	212	Eigth 14th	Court	Suite 200	Lebanon	Decatur County	IN	42898	United States	-5	apartment	3446.86
+AAAAAAAAAKIEAAAA	Miss	Rhonda	Griffin	212	Hickory 	Pkwy	Suite 90	Oakland	Adams County	IN	49843	United States	-5	condo	2558.93
+AAAAAAAAALABCAAA	Mr.	Danny		421	Madison 11th	Avenue	Suite 230	Glenwood	Steuben County	IN	43511	United States	-5	condo	2379.08
+AAAAAAAAALJHAAAA	Sir	Rick	Wilkerson	255	Lee 	Circle	Suite 230	Pleasant Grove	Jackson County	IN	44136	United States	-5	condo	1882.78
+AAAAAAAAAMOJAAAA	Sir	John	Spencer	632	Main 	Avenue	Suite 110	Bunker Hill	Cass County	IN	40150	United States	-5	apartment	2934.62
+AAAAAAAAAMOMBAAA	Mrs.	Helen	Winters	864	Ridge South	Court	Suite 50	Edgewood	Jay County	IN	40069	United States	-5	single family	3125.42
+AAAAAAAAANBOAAAA	Sir	Martin	Flores	516	1st 	Court	Suite F	Pleasant Grove	Benton County	IN	44136	United States	-5	condo	1686.4
+AAAAAAAAANEEBAAA	Ms.	Angela	Eddy	458	Williams Pine	Ct.	Suite D	White Oak	Spencer County	IN	46668	United States	-5	single family	7222.76
+AAAAAAAAAOGFAAAA	Sir	Donald	Harris	862	9th Jackson	ST	Suite 10	Waterloo	Whitley County	IN	41675	United States	-5	condo	2697.42
+AAAAAAAAAONIAAAA	Dr.	Annie	Perkins	398	13th 	Wy	Suite F	Westgate	Boone County	IN	42366	United States	-5	apartment	2084.42
+AAAAAAAAAONIAAAA	Dr.	Annie	Perkins	398	13th 	Wy	Suite F	Westgate	Boone County	IN	42366	United States	-5	apartment	10719.07
+AAAAAAAAAPONAAAA	Miss	Annie	Allen	558	2nd Park	Avenue	Suite D	Superior	Benton County	IN	42562	United States	-5	condo	1994.52
+AAAAAAAABEFDBAAA	Mr.	Charles	Penrod	793	North 	Dr.	Suite 200	Lincoln	Hamilton County	IN	41289	United States	-5	apartment	2388.01
+AAAAAAAABFGBAAAA	Mr.	Steve	Johnson	813	Cedar Ridge	Ln	Suite E	Pleasant Hill	Bartholomew County	IN	43604	United States	-5	single family	16577.77
+AAAAAAAABFMNAAAA	Mr.	James	Hale	324	Miller 	Cir.	Suite J	Springfield	Elkhart County	IN	49303	United States	-5	condo	3981.7
+AAAAAAAABIHCBAAA	Mr.	Ronald	Yanez	150	Mill View	Road	Suite L	Cedar Grove	Ripley County	IN	40411	United States	-5	single family	3560.35
+AAAAAAAABIKDBAAA	Dr.	William	Robertson		Dogwood 		Suite W		Orange County	IN	47752		-5		2124.93
+AAAAAAAABIKDBAAA	Dr.	William	Robertson		Dogwood 		Suite W		Orange County	IN	47752		-5		7797.7
+AAAAAAAABKADBAAA	Mr.	Michael	Grey	726	Cedar 	Avenue	Suite O	Tanglewood	Switzerland County	IN	48994	United States	-5	single family	3107.67
+AAAAAAAABKIFAAAA	Dr.	Vanessa	Diaz	162	Pine Davis	Ln	Suite 150	Crossroads	Hancock County	IN	40534	United States	-5	single family	4275.85
+AAAAAAAABLADBAAA	Dr.			658	Spring Green	Avenue	Suite 30	Glendale	Madison County	IN	43951	United States	-5	apartment	1723.68
+AAAAAAAABNAKAAAA	Sir	Roosevelt	Spicer	833	Hill 	ST	Suite V	Newport	Monroe County	IN	41521	United States	-5	condo	2237.51
+AAAAAAAABNBNAAAA	Miss	Latoya	Keyes	892	Adams 	Court	Suite M	Springfield	White County	IN	49303	United States	-5	single family	3592.4
+AAAAAAAABOOOBAAA	Sir	Roger	Flowers	609	Cherry 7th	Ln	Suite B	Riverview	Carroll County	IN	49003	United States	-5	single family	3928.87
+AAAAAAAABPDPBAAA	Mr.	Rodolfo	Coleman	814	Second View	Avenue	Suite R	Centerville	Fayette County	IN	40059	United States	-5	single family	1939.63
+AAAAAAAACAKHAAAA	Mrs.	Hazel	Williams	159	Lake 	Ct.	Suite 340	Highland	Whitley County	IN	49454	United States	-5	single family	2790.27
+AAAAAAAACBGPBAAA	Mrs.	Melissa	Kaiser	493	Main 	Ct.	Suite J	Greenfield	Grant County	IN	45038	United States	-5	condo	2502.59
+AAAAAAAACBOBAAAA	Sir	Douglas	Robertson	826	South 10th	Wy	Suite J	Lincoln	Kosciusko County	IN	41289	United States	-5	apartment	2144.91
+AAAAAAAACCGIAAAA	Mr.	James	Gonzalez	332	Forest 	Ave	Suite 160	Antioch	Pulaski County	IN	48605	United States	-5	apartment	11263.86
+AAAAAAAACCPABAAA	Mrs.	Marnie	Gonzales	285	Elm Park	Wy	Suite J	Oakwood	Fountain County	IN	40169	United States	-5	condo	2569.7
+AAAAAAAACEEABAAA	Mr.	James	Abell	856	Chestnut Jefferson	Lane	Suite X	Wilson	Decatur County	IN	46971	United States	-5	condo	2405.52
+AAAAAAAACEEDBAAA	Sir	Dennis	Murray	135	Spruce 	Avenue	Suite N	Hopewell	Vigo County	IN	40587	United States	-5	apartment	2730.48
+AAAAAAAACENJBAAA	Miss	Gracie	Torrez	447	Highland Chestnut	Wy	Suite 360	Enterprise	Shelby County	IN	41757	United States	-5	condo	2988.09
+AAAAAAAACGGOAAAA		John	Keller	777	Walnut 	Drive	Suite N	Flint	Hancock County	IN	48909	United States	-5	apartment	2859.61
+AAAAAAAACHHGBAAA	Mr.	Thomas	Ocasio	441	Johnson Walnut	Blvd	Suite 440	Morris	Greene County	IN	46696	United States	-5	single family	2568.68
+AAAAAAAACIFBCAAA	Dr.	Ryan	Morris	323	Meadow 	Parkway	Suite T	Woodlawn	Floyd County	IN	44098	United States	-5	single family	4837.56
+AAAAAAAACJLAAAAA	Mrs.	Angela	Rogers	29	5th 	ST	Suite S	Waterloo	Dubois County	IN	41675	United States	-5	apartment	2645.37
+AAAAAAAACJNNAAAA	Sir	Donald	Meade	648	12th 4th	RD	Suite V	Liberty	Howard County	IN	43451	United States	-5	single family	2414.62
+AAAAAAAACKKLBAAA	Dr.	Richard	Henry	927	Park 3rd	Ln	Suite K	Green Acres	Clay County	IN	47683	United States	-5	apartment	1876.98
+AAAAAAAACKKLBAAA	Dr.	Richard	Henry	927	Park 3rd	Ln	Suite K	Green Acres	Clay County	IN	47683	United States	-5	apartment	2832.05
+AAAAAAAACKLBCAAA	Mr.	Trevor	Carr	115	East 	ST	Suite 260	Greenwood	Posey County	IN	48828	United States	-5	single family	2077.59
+AAAAAAAACLJEBAAA	Sir	Gerald	Phelps	165	Seventh 	RD	Suite E	Riverside	De Kalb County	IN	49231	United States	-5	condo	2678.4
+AAAAAAAACLJFAAAA			Masters	276	Birch 	Way	Suite 150	Green Acres	Lagrange County	IN	47683	United States	-5	condo	2310.45
+AAAAAAAACLLIAAAA	Dr.	Catherine	Anglin	505	Church 	Road	Suite 30	Antioch	Clark County	IN	48605	United States	-5	condo	4765.76
+AAAAAAAACLPCBAAA	Mr.	Ralph	Martinez	754	12th Hickory	Avenue	Suite 70	Edgewood	Carroll County	IN	40069	United States	-5	single family	3502.92
+AAAAAAAACMKGBAAA		Hiroko		613	4th 	Ave	Suite 380	Georgetown	Jackson County	IN	47057	United States	-5	condo	1938.78
+AAAAAAAACNAEBAAA	Ms.	Helen	Leon	323	Poplar 	Ave	Suite K	Pleasant Valley	Scott County	IN	42477	United States	-5	single family	4044.68
+AAAAAAAACNKHBAAA	Ms.	Rhonda	Davis	128	Laurel Church	Boulevard	Suite 210	Bethel	Grant County	IN	45281	United States	-5	apartment	6081.46
+AAAAAAAACPKCBAAA	Dr.	Earl	Gonzalez	528	Ash 	Pkwy	Suite 150	Spring Valley	Union County	IN	46060	United States	-5	apartment	2562.56
+AAAAAAAACPPABAAA	Dr.	Michael	Gamble	382	South 	Boulevard	Suite 60	Riverside	Franklin County	IN	49231	United States	-5	single family	3886.83
+AAAAAAAADBECAAAA	Mr.	Armando	Neal	463	Main 2nd	Street	Suite 0	Hillcrest	Newton County	IN	43003	United States	-5	single family	4135.34
+AAAAAAAADCCGBAAA	Mr.	Erick	Blanco	869	13th 	Parkway	Suite C	Greenfield	Morgan County	IN	45038	United States	-5	single family	3692.78
+AAAAAAAADCHACAAA	Sir	James	Boudreaux	347	West 6th	Cir.	Suite D	Mount Vernon	Vanderburgh County	IN	48482	United States	-5	single family	2788.36
+AAAAAAAADDFIBAAA	Miss	Shelia	Giles	246	Hill 11th	Ct.	Suite 450	Mountain View	Lagrange County	IN	44466	United States	-5	single family	2105.49
+AAAAAAAADDOABAAA	Ms.	Julia	Rojas	25	View 2nd	Court	Suite 410	Spring Hill	Wabash County	IN	46787	United States	-5	condo	2242.83
+AAAAAAAADGLGAAAA	Sir	Hilario	King	133	10th 	Way	Suite 50	Waterloo	Brown County	IN	41675	United States	-5	condo	4117.28
+AAAAAAAADHEDBAAA	Dr.	Jon	Kennedy	965	Church Central	RD	Suite S	Mount Pleasant	Jefferson County	IN	41933	United States	-5	single family	2339.08
+AAAAAAAADHFGBAAA	Mrs.	Teresa	Barber	940	3rd 6th	Cir.	Suite E	Maple Grove	Porter County	IN	48252	United States	-5	apartment	3578.04
+AAAAAAAADIBFBAAA	Dr.	Bruce	Wallace	686	3rd 	Street	Suite C	Salem	Wabash County	IN	48048	United States	-5	condo	4481.85
+AAAAAAAADIFEBAAA	Dr.	Bonnie	Brandt	692	Sunset 	Drive	Suite X	Waterloo	Jackson County	IN	41675	United States	-5	apartment	1867.03
+AAAAAAAADJCEBAAA	Mr.	Sean	Gonzalez	847	Cedar 4th	Circle	Suite 480	Lebanon	Lake County	IN	42898	United States	-5	condo	7982.46
+AAAAAAAADJLBBAAA	Dr.	Courtney	Flores	35	View 	Court	Suite K	Lakewood	Daviess County	IN	48877	United States	-5	single family	4242.99
+AAAAAAAADJLOAAAA	Dr.	Theresa	Poole	208	Elm 	Dr.	Suite P	Midway	Clinton County	IN	41904	United States	-5	apartment	2262.95
+AAAAAAAADJMBCAAA		Eric	Lloyd	882	Smith 9th	ST	Suite X	Hamilton	Steuben County	IN	42808	United States	-5	single family	2745.75
+AAAAAAAADKKEBAAA	Ms.	Lillian	Williams	808	Railroad 	Parkway	Suite 210	Hillcrest	Scott County	IN	43003	United States	-5	condo	2635.08
+AAAAAAAADLKIBAAA	Dr.	Tara	Edwards	717	10th 	Circle	Suite A	Bridgeport	Jasper County	IN	45817	United States	-5	apartment	1707.46
+AAAAAAAADLMACAAA	Mr.	Wilton	Temple	1	Elm 	Avenue	Suite 340	Franklin	Floyd County	IN	49101	United States	-5	apartment	3577.2
+AAAAAAAADLMMBAAA	Miss	Constance	Page	436	Walnut 	Court	Suite A	Oakwood	Henry County	IN	40169	United States	-5	single family	1777.72
+AAAAAAAADMOBCAAA	Mrs.	Barbara	Bradford	89	15th Second	Wy	Suite 30	Ashland	Crawford County	IN	44244	United States	-5	apartment	3519.25
+AAAAAAAADMOBCAAA	Mrs.	Barbara	Bradford	89	15th Second	Wy	Suite 30	Ashland	Crawford County	IN	44244	United States	-5	apartment	5027.94
+AAAAAAAADNICCAAA	Mrs.	Barbara	Miller	710	11th 	Circle	Suite V	Mountain View	Clark County	IN	44466	United States	-5	apartment	1721.08
+AAAAAAAADNLFBAAA	Ms.	Susan	Schroeder	68	Sixth 	Avenue	Suite A	Oak Grove	Howard County	IN	48370	United States	-5	single family	7604.9
+AAAAAAAADNLHBAAA	Mr.	Major	Green	277	Park Cherry	Ave	Suite K	Edgewood	Madison County	IN	40069	United States	-5	single family	4158.34
+AAAAAAAADOFKAAAA	Dr.	Agnes	Finch	628	Green Green	Drive	Suite 380	Newport		IN			-5		2411.12
+AAAAAAAADOKAAAAA	Sir	Randy	Houser	981	Woodland Highland	Circle	Suite 160	Ashland	Shelby County	IN	44244	United States	-5	condo	2329.13
+AAAAAAAADPCGAAAA	Sir	Eric	Croteau	694	East 	RD	Suite 360	Somerville	Adams County	IN	47783	United States	-5	single family	3480.35
+AAAAAAAADPEBAAAA	Sir	Gary	Garner	111	View 	RD	Suite D	Saratoga	Jasper County	IN	42123	United States	-5	condo	6988.34
+AAAAAAAADPFGAAAA	Sir	Joseph		783	Wilson Lakeview	Dr.	Suite 270	Sulphur Springs	Clay County	IN	48354	United States	-5	condo	2086.91
+AAAAAAAADPMIBAAA	Ms.	Lavon	Flores	482	Valley 	Dr.	Suite 340	Spring Grove	Wabash County	IN	46719	United States	-5	condo	1935.81
+AAAAAAAADPMIBAAA	Ms.	Lavon	Flores	482	Valley 	Dr.	Suite 340	Spring Grove	Wabash County	IN	46719	United States	-5	condo	3665.58
+AAAAAAAADPNOAAAA	Ms.	Sylvia	Tobin	531	Lee Main	Ave	Suite 280	Arlington	Blackford County	IN	46557	United States	-5	condo	6082.25
+AAAAAAAAEACGBAAA	Dr.	John	Garza	18	Sunset 	Pkwy	Suite T	New Hope	Jay County	IN	49431	United States	-5	single family	16839.11
+Fetched 100 row(s) in 2.85s

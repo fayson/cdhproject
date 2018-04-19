@@ -1,0 +1,80 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select s_store_name
+  ,s_company_id
+  ,s_street_number
+  ,s_street_name
+  ,s_street_type
+  ,s_suite_number
+  ,s_city
+  ,s_county
+  ,s_state
+  ,s_zip
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk <= 30 ) then 1 else 0 end)  as D30days
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 30) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 60) then 1 else 0 end )  as D3160days
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 60) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 90) then 1 else 0 end)  as D6190days
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 90) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 120) then 1 else 0 end)  as D91120days
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk  > 120) then 1 else 0 end)  as D120days
+from
+   store_sales
+  ,store_returns
+  ,store
+  ,date_dim d1
+  ,date_dim d2
+where
+-- ss_sold_date_sk between 2451576 and 2451604
+-- and 
+sr_returned_date_sk between 2452184 and 2452214
+and d2.d_year = 2001
+and d2.d_moy  = 10
+and ss_ticket_number = sr_ticket_number
+and ss_item_sk = sr_item_sk
+and ss_sold_date_sk   = d1.d_date_sk
+and sr_returned_date_sk   = d2.d_date_sk
+and ss_customer_sk = sr_customer_sk
+and ss_store_sk = s_store_sk
+group by
+   s_store_name
+  ,s_company_id
+  ,s_street_number
+  ,s_street_name
+  ,s_street_type
+  ,s_suite_number
+  ,s_city
+  ,s_county
+  ,s_state
+  ,s_zip
+order by s_store_name
+        ,s_company_id
+        ,s_street_number
+        ,s_street_name
+        ,s_street_type
+        ,s_suite_number
+        ,s_city
+        ,s_county
+        ,s_state
+        ,s_zip
+limit 100
+Query submitted at: 2018-04-19 06:49:42 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=874f306f9863135a:8688c31600000000
+able	1	255	Sycamore 	Dr.	Suite 410	Midway	Williamson County	TN	31904	106	126	79	63	102
+able	1	479	Park First	Lane	Suite 20	Midway	Williamson County	TN	31904	111	132	93	62	109
+ation	1	811	Lee 	Circle	Suite T	Midway	Williamson County	TN	31904	107	117	79	53	129
+bar	1	175	4th 	Court	Suite C	Midway	Williamson County	TN	31904	111	121	98	66	100
+bar	1	200	Lake 	RD	Suite 320	Midway	Williamson County	TN	31904	119	120	75	61	109
+cally	1	588	View Mill	Court	Suite 160	Midway	Williamson County	TN	31904	138	118	87	58	109
+eing	1	226	12th 	Lane	Suite D	Fairview	Williamson County	TN	35709	113	131	100	57	95
+ese	1	27	Lake 	Ln	Suite 260	Midway	Williamson County	TN	31904	118	121	84	51	112
+ese	1	408	Washington 1st	Circle	Suite 390	Midway	Williamson County	TN	31904	123	122	83	45	123
+n st	1	240	Willow 	RD	Suite 280	Fairview	Williamson County	TN	35709	119	153	76	39	106
+ought	1	767	Spring 	Wy	Suite 250	Midway	Williamson County	TN	31904	111	124	87	58	103
+pri	1	84	First 	Cir.	Suite 180	Midway	Williamson County	TN	31904	117	126	83	59	100
+Fetched 12 row(s) in 2.37s

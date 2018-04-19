@@ -1,0 +1,236 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,ship_carriers
+        ,year
+        ,sum(jan_sales) as jan_sales
+        ,sum(feb_sales) as feb_sales
+        ,sum(mar_sales) as mar_sales
+        ,sum(apr_sales) as apr_sales
+        ,sum(may_sales) as may_sales
+        ,sum(jun_sales) as jun_sales
+        ,sum(jul_sales) as jul_sales
+        ,sum(aug_sales) as aug_sales
+        ,sum(sep_sales) as sep_sales
+        ,sum(oct_sales) as oct_sales
+        ,sum(nov_sales) as nov_sales
+        ,sum(dec_sales) as dec_sales
+        ,sum(jan_sales/w_warehouse_sq_ft) as jan_sales_per_sq_foot
+        ,sum(feb_sales/w_warehouse_sq_ft) as feb_sales_per_sq_foot
+        ,sum(mar_sales/w_warehouse_sq_ft) as mar_sales_per_sq_foot
+        ,sum(apr_sales/w_warehouse_sq_ft) as apr_sales_per_sq_foot
+        ,sum(may_sales/w_warehouse_sq_ft) as may_sales_per_sq_foot
+        ,sum(jun_sales/w_warehouse_sq_ft) as jun_sales_per_sq_foot
+        ,sum(jul_sales/w_warehouse_sq_ft) as jul_sales_per_sq_foot
+        ,sum(aug_sales/w_warehouse_sq_ft) as aug_sales_per_sq_foot
+        ,sum(sep_sales/w_warehouse_sq_ft) as sep_sales_per_sq_foot
+        ,sum(oct_sales/w_warehouse_sq_ft) as oct_sales_per_sq_foot
+        ,sum(nov_sales/w_warehouse_sq_ft) as nov_sales_per_sq_foot
+        ,sum(dec_sales/w_warehouse_sq_ft) as dec_sales_per_sq_foot
+        ,sum(jan_net) as jan_net
+        ,sum(feb_net) as feb_net
+        ,sum(mar_net) as mar_net
+        ,sum(apr_net) as apr_net
+        ,sum(may_net) as may_net
+        ,sum(jun_net) as jun_net
+        ,sum(jul_net) as jul_net
+        ,sum(aug_net) as aug_net
+        ,sum(sep_net) as sep_net
+        ,sum(oct_net) as oct_net
+        ,sum(nov_net) as nov_net
+        ,sum(dec_net) as dec_net
+ from (
+    (select
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,concat('DIAMOND'  , ',' , 'ZOUROS') as ship_carriers
+       ,d_year as year
+        ,sum(case when d_moy = 1
+                then ws_ext_sales_price* ws_quantity else 0 end) as jan_sales
+        ,sum(case when d_moy = 2
+                then ws_ext_sales_price* ws_quantity else 0 end) as feb_sales
+        ,sum(case when d_moy = 3
+                then ws_ext_sales_price* ws_quantity else 0 end) as mar_sales
+        ,sum(case when d_moy = 4
+                then ws_ext_sales_price* ws_quantity else 0 end) as apr_sales
+        ,sum(case when d_moy = 5
+                then ws_ext_sales_price* ws_quantity else 0 end) as may_sales
+        ,sum(case when d_moy = 6
+                then ws_ext_sales_price* ws_quantity else 0 end) as jun_sales
+        ,sum(case when d_moy = 7
+                then ws_ext_sales_price* ws_quantity else 0 end) as jul_sales
+        ,sum(case when d_moy = 8
+                then ws_ext_sales_price* ws_quantity else 0 end) as aug_sales
+        ,sum(case when d_moy = 9
+                then ws_ext_sales_price* ws_quantity else 0 end) as sep_sales
+        ,sum(case when d_moy = 10
+                then ws_ext_sales_price* ws_quantity else 0 end) as oct_sales
+        ,sum(case when d_moy = 11
+                then ws_ext_sales_price* ws_quantity else 0 end) as nov_sales
+        ,sum(case when d_moy = 12
+                then ws_ext_sales_price* ws_quantity else 0 end) as dec_sales
+        ,sum(case when d_moy = 1
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as jan_net
+        ,sum(case when d_moy = 2
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as feb_net
+        ,sum(case when d_moy = 3
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as mar_net
+        ,sum(case when d_moy = 4
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as apr_net
+        ,sum(case when d_moy = 5
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as may_net
+        ,sum(case when d_moy = 6
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as jun_net
+        ,sum(case when d_moy = 7
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as jul_net
+        ,sum(case when d_moy = 8
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as aug_net
+        ,sum(case when d_moy = 9
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as sep_net
+        ,sum(case when d_moy = 10
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as oct_net
+        ,sum(case when d_moy = 11
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as nov_net
+        ,sum(case when d_moy = 12
+                then ws_net_paid_inc_ship * ws_quantity else 0 end) as dec_net
+     from
+          web_sales
+         ,warehouse
+         ,date_dim
+         ,time_dim
+          ,ship_mode
+     where
+            ws_warehouse_sk =  w_warehouse_sk
+        and ws_sold_date_sk = d_date_sk
+        and ws_sold_date_sk between 2451180 and 2451544
+        and ws_sold_time_sk = t_time_sk
+        and ws_ship_mode_sk = sm_ship_mode_sk
+        and d_year = 1999
+        and t_time between 46185 and 46185+28800
+        and sm_carrier in ('DIAMOND','ZOUROS')
+     group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+       ,d_year
+        )
+ union all
+    (select
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,concat('DIAMOND'  , ',' , 'ZOUROS') as ship_carriers
+        -- ,'DIAMOND' || ',' || 'ZOUROS' as ship_carriers
+       ,d_year as year
+        ,sum(case when d_moy = 1
+                then cs_sales_price* cs_quantity else 0 end) as jan_sales
+       ,sum(case when d_moy = 2
+                then cs_sales_price* cs_quantity else 0 end) as feb_sales
+        ,sum(case when d_moy = 3
+                then cs_sales_price* cs_quantity else 0 end) as mar_sales
+        ,sum(case when d_moy = 4
+                then cs_sales_price* cs_quantity else 0 end) as apr_sales
+        ,sum(case when d_moy = 5
+                then cs_sales_price* cs_quantity else 0 end) as may_sales
+        ,sum(case when d_moy = 6
+                then cs_sales_price* cs_quantity else 0 end) as jun_sales
+        ,sum(case when d_moy = 7
+                then cs_sales_price* cs_quantity else 0 end) as jul_sales
+        ,sum(case when d_moy = 8
+                then cs_sales_price* cs_quantity else 0 end) as aug_sales
+        ,sum(case when d_moy = 9
+                then cs_sales_price* cs_quantity else 0 end) as sep_sales
+        ,sum(case when d_moy = 10
+                then cs_sales_price* cs_quantity else 0 end) as oct_sales
+        ,sum(case when d_moy = 11
+                then cs_sales_price* cs_quantity else 0 end) as nov_sales
+        ,sum(case when d_moy = 12
+                then cs_sales_price* cs_quantity else 0 end) as dec_sales
+        ,sum(case when d_moy = 1
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as jan_net
+        ,sum(case when d_moy = 2
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as feb_net
+        ,sum(case when d_moy = 3
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as mar_net
+        ,sum(case when d_moy = 4
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as apr_net
+        ,sum(case when d_moy = 5
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as may_net
+        ,sum(case when d_moy = 6
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as jun_net
+        ,sum(case when d_moy = 7
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as jul_net
+        ,sum(case when d_moy = 8
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as aug_net
+        ,sum(case when d_moy = 9
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as sep_net
+        ,sum(case when d_moy = 10
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as oct_net
+        ,sum(case when d_moy = 11
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as nov_net
+        ,sum(case when d_moy = 12
+                then cs_net_paid_inc_ship_tax * cs_quantity else 0 end) as dec_net
+     from
+          catalog_sales
+         ,warehouse
+         ,date_dim
+         ,time_dim
+         ,ship_mode
+     where
+            cs_warehouse_sk =  w_warehouse_sk
+        and cs_sold_date_sk = d_date_sk
+        and cs_sold_date_sk between 2451180 and 2451544
+        and cs_sold_time_sk = t_time_sk
+        and cs_ship_mode_sk = sm_ship_mode_sk
+        and d_year = 1999
+        and t_time between 46185 AND 46185+28800
+        and sm_carrier in ('DIAMOND','ZOUROS')
+     group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+       ,d_year
+     )
+ ) x
+ group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,ship_carriers
+       ,year
+ order by w_warehouse_name
+ limit 100
+Query submitted at: 2018-04-19 06:51:05 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=1f4a8e08c360937c:448b182800000000
+	NULL	Fairview	Williamson County	TN	United States	DIAMOND,ZOUROS	1999	31107332.49	19190759.72	23263491.51	21853079.17	24777868.27	24338965.45	20270256.02	49822435.51000001	49318794.64000002	47389172.52	79852521.86999997	74503727.02	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	105257719.61	86336479.61999999	79868561.58	89299477.3	92301586.86	97314392.17999999	78510554.35999998	201122858.73	203165626.56	195638465.25	307639755.93	317274817.77
+Bad cards must make.	621234	Fairview	Williamson County	TN	United States	DIAMOND,ZOUROS	1999	28412964.51	26293207.54	16977693.32	20058667.95000001	16049231.83	23906049.89	17739245.12	42576555.32	49249587.75	57067846.84	67657790.75	90420604.06	45.73633205845141	42.32416052566344	27.32898283094616	32.28842585885513	25.83443892317548	38.48155427745423	28.55485231007961	68.53545575419247	79.27703208452853	91.86207908775114	108.9087054958357	145.5499925309948	93840997.78	87173122.83000001	79202949.65000001	85204449.03999999	83028519.15000002	99089918.21000001	98466235.37	189118545.75	210246582.92	210561751.81	303331443.19	328468829.9599999
+Conventional childr	977787	Fairview	Williamson County	TN	United States	DIAMOND,ZOUROS	1999	19848284.28	26217592.77	22448332.7	20822269.33	22340522.8	21897966.52	18684837.77	52073520.73	64031944.28999999	46892664.25	64267615.90999999	71336566.09999999	20.29919019172888	26.81319425396329	22.95830554098183	21.29530187044827	22.84804645592547	22.395436347589	19.10931293829842	53.25650753180396	65.4865980934498	47.95795428861296	65.72762361332272	72.95716357447992	98276510.88	83086551.59	105404543.24	87437785.14	84124801.73999999	90886650.75	85808223.96000001	206239954.03	231448697.87	183193257.23	287734017.6499999	283092894.33
+Doors canno	294242	Fairview	Williamson County	TN	United States	DIAMOND,ZOUROS	1999	21821914.49	24737278.17	21986776.63	18022494.73	15887483.73	22084926.61	21747462.39	63915267.65000001	49376678.86000001	57071652.81000001	76055843.29000001	77950322.09999999	74.16315308487572	84.07120047443941	74.72344746841034	61.25058533452057	53.99461575845732	75.05701636747983	73.91012292602687	217.2200693646727	167.8097581582507	193.9616125841994	258.4805815961012	264.9190873498684	104980692.47	100805373.57	76613144.06	80571281.83	78187462.67999999	95890801.35000001	102055457.24	226687280.9	200171454.96	201084341.81	298884451.71	325317178.22
+Important issues liv	138504	Fairview	Williamson County	TN	United States	DIAMOND,ZOUROS	1999	24922402.88	17985027.46	18728502.52	23203151.58	22930681.92	21577454	20900827.61	40097743.00000001	42903219.05	50802370.34999999	85902866.01999998	75745226.42999999	179.9399503263444	129.8520436954889	135.2199396407324	167.5269420377751	165.5597088892739	155.7893923641195	150.9041443568417	289.5060287067522	309.7615884739791	366.7935247357477	620.2193873101136	546.8811473314851	101324675.5	80565890.96000001	83487860.84999999	94874878.56000003	101918619.09	81846018.25	81973400.25	193612631.9199999	228946886.09	209982428.1	341675586.9699999	328489273.5499999
+Fetched 5 row(s) in 4.30s

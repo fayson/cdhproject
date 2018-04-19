@@ -1,0 +1,166 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select c_last_name,
+  c_first_name,
+  substr(s_city, 1, 30),
+  ss_ticket_number,
+  amt,
+  profit
+from
+  (select
+    ss_ticket_number,
+    ss_customer_sk,
+    store.s_city,
+    sum(ss_coupon_amt) amt,
+    sum(ss_net_profit) profit
+  from
+    store_sales,
+    date_dim,
+    store,
+    household_demographics
+  where
+    store_sales.ss_sold_date_sk = date_dim.d_date_sk
+    and store_sales.ss_store_sk = store.s_store_sk
+    and store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk
+    and (household_demographics.hd_dep_count = 8
+      or household_demographics.hd_vehicle_count > 0)
+    and date_dim.d_dow = 1
+     and date_dim.d_year in (1998, 1998 + 1, 1998 + 2)
+    and store.s_number_employees between 200 and 295
+    and ss_sold_date_sk between 2450819 and 2451904
+    -- partition key filter
+    --and ss_sold_date_sk in (2450819, 2450826, 2450833, 2450840, 2450847, 2450854, 2450861, 2450868, 2450875, 2450882, 2450889,
+    -- 2450896, 2450903, 2450910, 2450917, 2450924, 2450931, 2450938, 2450945, 2450952, 2450959, 2450966, 2450973, 2450980, 2450987,
+    -- 2450994, 2451001, 2451008, 2451015, 2451022, 2451029, 2451036, 2451043, 2451050, 2451057, 2451064, 2451071, 2451078, 2451085,
+    -- 2451092, 2451099, 2451106, 2451113, 2451120, 2451127, 2451134, 2451141, 2451148, 2451155, 2451162, 2451169, 2451176, 2451183,
+    -- 2451190, 2451197, 2451204, 2451211, 2451218, 2451225, 2451232, 2451239, 2451246, 2451253, 2451260, 2451267, 2451274, 2451281,
+    -- 2451288, 2451295, 2451302, 2451309, 2451316, 2451323, 2451330, 2451337, 2451344, 2451351, 2451358, 2451365, 2451372, 2451379,
+    -- 2451386, 2451393, 2451400, 2451407, 2451414, 2451421, 2451428, 2451435, 2451442, 2451449, 2451456, 2451463, 2451470, 2451477,
+    -- 2451484, 2451491, 2451498, 2451505, 2451512, 2451519, 2451526, 2451533, 2451540, 2451547, 2451554, 2451561, 2451568, 2451575,
+    -- 2451582, 2451589, 2451596, 2451603, 2451610, 2451617, 2451624, 2451631, 2451638, 2451645, 2451652, 2451659, 2451666, 2451673,
+    -- 2451680, 2451687, 2451694, 2451701, 2451708, 2451715, 2451722, 2451729, 2451736, 2451743, 2451750, 2451757, 2451764, 2451771,
+    -- 2451778, 2451785, 2451792, 2451799, 2451806, 2451813, 2451820, 2451827, 2451834, 2451841, 2451848, 2451855, 2451862, 2451869,
+    -- 2451876, 2451883, 2451890, 2451897, 2451904)    
+  group by
+    ss_ticket_number,
+    ss_customer_sk,
+    ss_addr_sk,
+    store.s_city
+  ) ms,
+  customer
+where
+  ss_customer_sk = c_customer_sk
+order by
+  c_last_name,
+  c_first_name,
+  substr(s_city, 1, 30),
+  profit 
+  limit 100
+Query submitted at: 2018-04-19 06:53:43 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=214f97a8fea4910f:69b6e3e100000000
+		Fairview	475915	437.14	-28128.18
+		Fairview	361944	0	-24970.14
+		Fairview	43234	122.1	-22425.92
+		Fairview	108858	1437.37	-19473.4
+		Fairview	250188	0	-19408.45
+		Fairview	335446	597.73	-19347.95
+		Fairview	269675	2871.46	-18924.99
+		Fairview	354966	5104.7	-18221.92
+		Fairview	59981	635.8199999999999	-16951.49
+		Fairview	411014	932.48	-15382.64
+		Fairview	238763	2966.29	-15281.84
+		Fairview	75182	2907.14	-14880.69
+		Fairview	156754	5053.969999999999	-14351.57
+		Fairview	158775	2920.28	-14210.51
+		Fairview	337997	1080.23	-14156.69
+		Fairview	340558	9930.059999999999	-13406.88
+		Fairview	478075	4082.19	-12954.19
+		Fairview	407016	3677.36	-12595.44
+		Fairview	161826	3793.05	-12284.42
+		Fairview	169803	78	-12069.83
+		Fairview	124421	326.72	-11801.82
+		Fairview	205990	2607.4	-10578.4
+		Fairview	283350	3278.65	-10285.98
+		Fairview	85528	3781.6	-9634.019999999999
+		Fairview	177391	2305.18	-9511.539999999999
+		Fairview	142311	4271.059999999999	-9388.680000000002
+		Fairview	433276	1298.04	-9379.119999999997
+		Fairview	188812	524.17	-9322.16
+		Fairview	59447	1963.33	-9320.08
+		Fairview	193379	960.86	-8774.030000000001
+		Fairview	352158	4455.780000000001	-8763.440000000001
+		Fairview	91869	3613.2	-8717.52
+		Fairview	402434	162.13	-8582.58
+		Fairview	22706	1972.75	-8555.459999999999
+		Fairview	328813	6151.26	-8460.27
+		Fairview	318030	0	-6651.959999999999
+		Fairview	161828	1953.77	-6377.22
+		Fairview	61463	3256.6	-6299.029999999999
+		Fairview	418320	581.98	-6090.700000000001
+		Fairview	405325	316.55	-5577.74
+		Fairview	48656	87.02000000000001	-5502.040000000002
+		Fairview	74518	5033.929999999999	-5444.66
+		Fairview	64667	1388.53	-5365.41
+		Fairview	299138	166.56	-5328.08
+		Fairview	24149	5380.53	-5259.02
+		Fairview	342471	2537.37	-4597.910000000001
+		Fairview	309369	1723.23	-4564.52
+		Fairview	132073	1382.96	-4501.03
+		Fairview	227038	30.66	-4178.98
+		Fairview	73961	3489.98	-3978.690000000001
+		Fairview	312700	0	-3806.04
+		Fairview	466119	0	-3739.29
+		Fairview	355900	3358.06	-3669.68
+		Fairview	301135	728.62	-3662.209999999999
+		Fairview	342600	656.45	-3056.81
+		Fairview	476061	0	-2582.289999999999
+		Fairview	416562	209.02	-2517.79
+		Fairview	154721	0	-2074.96
+		Fairview	299138	0	-1923.12
+		Fairview	416562	NULL	-1788.8
+		Fairview	200435	4559.58	-1281.639999999999
+		Fairview	82983	110.66	-1213.5
+		Fairview	330838	88.27	-662.8000000000002
+		Fairview	429037	17.46	1461.52
+		Fairview	36429	0	1822.990000000001
+		Fairview	104590	0	2863.25
+		Fairview	281537	400.32	3331.93
+		Fairview	209625	28.67	4514.81
+		Fairview	161826	NULL	NULL
+		Fairview	73961	0	NULL
+		Fairview	342471	0	NULL
+		Fairview	43234	0	NULL
+		Midway	267136	11844.12	-30009.83
+		Midway	79724	1207.65	-26100.23
+		Midway	397416	6043.16	-24930.98
+		Midway	215442	3551.46	-23716.72
+		Midway	205434	270.5	-23561.57
+		Midway	167799	3794.75	-23529.32
+		Midway	374606	9354.549999999999	-22939.96
+		Midway	293019	6521.75	-22276.27
+		Midway	232643	566.26	-21995.81
+		Midway	117162	0	-21801.79
+		Midway	305453	475.76	-20877.12
+		Midway	225846	7246.03	-20773.46
+		Midway	3524	598.1700000000001	-20723.14
+		Midway	123010	988.42	-19976.89
+		Midway	47982	1799.32	-19761.76
+		Midway	23126	5259.48	-19585.16
+		Midway	205679	3829.6	-19442.02
+		Midway	89924	9815.500000000002	-19394.87
+		Midway	443073	7511.919999999999	-19314.23
+		Midway	23442	1865.85	-19168.98
+		Midway	230833	8216.84	-19141.34
+		Midway	26902	0	-19133.72
+		Midway	376519	578.54	-18739.75
+		Midway	352247	800.12	-18678.92
+		Midway	88828	5725.34	-18378.38
+		Midway	173418	9846.67	-18278.2
+		Midway	179152	164.1	-18257.5
+		Midway	115089	72.27	-18251.56
+Fetched 100 row(s) in 2.71s

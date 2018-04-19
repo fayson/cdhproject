@@ -1,0 +1,183 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with ss as (
+ select
+          i_item_id,sum(ss_ext_sales_price) total_sales
+ from
+ 	store_sales,
+ 	date_dim,
+         customer_address,
+         item
+ where
+         i_item_id in (select
+  i_item_id
+from
+ item
+where i_category in ('Music'))
+ and     ss_item_sk              = i_item_sk
+ and     ss_sold_date_sk         = d_date_sk
+ and     d_year                  = 2002
+ and     d_moy                   = 10
+ and     ss_addr_sk              = ca_address_sk
+ and     ca_gmt_offset           = -5
+ group by i_item_id),
+ cs as (
+ select
+          i_item_id,sum(cs_ext_sales_price) total_sales
+ from
+        catalog_sales,
+        date_dim,
+         customer_address,
+         item
+ where
+         i_item_id               in (select
+  i_item_id
+from
+ item
+where i_category in ('Music'))
+ and     cs_item_sk              = i_item_sk
+ and     cs_sold_date_sk         = d_date_sk
+ and     d_year                  = 2002
+ and     d_moy                   = 10
+ and     cs_bill_addr_sk         = ca_address_sk
+ and     ca_gmt_offset           = -5
+ group by i_item_id),
+ ws as (
+ select
+          i_item_id,sum(ws_ext_sales_price) total_sales
+ from
+        web_sales,
+        date_dim,
+         customer_address,
+         item
+ where
+         i_item_id               in (select
+  i_item_id
+from
+ item
+where i_category in ('Music'))
+ and     ws_item_sk              = i_item_sk
+ and     ws_sold_date_sk         = d_date_sk
+ and     d_year                  = 2002
+ and     d_moy                   = 10
+ and     ws_bill_addr_sk         = ca_address_sk
+ and     ca_gmt_offset           = -5
+ group by i_item_id)
+  select
+  i_item_id
+,sum(total_sales) total_sales
+ from  (select * from ss
+        union all
+        select * from cs
+        union all
+        select * from ws) tmp1
+ group by i_item_id
+ order by i_item_id
+      ,total_sales
+limit 100
+AAAAAAAAAABBAAAA	12652.39
+AAAAAAAAAABEAAAA	16752.15
+AAAAAAAAAADCAAAA	4730.46
+AAAAAAAAAADEAAAA	26389.43
+AAAAAAAAAAFFAAAA	4177.51
+AAAAAAAAAAHAAAAA	5303.629999999999
+AAAAAAAAAAJEAAAA	2414.17
+AAAAAAAAAANDAAAA	825.1099999999999
+AAAAAAAAAAOCAAAA	16947.1
+AAAAAAAAAAOFAAAA	40108.92999999999
+AAAAAAAAABADAAAA	5436.18
+AAAAAAAAABAGAAAA	16572.08
+AAAAAAAAABBCAAAA	2821.91
+AAAAAAAAABBFAAAA	3434.88
+AAAAAAAAABCEAAAA	15212.04
+AAAAAAAAABDEAAAA	9120.6
+AAAAAAAAABFBAAAA	20048.23
+AAAAAAAAABFEAAAA	10960.47
+AAAAAAAAABHCAAAA	8803.76
+AAAAAAAAABIBAAAA	22512.21
+AAAAAAAAABICAAAA	5718.66
+AAAAAAAAABIEAAAA	16182.79
+AAAAAAAAABKCAAAA	9228.110000000001
+AAAAAAAAABLBAAAA	8250.27
+AAAAAAAAABNAAAAA	31621.38
+AAAAAAAAABOEAAAA	4189.34
+AAAAAAAAABOFAAAA	9634.41
+AAAAAAAAACACAAAA	8827.67
+AAAAAAAAACAFAAAA	38664.4
+AAAAAAAAACBEAAAA	12103.32
+AAAAAAAAACBFAAAA	3241.99
+AAAAAAAAACCDAAAA	2041.04
+AAAAAAAAACCGAAAA	9317.34
+AAAAAAAAACDCAAAA	15050.81
+AAAAAAAAACDFAAAA	3325.61
+AAAAAAAAACDGAAAA	456.3
+AAAAAAAAACJFAAAA	15126.71
+AAAAAAAAACLBAAAA	15519.64
+AAAAAAAAACNCAAAA	13245.91
+AAAAAAAAACODAAAA	2771.52
+AAAAAAAAADACAAAA	19094.84
+AAAAAAAAADAFAAAA	4769.93
+AAAAAAAAADBAAAAA	9174.859999999999
+AAAAAAAAADDCAAAA	9609.039999999999
+AAAAAAAAADDEAAAA	27595.97
+AAAAAAAAADEEAAAA	17208.13
+AAAAAAAAADFFAAAA	16467.51
+AAAAAAAAADGEAAAA	18535.42
+AAAAAAAAADHDAAAA	22201.7
+AAAAAAAAADICAAAA	17765.26
+AAAAAAAAADLCAAAA	35698.07
+AAAAAAAAADNDAAAA	5951.27
+AAAAAAAAADPCAAAA	11986.71
+AAAAAAAAADPEAAAA	9448.560000000001
+AAAAAAAAADPFAAAA	14273.56
+AAAAAAAAAEAGAAAA	38929.56
+AAAAAAAAAEBAAAAA	11001.44
+AAAAAAAAAEBCAAAA	44928.68000000001
+AAAAAAAAAEBDAAAA	17085.19
+AAAAAAAAAECCAAAA	9381.059999999999
+AAAAAAAAAECEAAAA	19292.37
+AAAAAAAAAEDGAAAA	2694.58
+AAAAAAAAAEFCAAAA	19559.62
+AAAAAAAAAEGDAAAA	8930.309999999999
+AAAAAAAAAEIBAAAA	7395.07
+AAAAAAAAAEICAAAA	10443.65
+AAAAAAAAAEKCAAAA	19251.56
+AAAAAAAAAEKFAAAA	7209.67
+AAAAAAAAAELEAAAA	20875.25
+AAAAAAAAAENFAAAA	17098.16
+AAAAAAAAAEPDAAAA	5791.530000000001
+AAAAAAAAAFAGAAAA	24318.31
+AAAAAAAAAFBEAAAA	11963.22
+AAAAAAAAAFCDAAAA	37301.69
+AAAAAAAAAFDCAAAA	5977.59
+AAAAAAAAAFDFAAAA	22771.13
+AAAAAAAAAFFAAAAA	4844.16
+AAAAAAAAAFHCAAAA	11440.05
+AAAAAAAAAFIAAAAA	13769.65
+AAAAAAAAAFJCAAAA	10808.32
+AAAAAAAAAFLEAAAA	7228.25
+AAAAAAAAAFMDAAAA	4388.94
+AAAAAAAAAFNBAAAA	7183.74
+AAAAAAAAAFOEAAAA	16957.75
+AAAAAAAAAGBBAAAA	6633.16
+AAAAAAAAAGCCAAAA	32559.47
+AAAAAAAAAGCDAAAA	15649.74
+AAAAAAAAAGDCAAAA	15039.86
+AAAAAAAAAGDEAAAA	15036.59
+AAAAAAAAAGEGAAAA	20136.18
+AAAAAAAAAGFAAAAA	2540.74
+AAAAAAAAAGFGAAAA	4131.32
+AAAAAAAAAGHAAAAA	9320.68
+AAAAAAAAAGHDAAAA	22520.24
+AAAAAAAAAGJCAAAA	23465.42
+AAAAAAAAAGKAAAAA	3086.76
+AAAAAAAAAGKDAAAA	22950.01
+AAAAAAAAAGKEAAAA	30251.33
+AAAAAAAAAGNBAAAA	18217.5
+AAAAAAAAAGOCAAAA	10201.1
+Fetched 100 row(s) in 3.63s

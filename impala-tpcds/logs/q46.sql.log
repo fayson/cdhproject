@@ -1,0 +1,187 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select c_last_name,
+  c_first_name,
+  ca_city,
+  bought_city,
+  ss_ticket_number,
+  amt,
+  profit
+from
+  (select
+    ss_ticket_number,
+    ss_customer_sk,
+    ca_city bought_city,
+    sum(ss_coupon_amt) amt,
+    sum(ss_net_profit) profit
+  from
+    store_sales,
+    date_dim,
+    store,
+    household_demographics,
+    customer_address
+  where
+    store_sales.ss_sold_date_sk = date_dim.d_date_sk
+    and store_sales.ss_store_sk = store.s_store_sk
+    and store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk
+    and store_sales.ss_addr_sk = customer_address.ca_address_sk
+    and (household_demographics.hd_dep_count = 5
+      or household_demographics.hd_vehicle_count = 3)
+    and date_dim.d_dow in (6, 0)
+    and date_dim.d_year in (1999, 1999 + 1, 1999 + 2)
+    and store.s_city in ('Midway', 'Concord', 'Spring Hill', 'Brownsville', 'Greenville')
+    -- partition key filter
+    and ss_sold_date_sk in (2451181, 2451182, 2451188, 2451189, 2451195, 2451196, 2451202, 2451203, 2451209, 2451210, 2451216, 2451217, 
+                            2451223, 2451224, 2451230, 2451231, 2451237, 2451238, 2451244, 2451245, 2451251, 2451252, 2451258, 2451259, 
+                            2451265, 2451266, 2451272, 2451273, 2451279, 2451280, 2451286, 2451287, 2451293, 2451294, 2451300, 2451301, 
+                            2451307, 2451308, 2451314, 2451315, 2451321, 2451322, 2451328, 2451329, 2451335, 2451336, 2451342, 2451343, 
+                            2451349, 2451350, 2451356, 2451357, 2451363, 2451364, 2451370, 2451371, 2451377, 2451378, 2451384, 2451385, 
+                            2451391, 2451392, 2451398, 2451399, 2451405, 2451406, 2451412, 2451413, 2451419, 2451420, 2451426, 2451427, 
+                            2451433, 2451434, 2451440, 2451441, 2451447, 2451448, 2451454, 2451455, 2451461, 2451462, 2451468, 2451469, 
+                            2451475, 2451476, 2451482, 2451483, 2451489, 2451490, 2451496, 2451497, 2451503, 2451504, 2451510, 2451511, 
+                            2451517, 2451518, 2451524, 2451525, 2451531, 2451532, 2451538, 2451539, 2451545, 2451546, 2451552, 2451553, 
+                            2451559, 2451560, 2451566, 2451567, 2451573, 2451574, 2451580, 2451581, 2451587, 2451588, 2451594, 2451595, 
+                            2451601, 2451602, 2451608, 2451609, 2451615, 2451616, 2451622, 2451623, 2451629, 2451630, 2451636, 2451637, 
+                            2451643, 2451644, 2451650, 2451651, 2451657, 2451658, 2451664, 2451665, 2451671, 2451672, 2451678, 2451679, 
+                            2451685, 2451686, 2451692, 2451693, 2451699, 2451700, 2451706, 2451707, 2451713, 2451714, 2451720, 2451721, 
+                            2451727, 2451728, 2451734, 2451735, 2451741, 2451742, 2451748, 2451749, 2451755, 2451756, 2451762, 2451763, 
+                            2451769, 2451770, 2451776, 2451777, 2451783, 2451784, 2451790, 2451791, 2451797, 2451798, 2451804, 2451805, 
+                            2451811, 2451812, 2451818, 2451819, 2451825, 2451826, 2451832, 2451833, 2451839, 2451840, 2451846, 2451847, 
+                            2451853, 2451854, 2451860, 2451861, 2451867, 2451868, 2451874, 2451875, 2451881, 2451882, 2451888, 2451889, 
+                            2451895, 2451896, 2451902, 2451903, 2451909, 2451910, 2451916, 2451917, 2451923, 2451924, 2451930, 2451931, 
+                            2451937, 2451938, 2451944, 2451945, 2451951, 2451952, 2451958, 2451959, 2451965, 2451966, 2451972, 2451973, 
+                            2451979, 2451980, 2451986, 2451987, 2451993, 2451994, 2452000, 2452001, 2452007, 2452008, 2452014, 2452015, 
+                            2452021, 2452022, 2452028, 2452029, 2452035, 2452036, 2452042, 2452043, 2452049, 2452050, 2452056, 2452057, 
+                            2452063, 2452064, 2452070, 2452071, 2452077, 2452078, 2452084, 2452085, 2452091, 2452092, 2452098, 2452099, 
+                            2452105, 2452106, 2452112, 2452113, 2452119, 2452120, 2452126, 2452127, 2452133, 2452134, 2452140, 2452141, 
+                            2452147, 2452148, 2452154, 2452155, 2452161, 2452162, 2452168, 2452169, 2452175, 2452176, 2452182, 2452183, 
+                            2452189, 2452190, 2452196, 2452197, 2452203, 2452204, 2452210, 2452211, 2452217, 2452218, 2452224, 2452225, 
+                            2452231, 2452232, 2452238, 2452239, 2452245, 2452246, 2452252, 2452253, 2452259, 2452260, 2452266, 2452267, 
+                            2452273, 2452274)
+  group by
+    ss_ticket_number,
+    ss_customer_sk,
+    ss_addr_sk,
+    ca_city
+  ) dn,
+  customer,
+  customer_address current_addr
+where
+  ss_customer_sk = c_customer_sk
+  and customer.c_current_addr_sk = current_addr.ca_address_sk
+  and current_addr.ca_city <> bought_city
+order by
+  c_last_name,
+  c_first_name,
+  ca_city,
+  bought_city,
+  ss_ticket_number
+limit 100
+Query submitted at: 2018-04-19 06:49:13 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=314710dd2c8a8819:1ca7189300000000
+			Blanchard	22651	3015.79	-10245.15
+			Enterprise	231790	892.54	-15350.23
+			Fairview	468065	83.61	-8424.209999999999
+			Freeport	376023	1577.07	-11538.94
+			Hillcrest	346645	2619.77	-11076.08
+			Jamestown	222310	178.12	-7795.59
+			Mount Zion	370197	839.34	-15293.35
+			Nichols	78688	2522.78	-4853.740000000002
+			Oakdale	265157	63.16	-4708.900000000001
+			San Jose	450118	2029.63	-9369.92
+			Spring Valley	19426	2431.59	-7526.81
+			Walnut Grove	77781	4489.410000000001	-18777.81
+			Waterloo	290625	175.29	-6713.18
+		Antioch	Bunker Hill	383228	2588.85	-13300.51
+		Antioch	Midway	259473	8819.59	-16160.26
+		Arlington		176172	10975.92	-14761.58
+		Arlington	Mount Olive	332089	116.1	-4188.139999999999
+		Ashland	Greenville	111059	3959.96	-11986.02
+		Bath	Mount Zion	365100	26.78	-21346.26
+		Belmont	Bunker Hill	121119	5601.799999999999	-17786.8
+		Belmont	Clifton	109517	795.1900000000001	-4521.92
+		Belmont	Greenwood	105213	1725.26	-10332.42
+		Belmont	Mount Olive	87267	1886.31	-10794.25
+		Belmont	Spring Hill	426004	946.05	-9394.030000000002
+		Belmont	Unionville	341213	189.6	-2286.39
+		Bethel	Lakeview	37141	0	-867.1100000000001
+		Bethel	Lakewood	435421	2039.03	-4798.78
+		Bethel	Waterloo	302833	355.37	-3735.760000000001
+		Bethel	Wilson	250952	3601.38	-578.3699999999999
+		Bridgeport	Lakewood	205355	273.94	-15671.16
+		Bridgeport	Midway	374793	907.1900000000001	-10783.72
+		Bridgeport	Mount Pleasant	364474	268.23	-5841.77
+		Bridgeport	Newtown	223681	2492.79	-7825.65
+		Brookwood	Franklin	440613	0	-3471.24
+		Brownsville	Bethel	362303	685.35	-4955.660000000001
+		Brownsville	Highland Park	240870	7900.18	-13195.48
+		Brownsville	Newtown	435035	71.17999999999999	-1280.64
+		Brownsville	Oakdale	420685	27.92	-8809.210000000001
+		Brownsville	Riverview	478159	1070.37	-6759.549999999999
+		Brownsville	Springfield	410106	13561.87	-22991.73
+		Buena Vista	Greendale	157375	3.45	1071.77
+		Buena Vista	Highland Park	3547	69.56	-9464.68
+		Buena Vista	Lone Oak	379443	1837.5	-5962.77
+		Bunker Hill	Maple Grove	46981	1384.2	-11750.7
+		Caldwell	Oak Grove	93843	655.24	-4700.370000000001
+		Cascade	Newtown	197937	23.26	-16325.68
+		Cedar Grove	Concord	350051	0	-2001.849999999999
+		Centerville	Spring Valley	436914	8838.389999999999	-11382.2
+		Centerville	Woodville	88410	136.97	-13234.63
+		Clifford	White Oak	236414	3927.2	-1267.27
+		Clifton	Kingston	220566	4029.66	-12096.09
+		Clinton	Waterloo	473557	4452.26	-11640.83
+		Concord	Bay View	430991	397.5	-17901.52
+		Concord	Farmington	230987	0	-7245.540000000001
+		Concord	Jackson	311739	1702.47	-6409.02
+		Concord	Mount Vernon	190603	7021.809999999999	-18817.96
+		Concord	Springfield	238517	1349.64	-10465.11
+		Concord	Union	233486	1078.81	-10167.78
+		Crossroads	Midway	373448	1630.39	-1637.71
+		Deerfield	Jackson	212424	608.64	-17477.22
+		Deerfield	New Hope	89458	4379.09	-9108.1
+		Deerfield	Spring Valley	116297	7129.41	-9229.499999999998
+		Deerfield	Woodland	216017	1972.03	-4437.370000000001
+		Edgewood	Brentwood	164909	0	2376.61
+		Edgewood	Oak Ridge	45163	1143.73	-6030.01
+		Edwards	Walnut Grove	265912	8535.27	-9694.110000000004
+		Ellisville	Cedar Grove	15867	0	-17668.11
+		Enterprise	Antioch	61822	1668.17	-12321.86
+		Fairfield	Bunker Hill	293776	4931.48	-4617.57
+		Fairview	Highland Park	341048	3842.3	-11861.48
+		Fairview	Highland Park	379578	125.49	-10657.05
+		Fairview	La Grange	350928	1248.59	-13907.64
+		Farmington	Pomona	51027	0	-2612.700000000001
+		Farmington	Spring Hill	105562	643.65	-8125.31
+		Five Forks	Bethel	139109	5237.679999999999	-13769
+		Five Forks	Liberty	244304	1566.52	-9255.77
+		Five Forks	Milan	426559	57.86	-6317.839999999999
+		Five Points		20335	984.73	-3787.74
+		Five Points	Bridgeport	307169	26.66	-3834.7
+		Five Points	Dublin	249518	2267.98	-3922.45
+		Five Points	Edgewood	448015	2858.67	-4816.23
+		Five Points	Florence	188678	0	-2400.81
+		Florence	Riverside	122393	458.16	-2041.44
+		Forest Hills	Cedar Grove	172233	6362.39	-20540.41
+		Forest Hills	Concord	321830	3711.14	-15156.2
+		Forest Hills	Oneida	4556	1693.29	-12111.81
+		Forest Hills	Spring Hill	19467	843.3499999999999	-8700.09
+		Forest Hills	Waterloo	373187	4195.33	-15134.3
+		Four Points	Indian Village	145271	321.97	-2734.420000000001
+		Fowler	Clinton	270980	1879.86	-6394.65
+		Franklin	Mount Pleasant	284200	583.3000000000001	-14629.6
+		Franklin	Riverside	252934	0	-4469.709999999999
+		Friendship	California	357420	5527.8	-16327.71
+		Friendship	Concord	114529	1361.79	-9633.180000000002
+		Friendship	Oak Ridge	381832	643.5799999999999	-7178.339999999999
+		Georgetown	Belmont	262823	742.99	-22128.82
+		Georgetown	Florence	300319	0	-1888.47
+		Glendale	Bear Creek	473305	6505.9	-8120.24
+		Glendale	Edgewood	363615	817.47	-3088.159999999999
+		Glendale	Fisher	340872	5987.849999999999	-18486.83
+Fetched 100 row(s) in 3.51s

@@ -1,0 +1,30 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select sum (ss_quantity)
+from store_sales, store, (select * from customer_demographics where cd_marital_status = 'S' and cd_education_status = '4 yr Degree') as v1, (select * from customer_address where ca_country = 'United States' and ca_state in ('AK', 'IA', 'NE', 'NY', 'VA', 'AR', 'AZ', 'MI', 'NC')) as v2, date_dim
+ where s_store_sk = ss_store_sk
+ and  ss_sold_date_sk = d_date_sk and d_year = 1998
+ and  ss_sold_date_sk between 2450815 and 2451179
+ and  (v1.cd_demo_sk = ss_cdemo_sk and
+        (
+        (ss_sales_price between 100.00 and 150.00) or
+        (ss_sales_price between 50.00 and 100.00) or
+        (ss_sales_price between 150.00 and 200.00)
+        )
+      )
+ and  (ss_addr_sk = v2.ca_address_sk and
+      (
+        (ca_state in ('AK', 'IA', 'NE') and ss_net_profit between 0 and 2000)
+        or (ca_state in ('NY', 'VA', 'AR') and ss_net_profit between 150 and 3000)
+        or (ca_state in ('AZ', 'MI', 'NC') and ss_net_profit between 50 and 25000)
+      )
+      )
+Query submitted at: 2018-04-19 06:49:24 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=a84a498fcefa6e23:dcb5d8100000000
+40224
+Fetched 1 row(s) in 1.75s

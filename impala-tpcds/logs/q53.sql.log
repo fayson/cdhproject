@@ -1,0 +1,76 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select *
+from
+  (select
+    i_manufact_id,
+    sum(ss_sales_price) sum_sales,
+    avg(sum(ss_sales_price)) over (partition by i_manufact_id) avg_quarterly_sales
+  from
+    item,
+    store_sales,
+    date_dim,
+    store
+  where
+    ss_item_sk = i_item_sk
+    and ss_sold_date_sk = d_date_sk
+    and ss_store_sk = s_store_sk
+    and d_month_seq in (1212, 1212 + 1, 1212 + 2, 1212 + 3, 1212 + 4, 1212 + 5, 1212 + 6, 1212 + 7, 1212 + 8, 1212 + 9, 1212 + 10, 1212 + 11)
+    and ((i_category in ('Books', 'Children', 'Electronics')
+      and i_class in ('personal', 'portable', 'reference', 'self-help')
+      and i_brand in ('scholaramalgamalg #14', 'scholaramalgamalg #7', 'exportiunivamalg #9', 'scholaramalgamalg #9'))
+    or (i_category in ('Women', 'Music', 'Men')
+      and i_class in ('accessories', 'classical', 'fragrances', 'pants')
+      and i_brand in ('amalgimporto #1', 'edu packscholar #1', 'exportiimporto #1', 'importoamalg #1')))
+    and ss_sold_date_sk between 2451911 and 2452275 -- partition key filter
+  group by
+    i_manufact_id,
+    d_qoy
+  ) tmp1
+where
+  case when avg_quarterly_sales > 0 then abs (sum_sales - avg_quarterly_sales) / avg_quarterly_sales else null end > 0.1
+order by
+  avg_quarterly_sales,
+  sum_sales,
+  i_manufact_id
+limit 100
+Query submitted at: 2018-04-19 06:50:12 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=9c4a0575d00b0c2b:7939071b00000000
+103	303.87	637.8049999999999
+103	406.1799999999999	637.8049999999999
+103	487.8600000000001	637.8049999999999
+103	1353.31	637.8049999999999
+887	397.55	771.7724999999999
+887	462.6900000000001	771.7724999999999
+887	1447.3	771.7724999999999
+315	382.23	784.36
+315	570.2	784.36
+315	907.51	784.36
+315	1277.5	784.36
+402	275.3099999999999	791.1199999999999
+402	492.09	791.1199999999999
+402	1162.63	791.1199999999999
+402	1234.45	791.1199999999999
+355	264.36	850.995
+355	1055.02	850.995
+355	1260.46	850.995
+163	372.9599999999999	895.7774999999999
+163	556.8399999999999	895.7774999999999
+163	1190.43	895.7774999999999
+163	1462.88	895.7774999999999
+612	328.6	928.4225
+612	711.5799999999999	928.4225
+612	747.6899999999999	928.4225
+612	1925.82	928.4225
+36	718.71	1079.1625
+36	948.5400000000001	1079.1625
+36	1503.41	1079.1625
+195	443.6	1087.415
+195	512.53	1087.415
+195	2373.21	1087.415
+Fetched 32 row(s) in 1.60s

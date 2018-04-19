@@ -1,0 +1,171 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with ssales as
+(select STRAIGHT_JOIN c_last_name
+,c_first_name
+,s_store_name
+,ca_state
+,s_state
+,item.i_color
+,i_current_price
+,i_manager_id
+,i_units
+,i_size
+,sum(ss_ext_sales_price) netpaid
+from (select sr_ticket_number,sr_item_sk,i_color from store_returns, item where  sr_item_sk = i_item_sk) store_returns,
+(select ss_ext_sales_price,ss_ticket_number,ss_item_sk, ss_customer_sk,ss_store_sk,i_color from store_sales,store, item where s_market_id=5 and ss_store_sk = s_store_sk and  ss_item_sk = i_item_sk)store_sales
+,item item
+,(select c_last_name ,c_first_name, c_customer_sk,c_birth_country from customer where c_birth_country in (select upper(ca_country) as ca_country from store, customer_address where s_zip = ca_zip and s_market_id=5) )customer
+,(select upper(ca_country) as ca_country, ca_state,ca_zip from customer_address where ca_zip in  (select s_zip from store where s_market_id=5)) customer_address
+,store
+where
+ss_ticket_number = sr_ticket_number
+and ss_item_sk = sr_item_sk
+and  ss_customer_sk = c_customer_sk
+and ss_item_sk = i_item_sk
+and store_sales.i_color = store_returns.i_color
+and store_sales.i_color = item.i_color
+and ss_store_sk = s_store_sk
+and c_birth_country = upper(ca_country)
+and s_zip = ca_zip
+and s_market_id=5
+group by c_last_name
+,c_first_name
+,s_store_name
+,ca_state
+,s_state
+,i_color
+,i_current_price
+,i_manager_id
+,i_units
+,i_size)
+select c_last_name, c_first_name, s_store_name, paid
+from (
+select c_last_name
+,c_first_name
+,s_store_name
+,sum(netpaid) paid
+from ssales
+where i_color = 'azure'
+group by c_last_name
+,c_first_name
+,s_store_name
+) a1
+, (select 0.05*avg(netpaid) paid2
+from ssales
+) a2
+where a1.paid > a2.paid2
+Johnson		able	4343.68
+	Stuart	able	3986.84
+Baker	Jorge	able	3768.34
+	Joann	cally	4138.8
+Larkin	George	able	1353.78
+Miley	Fernando	cally	759.92
+Sutton	Minerva	able	4681.6
+Fetched 7 row(s) in 9.06s
+Query: with ssales as
+(select STRAIGHT_JOIN c_last_name
+,c_first_name
+,s_store_name
+,ca_state
+,s_state
+,item.i_color
+,i_current_price
+,i_manager_id
+,i_units
+,i_size
+,sum(ss_ext_sales_price) netpaid
+from (select sr_ticket_number,sr_item_sk,i_color from store_returns, item where  sr_item_sk = i_item_sk) store_returns,
+(select ss_ext_sales_price,ss_ticket_number,ss_item_sk, ss_customer_sk,ss_store_sk,i_color from store_sales,store, item where s_market_id=5 and ss_store_sk = s_store_sk and  ss_item_sk = i_item_sk)store_sales
+,item item
+,(select c_last_name ,c_first_name, c_customer_sk,c_birth_country from customer where c_birth_country in (select upper(ca_country) as ca_country from store, customer_address where s_zip = ca_zip and s_market_id=5) )customer
+,(select upper(ca_country) as ca_country, ca_state,ca_zip from customer_address where ca_zip in  (select s_zip from store where s_market_id=5)) customer_address
+,store
+where
+ss_ticket_number = sr_ticket_number
+and ss_item_sk = sr_item_sk
+and  ss_customer_sk = c_customer_sk
+and ss_item_sk = i_item_sk
+and store_sales.i_color = store_returns.i_color
+and store_sales.i_color = item.i_color
+and ss_store_sk = s_store_sk
+and c_birth_country = upper(ca_country)
+and s_zip = ca_zip
+and s_market_id=5
+group by c_last_name
+,c_first_name
+,s_store_name
+,ca_state
+,s_state
+,i_color
+,i_current_price
+,i_manager_id
+,i_units
+,i_size)
+select c_last_name, c_first_name, s_store_name, paid
+from (
+select c_last_name
+,c_first_name
+,s_store_name
+,sum(netpaid) paid
+from ssales
+where i_color = 'pink'
+group by c_last_name
+,c_first_name
+,s_store_name
+) a1
+, (select 0.05*avg(netpaid) paid2
+from ssales
+) a2
+where a1.paid > a2.paid2
+Walker		cally	3950.02
+Richardson		cally	1753.68
+		cally	44272.20999999999
+Torres		cally	1104.84
+Martin		cally	1593.24
+Lee	Marnie	cally	6338.64
+	Amy	cally	8565.200000000001
+Garrison		cally	935.76
+	Kevin	cally	5095.86
+Braxton		cally	4663.71
+Jackson	Deborah	cally	4777.89
+Johnson		able	8109.64
+Olson		able	5811.19
+Henderson	Bonnie	able	551659.3500000002
+Britton	Edward	able	1054.32
+Miller	Mark	cally	5904.360000000001
+Henderson		able	4435.6
+Shaw	Dorothy	cally	1154.41
+Hamilton	Rita	able	1038.42
+Wilson		cally	1039.5
+Wheeler	Ivan	able	1508.1
+Rose		able	6225.84
+	Lawrence	able	740.52
+Guthrie	Arthur	able	2411.52
+Asher	Roberto	cally	6185.519999999999
+	James	cally	3006.25
+Davis	Randy	able	1689.2
+Perry		cally	5510.04
+Mitchell		able	3022
+Woodcock	Jason	cally	140839.1500000001
+Vela		cally	3456.18
+Miller	Wallace	able	39566.88
+Neal		able	862.55
+Phillips		cally	8028.08
+Shull	Thelma	cally	9964.91
+	Leah	able	1123.92
+Horton	Robert	able	1282.48
+Lewis		able	2792.02
+Smith	Paula	cally	4040.1
+Patrick		able	3730.88
+Lloyd		cally	3581.9
+		able	15310.76
+Malone	Michael	able	1568.16
+Polk		cally	1961.52
+	Alice	cally	1414.14
+Fetched 45 row(s) in 8.44s

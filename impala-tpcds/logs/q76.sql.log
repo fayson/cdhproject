@@ -1,0 +1,131 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select channel, col_name, d_year, d_qoy, i_category, COUNT(*) sales_cnt, SUM(ext_sales_price) sales_amt FROM (
+        SELECT 'store' as channel, 'ss_hdemo_sk' col_name, d_year, d_qoy, i_category, ss_ext_sales_price ext_sales_price
+         FROM store_sales, item, date_dim
+         WHERE ss_hdemo_sk IS NULL
+           AND ss_sold_date_sk=d_date_sk
+           AND ss_item_sk=i_item_sk
+        UNION ALL
+        SELECT 'web' as channel, 'ws_promo_sk' col_name, d_year, d_qoy, i_category, ws_ext_sales_price ext_sales_price
+         FROM web_sales, item, date_dim
+         WHERE ws_promo_sk IS NULL
+           AND ws_sold_date_sk=d_date_sk
+           AND ws_item_sk=i_item_sk
+        UNION ALL
+        SELECT 'catalog' as channel, 'cs_bill_customer_sk' col_name, d_year, d_qoy, i_category, cs_ext_sales_price ext_sales_price
+         FROM catalog_sales, item, date_dim
+         WHERE cs_bill_customer_sk IS NULL
+           AND cs_sold_date_sk=d_date_sk
+           AND cs_item_sk=i_item_sk) foo
+GROUP BY channel, col_name, d_year, d_qoy, i_category
+ORDER BY channel, col_name, d_year, d_qoy, i_category
+limit 100
+Query submitted at: 2018-04-19 06:53:25 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=a492e30d99347de:46a9124100000000
+catalog	cs_bill_customer_sk	1998	1	Books	21	20865.72
+catalog	cs_bill_customer_sk	1998	1	Children	23	28069.45
+catalog	cs_bill_customer_sk	1998	1	Electronics	19	43052.57999999999
+catalog	cs_bill_customer_sk	1998	1	Home	21	34635.11
+catalog	cs_bill_customer_sk	1998	1	Jewelry	23	47719.62
+catalog	cs_bill_customer_sk	1998	1	Men	23	18584.13
+catalog	cs_bill_customer_sk	1998	1	Music	18	40594.74
+catalog	cs_bill_customer_sk	1998	1	Shoes	15	14556.56
+catalog	cs_bill_customer_sk	1998	1	Sports	20	18180.6
+catalog	cs_bill_customer_sk	1998	1	Women	24	35162.26
+catalog	cs_bill_customer_sk	1998	2		1	734.5599999999999
+catalog	cs_bill_customer_sk	1998	2	Books	26	27430.35
+catalog	cs_bill_customer_sk	1998	2	Children	21	37081.25
+catalog	cs_bill_customer_sk	1998	2	Electronics	11	1649.19
+catalog	cs_bill_customer_sk	1998	2	Home	28	46162.56
+catalog	cs_bill_customer_sk	1998	2	Jewelry	18	30752.39
+catalog	cs_bill_customer_sk	1998	2	Men	13	12941.39
+catalog	cs_bill_customer_sk	1998	2	Music	19	21608.74000000001
+catalog	cs_bill_customer_sk	1998	2	Shoes	13	34192.64000000001
+catalog	cs_bill_customer_sk	1998	2	Sports	17	22304.06
+catalog	cs_bill_customer_sk	1998	2	Women	17	20471.76
+catalog	cs_bill_customer_sk	1998	3		2	7158.06
+catalog	cs_bill_customer_sk	1998	3	Books	28	15965.04
+catalog	cs_bill_customer_sk	1998	3	Children	38	50459.8
+catalog	cs_bill_customer_sk	1998	3	Electronics	35	49580.29
+catalog	cs_bill_customer_sk	1998	3	Home	34	23409.28
+catalog	cs_bill_customer_sk	1998	3	Jewelry	41	69571.92000000001
+catalog	cs_bill_customer_sk	1998	3	Men	41	45937.16
+catalog	cs_bill_customer_sk	1998	3	Music	37	29683.25
+catalog	cs_bill_customer_sk	1998	3	Shoes	43	87172.17
+catalog	cs_bill_customer_sk	1998	3	Sports	43	35863.87
+catalog	cs_bill_customer_sk	1998	3	Women	34	25149.45
+catalog	cs_bill_customer_sk	1998	4	Books	51	60848.44
+catalog	cs_bill_customer_sk	1998	4	Children	54	64494.06
+catalog	cs_bill_customer_sk	1998	4	Electronics	42	27938.82
+catalog	cs_bill_customer_sk	1998	4	Home	62	74900.21000000001
+catalog	cs_bill_customer_sk	1998	4	Jewelry	56	76520.23999999999
+catalog	cs_bill_customer_sk	1998	4	Men	62	52797.24000000001
+catalog	cs_bill_customer_sk	1998	4	Music	59	144915.12
+catalog	cs_bill_customer_sk	1998	4	Shoes	64	51743.49
+catalog	cs_bill_customer_sk	1998	4	Sports	57	85545.62000000001
+catalog	cs_bill_customer_sk	1998	4	Women	75	92442.65999999997
+catalog	cs_bill_customer_sk	1999	1	Books	18	11625.03
+catalog	cs_bill_customer_sk	1999	1	Children	24	37878.47
+catalog	cs_bill_customer_sk	1999	1	Electronics	16	49458.45999999999
+catalog	cs_bill_customer_sk	1999	1	Home	23	43351.92
+catalog	cs_bill_customer_sk	1999	1	Jewelry	18	38718.69
+catalog	cs_bill_customer_sk	1999	1	Men	21	31369.28
+catalog	cs_bill_customer_sk	1999	1	Music	36	59924.78000000001
+catalog	cs_bill_customer_sk	1999	1	Shoes	28	33659.00999999999
+catalog	cs_bill_customer_sk	1999	1	Sports	24	46514.37
+catalog	cs_bill_customer_sk	1999	1	Women	10	14967.02
+catalog	cs_bill_customer_sk	1999	2	Books	15	32823.62
+catalog	cs_bill_customer_sk	1999	2	Children	14	25463.83000000001
+catalog	cs_bill_customer_sk	1999	2	Electronics	15	28381.67
+catalog	cs_bill_customer_sk	1999	2	Home	19	3799.2
+catalog	cs_bill_customer_sk	1999	2	Jewelry	16	19577.84
+catalog	cs_bill_customer_sk	1999	2	Men	22	21043.02
+catalog	cs_bill_customer_sk	1999	2	Music	15	14565.25
+catalog	cs_bill_customer_sk	1999	2	Shoes	30	37873.86000000001
+catalog	cs_bill_customer_sk	1999	2	Sports	23	38729.36000000001
+catalog	cs_bill_customer_sk	1999	2	Women	19	25175.22
+catalog	cs_bill_customer_sk	1999	3		1	1144.08
+catalog	cs_bill_customer_sk	1999	3	Books	31	34429.96
+catalog	cs_bill_customer_sk	1999	3	Children	32	26800.92
+catalog	cs_bill_customer_sk	1999	3	Electronics	53	45606.79000000001
+catalog	cs_bill_customer_sk	1999	3	Home	25	24056.82
+catalog	cs_bill_customer_sk	1999	3	Jewelry	32	46730.7
+catalog	cs_bill_customer_sk	1999	3	Men	32	28987.01
+catalog	cs_bill_customer_sk	1999	3	Music	33	56482.26
+catalog	cs_bill_customer_sk	1999	3	Shoes	41	53473.73
+catalog	cs_bill_customer_sk	1999	3	Sports	42	37649.53999999999
+catalog	cs_bill_customer_sk	1999	3	Women	42	55394.18
+catalog	cs_bill_customer_sk	1999	4		1	147.14
+catalog	cs_bill_customer_sk	1999	4	Books	62	72138.56000000001
+catalog	cs_bill_customer_sk	1999	4	Children	58	89199.99000000002
+catalog	cs_bill_customer_sk	1999	4	Electronics	58	37383.64999999999
+catalog	cs_bill_customer_sk	1999	4	Home	55	75370.21999999999
+catalog	cs_bill_customer_sk	1999	4	Jewelry	72	85252.87
+catalog	cs_bill_customer_sk	1999	4	Men	52	57037.8
+catalog	cs_bill_customer_sk	1999	4	Music	64	90721.56
+catalog	cs_bill_customer_sk	1999	4	Shoes	48	54620.56
+catalog	cs_bill_customer_sk	1999	4	Sports	62	84941.98000000001
+catalog	cs_bill_customer_sk	1999	4	Women	59	72793.03999999999
+catalog	cs_bill_customer_sk	2000	1		1	NULL
+catalog	cs_bill_customer_sk	2000	1	Books	20	11351.32
+catalog	cs_bill_customer_sk	2000	1	Children	16	1771.68
+catalog	cs_bill_customer_sk	2000	1	Electronics	13	28159.27
+catalog	cs_bill_customer_sk	2000	1	Home	28	21180.91
+catalog	cs_bill_customer_sk	2000	1	Jewelry	24	43220.15000000001
+catalog	cs_bill_customer_sk	2000	1	Men	30	49571.17000000001
+catalog	cs_bill_customer_sk	2000	1	Music	20	25804.07
+catalog	cs_bill_customer_sk	2000	1	Shoes	17	21916.69
+catalog	cs_bill_customer_sk	2000	1	Sports	15	29948.41
+catalog	cs_bill_customer_sk	2000	1	Women	24	42302.15
+catalog	cs_bill_customer_sk	2000	2	Books	17	4864.8
+catalog	cs_bill_customer_sk	2000	2	Children	22	13475.7
+catalog	cs_bill_customer_sk	2000	2	Electronics	19	35102.65
+catalog	cs_bill_customer_sk	2000	2	Home	22	43939.31
+catalog	cs_bill_customer_sk	2000	2	Jewelry	17	12306.32
+Fetched 100 row(s) in 3.56s

@@ -1,0 +1,141 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select substr(w_warehouse_name,1,20)
+  ,sm_type
+  ,web_name
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk <= 30 ) then 1 else 0 end)  as D30_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 30) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 60) then 1 else 0 end )  as D31_60_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 60) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 90) then 1 else 0 end)  as D61_90_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 90) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 120) then 1 else 0 end)  as D91_120_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk  > 120) then 1 else 0 end)  as D120_days
+  from
+   web_sales
+  ,warehouse
+  ,ship_mode
+  ,web_site
+  ,date_dim
+where
+    d_month_seq between 1212 and 1212 + 11
+and ws_ship_date_sk   = d_date_sk
+and ws_warehouse_sk   = w_warehouse_sk
+and ws_ship_mode_sk   = sm_ship_mode_sk
+and ws_web_site_sk    = web_site_sk
+group by
+   substr(w_warehouse_name,1,20)
+  ,sm_type
+  ,web_name
+order by substr(w_warehouse_name,1,20)
+        ,sm_type
+       ,web_name
+limit 100
+Query submitted at: 2018-04-19 06:50:51 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=c45fd5e62390c24:4d50cc5300000000
+	EXPRESS	site_0	561	579	591	615	0
+	EXPRESS	site_1	607	577	611	595	0
+	EXPRESS	site_2	579	652	619	588	0
+	EXPRESS	site_3	534	534	531	556	0
+	EXPRESS	site_4	528	574	559	526	0
+	LIBRARY	site_0	363	387	388	370	0
+	LIBRARY	site_1	457	418	411	416	0
+	LIBRARY	site_2	483	467	498	474	0
+	LIBRARY	site_3	494	484	489	504	0
+	LIBRARY	site_4	477	442	419	425	0
+	NEXT DAY	site_0	567	591	613	550	0
+	NEXT DAY	site_1	595	587	577	600	0
+	NEXT DAY	site_2	608	537	543	512	0
+	NEXT DAY	site_3	569	530	505	523	0
+	NEXT DAY	site_4	576	638	615	631	0
+	OVERNIGHT	site_0	503	486	501	475	0
+	OVERNIGHT	site_1	415	426	423	359	0
+	OVERNIGHT	site_2	358	364	403	362	0
+	OVERNIGHT	site_3	431	387	420	391	0
+	OVERNIGHT	site_4	440	479	472	481	0
+	REGULAR	site_0	438	412	412	426	0
+	REGULAR	site_1	476	497	464	508	0
+	REGULAR	site_2	503	492	452	490	0
+	REGULAR	site_3	424	421	384	445	0
+	REGULAR	site_4	361	345	361	362	0
+	TWO DAY	site_0	414	439	420	416	0
+	TWO DAY	site_1	408	393	392	343	0
+	TWO DAY	site_2	422	461	429	398	0
+	TWO DAY	site_3	530	460	457	494	0
+	TWO DAY	site_4	504	482	467	491	0
+Bad cards must make.	EXPRESS	site_0	560	563	508	510	0
+Bad cards must make.	EXPRESS	site_1	526	563	565	585	0
+Bad cards must make.	EXPRESS	site_2	592	598	619	597	0
+Bad cards must make.	EXPRESS	site_3	620	583	590	624	0
+Bad cards must make.	EXPRESS	site_4	591	630	607	583	0
+Bad cards must make.	LIBRARY	site_0	489	471	485	474	0
+Bad cards must make.	LIBRARY	site_1	419	454	388	446	0
+Bad cards must make.	LIBRARY	site_2	411	370	360	362	0
+Bad cards must make.	LIBRARY	site_3	402	422	411	448	0
+Bad cards must make.	LIBRARY	site_4	434	475	496	514	0
+Bad cards must make.	NEXT DAY	site_0	550	569	535	559	0
+Bad cards must make.	NEXT DAY	site_1	555	615	585	655	0
+Bad cards must make.	NEXT DAY	site_2	625	573	651	593	0
+Bad cards must make.	NEXT DAY	site_3	587	617	571	645	0
+Bad cards must make.	NEXT DAY	site_4	583	574	539	542	0
+Bad cards must make.	OVERNIGHT	site_0	442	407	477	403	0
+Bad cards must make.	OVERNIGHT	site_1	515	449	507	492	0
+Bad cards must make.	OVERNIGHT	site_2	510	469	496	471	0
+Bad cards must make.	OVERNIGHT	site_3	397	426	396	422	0
+Bad cards must make.	OVERNIGHT	site_4	374	360	342	344	0
+Bad cards must make.	REGULAR	site_0	431	459	419	420	0
+Bad cards must make.	REGULAR	site_1	381	380	362	346	0
+Bad cards must make.	REGULAR	site_2	393	429	461	447	0
+Bad cards must make.	REGULAR	site_3	463	483	484	517	0
+Bad cards must make.	REGULAR	site_4	482	471	457	466	0
+Bad cards must make.	TWO DAY	site_0	493	461	473	450	0
+Bad cards must make.	TWO DAY	site_1	525	474	499	492	0
+Bad cards must make.	TWO DAY	site_2	416	420	416	444	0
+Bad cards must make.	TWO DAY	site_3	359	363	417	343	0
+Bad cards must make.	TWO DAY	site_4	379	424	433	468	0
+Conventional childr	EXPRESS	site_0	618	595	587	605	0
+Conventional childr	EXPRESS	site_1	524	593	529	531	0
+Conventional childr	EXPRESS	site_2	533	550	517	491	0
+Conventional childr	EXPRESS	site_3	624	597	598	566	0
+Conventional childr	EXPRESS	site_4	616	576	577	596	0
+Conventional childr	LIBRARY	site_0	484	460	462	446	0
+Conventional childr	LIBRARY	site_1	472	517	454	471	0
+Conventional childr	LIBRARY	site_2	395	428	449	415	0
+Conventional childr	LIBRARY	site_3	360	362	369	402	0
+Conventional childr	LIBRARY	site_4	426	389	429	393	0
+Conventional childr	NEXT DAY	site_0	523	533	528	494	0
+Conventional childr	NEXT DAY	site_1	578	546	545	536	0
+Conventional childr	NEXT DAY	site_2	595	565	597	587	0
+Conventional childr	NEXT DAY	site_3	578	653	603	591	0
+Conventional childr	NEXT DAY	site_4	618	586	596	577	0
+Conventional childr	OVERNIGHT	site_0	329	342	333	384	0
+Conventional childr	OVERNIGHT	site_1	424	412	454	385	0
+Conventional childr	OVERNIGHT	site_2	479	468	453	468	0
+Conventional childr	OVERNIGHT	site_3	478	491	482	472	0
+Conventional childr	OVERNIGHT	site_4	451	398	430	383	0
+Conventional childr	REGULAR	site_0	478	499	530	505	0
+Conventional childr	REGULAR	site_1	447	421	457	372	0
+Conventional childr	REGULAR	site_2	353	363	348	365	0
+Conventional childr	REGULAR	site_3	421	457	389	415	0
+Conventional childr	REGULAR	site_4	477	489	499	456	0
+Conventional childr	TWO DAY	site_0	432	412	408	403	0
+Conventional childr	TWO DAY	site_1	462	500	489	475	0
+Conventional childr	TWO DAY	site_2	484	493	427	520	0
+Conventional childr	TWO DAY	site_3	412	405	407	417	0
+Conventional childr	TWO DAY	site_4	346	400	344	408	0
+Doors canno	EXPRESS	site_0	622	601	585	597	0
+Doors canno	EXPRESS	site_1	569	618	582	585	0
+Doors canno	EXPRESS	site_2	584	553	518	558	0
+Doors canno	EXPRESS	site_3	545	507	564	531	0
+Doors canno	EXPRESS	site_4	610	565	582	610	0
+Doors canno	LIBRARY	site_0	440	431	418	431	0
+Doors canno	LIBRARY	site_1	491	512	470	539	0
+Doors canno	LIBRARY	site_2	482	500	495	470	0
+Doors canno	LIBRARY	site_3	437	438	393	464	0
+Doors canno	LIBRARY	site_4	360	363	367	397	0
+Fetched 100 row(s) in 2.02s

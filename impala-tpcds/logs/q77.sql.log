@@ -1,0 +1,187 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with ss as
+ (select s_store_sk,
+         sum(ss_ext_sales_price) as sales,
+         sum(ss_net_profit) as profit
+ from store_sales,
+      date_dim,
+      store
+ where ss_sold_date_sk = d_date_sk
+       and d_date between cast('2000-08-02' as timestamp)
+                  and (cast('2000-08-02' as timestamp) + interval  30 days)
+       and ss_store_sk = s_store_sk
+       and ss_sold_date_sk between 2451759 and 2451789
+ group by s_store_sk)
+ ,
+ sr as
+ (select s_store_sk,
+         sum(sr_return_amt) as sreturns,
+         sum(sr_net_loss) as profit_loss
+ from store_returns,
+      date_dim,
+      store
+ where sr_returned_date_sk = d_date_sk
+       and d_date between cast('2000-08-02' as timestamp)
+                  and (cast('2000-08-02' as timestamp) + interval  30 days)
+       and sr_store_sk = s_store_sk
+       and sr_returned_date_sk between 2451759 and 2451789
+ group by s_store_sk), 
+ cs as
+ (select cs_call_center_sk,
+        sum(cs_ext_sales_price) as sales,
+        sum(cs_net_profit) as profit
+ from catalog_sales,
+      date_dim
+ where cs_sold_date_sk = d_date_sk
+       and d_date between cast('2000-08-02' as timestamp)
+                  and (cast('2000-08-02' as timestamp) + interval  30 days)
+       and cs_sold_date_sk between 2451759 and 2451789
+ group by cs_call_center_sk 
+ ), 
+ cr as
+ (select
+        sum(cr_return_amount) as sreturns,
+        sum(cr_net_loss) as profit_loss
+ from catalog_returns,
+      date_dim
+ where cr_returned_date_sk = d_date_sk
+       and d_date between cast('2000-08-02' as timestamp)
+                  and (cast('2000-08-02' as timestamp) + interval  30 days)
+       and cr_returned_date_sk between 2451759 and 2451789
+ ), 
+ ws as
+ ( select wp_web_page_sk,
+        sum(ws_ext_sales_price) as sales,
+        sum(ws_net_profit) as profit
+ from web_sales,
+      date_dim,
+      web_page
+ where ws_sold_date_sk = d_date_sk
+       and d_date between cast('2000-08-02' as timestamp)
+                  and (cast('2000-08-02' as timestamp) + interval  30 days)
+       and ws_web_page_sk = wp_web_page_sk
+       and ws_sold_date_sk between 2451759 and 2451789
+ group by wp_web_page_sk), 
+ wr as
+ (select wp_web_page_sk,
+        sum(wr_return_amt) as sreturns,
+        sum(wr_net_loss) as profit_loss
+ from web_returns,
+      date_dim,
+      web_page
+ where wr_returned_date_sk = d_date_sk
+       and d_date between cast('2000-08-02' as timestamp)
+                  and (cast('2000-08-02' as timestamp) + interval  30 days)
+       and wr_web_page_sk = wp_web_page_sk
+       and wr_returned_date_sk between 2451759 and 2451789
+ group by wp_web_page_sk),
+ results as
+ (select channel
+        , id
+        , sum(sales) as sales
+        , sum(sreturns) as sreturns
+        , sum(profit) as profit
+ from 
+ (select 'store channel' as channel
+        , ss.s_store_sk as id
+        , sales
+        , coalesce(sreturns, 0) as sreturns
+        , (profit - coalesce(profit_loss,0)) as profit
+ from   ss left join sr
+        on  ss.s_store_sk = sr.s_store_sk
+ union all
+ select 'catalog channel' as channel
+        , cs_call_center_sk as id
+        , sales
+        , sreturns
+        , (profit - profit_loss) as profit
+ from  cs
+       , cr
+ union all
+ select 'web channel' as channel
+        , ws.wp_web_page_sk as id
+        , sales
+        , coalesce(sreturns, 0) sreturns
+        , (profit - coalesce(profit_loss,0)) as profit
+ from   ws left join wr
+        on  ws.wp_web_page_sk = wr.wp_web_page_sk
+ ) x
+ group by channel, id )
+
+ select *
+ from (
+ select channel, id, sales, sreturns, profit from  results
+ union
+ select channel, NULL AS id, sum(sales) as sales, sum(sreturns) as sreturns, sum(profit) as profit from  results group by channel
+ union
+ select NULL AS channel, NULL AS id, sum(sales) as sales, sum(sreturns) as sreturns, sum(profit) as profit from  results
+) foo
+order by channel, id
+ limit 100
+catalog channel	1	33338788.98999999	4133426.149999999	-6201014.359999992
+catalog channel	2	34032697.25000007	4133426.149999999	-5765422.709999993
+catalog channel	5	30662507.43000004	4133426.149999999	-5336398.030000001
+catalog channel	7	32482038.57000003	4133426.149999999	-5381910.639999991
+catalog channel	8	31964553.74000002	4133426.149999999	-5308637.12
+catalog channel	NULL	182395.11	4133426.149999999	-2500552.65
+catalog channel	NULL	162662981.0900002	24800556.89999999	-30493935.50999998
+store channel	1	19769061.26	446101.5400000003	-8903191.520000009
+store channel	2	17767438.69000001	499148.3700000002	-8063653.690000011
+store channel	4	18488623.39999999	504611.3599999999	-7904476.879999992
+store channel	7	18513313.15	438872.54	-8429656.82000001
+store channel	8	18775508.11999999	527239.5899999999	-8141036.020000003
+store channel	10	18329054.81999999	469304.21	-8180303.039999999
+store channel	13	19403749.82999999	482142.9100000005	-8682052.159999995
+store channel	14	18628908.55	516640.0300000002	-8264574.179999987
+store channel	16	18523486.57	442532.23	-8250156.450000015
+store channel	19	17677182.17000001	435920.76	-7949198.790000005
+store channel	20	19127620.71000001	424226.4799999998	-8418231.530000007
+store channel	22	17312151.31000001	426729.25	-8041190.200000009
+store channel	NULL	222316098.58	5613469.27	-99227721.28000005
+web channel	1	2197210.95	75985.06000000003	-177564.4
+web channel	2	2138221.919999999	95212.73999999998	-156816.42
+web channel	5	1889332.12	42370.21999999999	-334931.0599999999
+web channel	7	2402156.64	117113.86	-260092.25
+web channel	8	2171309.58	100138.82	-141376.44
+web channel	11	2038927.010000001	37468.95	-319436.63
+web channel	13	2028592.309999999	52478.48999999999	-234178.0299999999
+web channel	14	2077664.879999999	44198.30999999999	-160287.1000000001
+web channel	17	2071940.549999999	57468.20000000001	-362899.7900000002
+web channel	19	2066982.51	78797.84999999996	-346595.1099999999
+web channel	20	2284263.920000001	73819.21000000002	-269805.77
+web channel	23	2136014.99	18154.66	-182370.6699999999
+web channel	25	2120835.050000001	91204.42999999996	-326699.13
+web channel	26	1884235.289999999	83103.96999999999	-361298.5199999998
+web channel	29	2033933.31	25528.84	-185167.79
+web channel	31	1936732.589999998	91795.14000000001	-351152.3100000001
+web channel	32	2122914.460000001	80538.53999999998	-315144.7300000001
+web channel	35	2083277.249999999	19615.21	-230564.72
+web channel	37	1936412.909999999	83378.05999999998	-354921.9700000001
+web channel	38	1956992.5	55486.97	-202498.74
+web channel	41	2111546.720000001	40022.41000000001	-332471.89
+web channel	43	2229337.55	95219.51000000002	-315568.9099999999
+web channel	44	2133389.280000001	52895.94999999999	-204512.77
+web channel	47	2046622.739999999	24676.89	-281938.4299999999
+web channel	49	2043243.490000001	52233.25999999999	-157943.97
+web channel	50	2199826.45	101020.34	-246711.47
+web channel	53	2015938.46	23644.35	-311913.33
+web channel	55	2070199.469999999	99204.05000000003	-258074.02
+web channel	56	2074075.129999999	67024.84	-199080.14
+web channel	59	2032337.5	21669.09000000001	-230490.0700000001
+web channel	61	2154256.94	101908.91	-325765.7999999998
+web channel	62	1959501.950000001	76439.19	-295096.5699999999
+web channel	65	2105617.900000001	48518.19000000001	-378040.4299999998
+web channel	67	2193177.33	93521.64	-276320.4300000001
+web channel	68	2131833.18	69904.17	-233700.4600000001
+web channel	71	2055158.29	54675.82	-207774.9500000001
+web channel	73	2112693.720000001	74766.88	-292950.7
+web channel	74	2308036.64	91615.66	-312914.7500000001
+web channel	NULL	79554743.47999999	2512818.68	-10135070.67
+NULL	NULL	464533823.1500001	32926844.84999999	-139856727.46
+Fetched 60 row(s) in 8.44s

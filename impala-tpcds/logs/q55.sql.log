@@ -1,0 +1,115 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select i_brand_id brand_id,
+  i_brand brand,
+  sum(ss_ext_sales_price) ext_price
+from
+  date_dim,
+  store_sales,
+  item
+where
+  d_date_sk = ss_sold_date_sk
+  and ss_item_sk = i_item_sk
+  and i_manager_id = 48
+  and d_moy = 11
+  and d_year = 2001
+  and ss_sold_date_sk between 2452215 and 2452244
+group by
+  i_brand,
+  i_brand_id
+order by
+  ext_price desc,
+  i_brand_id
+limit 100
+Query submitted at: 2018-04-19 06:50:17 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=7246b6378e6483b4:e4153b2f00000000
+2002002	importoimporto #2	262463.0000000001
+3001002	amalgexporti #2	129336.35
+4001002	amalgedu pack #2	118334.8
+3003002	exportiexporti #2	114878.79
+5004002	edu packscholar #2	114355.82
+1004002	edu packamalg #2	100078.12
+8014002	edu packmaxi #2	67885.65000000001
+3004002	edu packexporti #2	66882.35000000001
+2001002	amalgimporto #2	60693.38
+5001002	amalgscholar #2	60628.48000000001
+1001002	amalgamalg #2	58072.49000000001
+4003002	exportiedu pack #2	57987.32000000001
+7012002	importonameless #2	55735.32000000001
+1002002	importoamalg #2	51588.81
+1003002	exportiamalg #2	50853.35
+10005005	brandnameless #10	48957.14
+9012006	importounivamalg #6	45139.22
+7014006	edu packnameless #6	44822.29
+6011002	amalgbrand #2	43731.68000000001
+1004001	namelessnameless #8	42816.31
+2001001	amalgbrand #6	41272.33
+7011005	scholarnameless #6	40583.16
+8012006	importomaxi #6	40345.43
+7002008	importobrand #8	36723.16
+9007006	brandmaxi #6	36423.44
+2003002	exportiimporto #2	36029.51
+9009008	maximaxi #8	35585.01
+10010009	univamalgamalg #9	34961.71000000001
+10003011	exportiunivamalg #11	34617.14999999999
+4002001	univamalgamalg #9	34095.82
+7013005	edu packscholar #2	33294.82
+2002001	edu packamalgamalg #4	33166.71
+9007002	brandmaxi #2	33153.56
+6010001	brandmaxi #6	32981.16
+7011001	importoscholar #2	32663.63
+4003001	scholarnameless #8	32001.23
+7012003	maxinameless #4	31834.17
+5002002	importoscholar #2	30991.59
+9011004	amalgunivamalg #4	30729.91999999999
+6004004	edu packcorp #4	29799.91
+10005004	amalgscholar #2	28711.55
+9003010	exportimaxi #10	28600.63
+7016003	edu packscholar #2	28247.71
+1002001	edu packimporto #2	28163.24
+8016010	corpmaxi #10	27335.41
+5003001	maxiunivamalg #9	27332.99
+7014003	edu packedu pack #2	27037.23
+7013006	exportinameless #6	26912.48
+7008006	namelessbrand #6	26443.55
+7010009	importoimporto #2	26380.5
+3003001	edu packscholar #2	26082.51
+7009008	maxibrand #8	26062.29
+10010015	univamalgamalg #15	25698.66
+2004002	edu packimporto #2	25244.12
+3001001	edu packimporto #2	25129.66
+8001008	amalgnameless #8	23742.97
+8016001	amalgimporto #2	22505.05
+4002002	importoedu pack #2	22253.8
+4001001	importocorp #8	21818.87
+8007008	brandnameless #8	21510.21
+9006008	corpmaxi #8	21226.04
+3004001	scholarbrand #10	20884.19
+6004006	edu packcorp #6	19934.65
+10015015	scholaramalgamalg #15	19909.32
+6007005	importoedu pack #2	18487.64
+2003001	edu packnameless #4	18196.44
+6007006	brandcorp #6	17892.98
+7013008	exportinameless #8	17424.76
+9011005	exportiexporti #2	16848.33
+8004008	edu packnameless #8	16394.34
+3002002	importoexporti #2	14940.86
+6001003	exportiimporto #2	14584.05
+8002008	importonameless #8	14085.77
+3003001	brandbrand #2	13053.45
+9002008	importomaxi #8	12383.59
+9008011	edu packedu pack #2	12025.75
+7013007	scholarcorp #4	11733.78
+7003004	exportibrand #4	11604.93
+7011005	edu packcorp #8	11163.88
+6001002	amalgcorp #2	10889.74
+7010010	univnameless #10	10014.64
+8002007	importoimporto #2	9391.620000000001
+6013008	exportibrand #8	8874.079999999998
+7006010	corpbrand #10	8775.59
+Fetched 84 row(s) in 1.54s

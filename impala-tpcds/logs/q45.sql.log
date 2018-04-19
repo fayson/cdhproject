@@ -1,0 +1,73 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select t1.ca_zip, t1.ca_city, sum(t1.ws_sales_price) from (
+(
+select  ca_zip, ca_city, ws_sales_price
+ from web_sales, customer ,  customer_address, date_dim
+ where (ws_bill_customer_sk = c_customer_sk
+ 	and c_current_addr_sk = ca_address_sk 
+	and substr(ca_zip,1,5) in ('85669', '86197','88274','83405','86475', '85392', '85460', '80348', '81792')
+ 	and ws_sold_date_sk = d_date_sk
+	and ws_sold_date_sk between 2452367 and 2452457
+ 	and d_qoy = 2 and d_year = 2002)
+ group by ca_zip, ca_city, ws_sales_price
+ order by ca_zip, ca_city, ws_sales_price
+)
+union
+(
+select  ca_zip, ca_city, ws_sales_price
+from web_sales, customer , customer_address, item, date_dim
+where (ws_bill_customer_sk = c_customer_sk
+        and c_current_addr_sk = ca_address_sk
+ 	and ws_item_sk = i_item_sk 
+        and  i_item_id in (select i_item_id
+            from item
+            where i_item_sk in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
+            )
+        and ws_sold_date_sk = d_date_sk
+        and ws_sold_date_sk between 2452367 and 2452457
+        and d_qoy = 2 and d_year = 2002)
+ group by ca_zip, ca_city, ws_sales_price
+ order by ca_zip, ca_city, ws_sales_price
+)
+) t1
+ group by ca_zip, ca_city 
+ order by ca_zip, ca_city
+Query submitted at: 2018-04-19 06:49:10 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=e8455663562bc805:c7fcde0f00000000
+24462	Lawrenceville	93.44
+27746	Union Hill	0.78
+27752	Walnut Grove	12.76
+31087	Macedonia	97.56
+31521	Newport	76.54000000000001
+35124	Valley View	59.32
+35752	Buena Vista	4.24
+36098	Five Points	106.98
+38370	Oak Grove	41.66
+39584	Oakdale	5.01
+48252	Maple Grove	3.81
+48482	Mount Vernon	46.7
+55752	Buena Vista	38.54
+57838	Oak Hill	12.62
+58605	Antioch	79.2
+59231	Riverside	12.26
+62898	Lebanon	3.35
+65817		167.81
+71749	Newtown	63.12
+75038	Greenfield	5.59
+80499	Summit	78.34
+80744	Roy	2.39
+84338	Red Hill	155.5
+86787	Spring Hill	59.86
+88014	Clifton	175.7
+88605	Antioch	66.36
+96668	White Oak	2.54
+WARNINGS: Ignoring ORDER BY clause without LIMIT or OFFSET: ORDER BY ca_zip ASC, ca_city ASC, ws_sales_price ASC.
+An ORDER BY appearing in a view, subquery, union operand, or an insert/ctas statement has no effect on the query result unless a LIMIT and/or OFFSET is used in conjunction with the ORDER BY. (2 warnings like this)
+
+Fetched 27 row(s) in 3.29s

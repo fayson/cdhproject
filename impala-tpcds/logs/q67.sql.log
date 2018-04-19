@@ -1,0 +1,178 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with results as
+(     select i_category ,i_class ,i_brand ,i_product_name ,d_year ,d_qoy ,d_moy ,s_store_id
+                  ,sum(coalesce(ss_sales_price*ss_quantity,0)) sumsales
+            from store_sales ,date_dim ,store ,item
+       where  ss_sold_date_sk=d_date_sk
+          and ss_item_sk=i_item_sk
+          and ss_store_sk = s_store_sk
+	and d_month_seq between 1217 and 1217+11
+	and ss_sold_date_sk between 2452062 and 2452426
+       group by i_category, i_class, i_brand, i_product_name, d_year, d_qoy, d_moy,s_store_id)
+ ,
+ results_rollup as
+ (select i_category, i_class, i_brand, i_product_name, d_year, d_qoy, d_moy, s_store_id, sumsales
+  from results
+  union all
+  select i_category, i_class, i_brand, i_product_name, d_year, d_qoy, d_moy, null s_store_id, sum(sumsales) sumsales
+  from results
+  group by i_category, i_class, i_brand, i_product_name, d_year, d_qoy, d_moy
+  union all
+  select i_category, i_class, i_brand, i_product_name, d_year, d_qoy, null d_moy, null s_store_id, sum(sumsales) sumsales
+  from results
+  group by i_category, i_class, i_brand, i_product_name, d_year, d_qoy
+  union all
+  select i_category, i_class, i_brand, i_product_name, d_year, null d_qoy, null d_moy, null s_store_id, sum(sumsales) sumsales
+  from results
+  group by i_category, i_class, i_brand, i_product_name, d_year
+  union all
+  select i_category, i_class, i_brand, i_product_name, null d_year, null d_qoy, null d_moy, null s_store_id, sum(sumsales) sumsales
+  from results
+  group by i_category, i_class, i_brand, i_product_name
+  union all
+  select i_category, i_class, i_brand, null i_product_name, null d_year, null d_qoy, null d_moy, null s_store_id, sum(sumsales) sumsales
+  from results
+  group by i_category, i_class, i_brand
+  union all
+  select i_category, i_class, null i_brand, null i_product_name, null d_year, null d_qoy, null d_moy, null s_store_id, sum(sumsales) sumsales
+  from results
+  group by i_category, i_class
+  union all
+  select i_category, null i_class, null i_brand, null i_product_name, null d_year, null d_qoy, null d_moy, null s_store_id, sum(sumsales) sumsales
+  from results
+  group by i_category
+  union all
+  select null i_category, null i_class, null i_brand, null i_product_name, null d_year, null d_qoy, null d_moy, null s_store_id, sum(sumsales) sumsales
+  from results)
+
+select *
+from (select i_category
+            ,i_class
+            ,i_brand
+            ,i_product_name
+            ,d_year
+            ,d_qoy
+            ,d_moy
+            ,s_store_id
+            ,sumsales
+            ,rank() over (partition by i_category order by sumsales desc) rk
+      from results_rollup) dw2
+where rk <= 100
+order by i_category
+        ,i_class
+        ,i_brand
+        ,i_product_name
+        ,d_year
+        ,d_qoy
+        ,d_moy
+        ,s_store_id
+        ,sumsales
+        ,rk
+limit 100
+				2001	3	NULL	NULL	85075.65999999999	98
+				2001	4	NULL	NULL	188333.13	11
+				2001	NULL	NULL	NULL	293880.1	5
+				2002	NULL	NULL	NULL	83039.25	100
+				NULL	NULL	NULL	NULL	376919.35	4
+			antiationeinganti	2001	4	NULL	NULL	99597.91	86
+			antiationeinganti	2001	NULL	NULL	NULL	153422.79	34
+			antiationeinganti	NULL	NULL	NULL	NULL	181454.55	15
+			ationeseableableable	2001	NULL	NULL	NULL	102409.92	83
+			ationeseableableable	NULL	NULL	NULL	NULL	102409.92	83
+			ationoughtn stpriought	2001	NULL	NULL	NULL	147938.26	46
+			ationoughtn stpriought	NULL	NULL	NULL	NULL	194467.42	8
+			NULL	NULL	NULL	NULL	NULL	888131.7500000001	3
+		brandmaxi #2	oughteingought	2001	NULL	NULL	NULL	140061.09	48
+		brandmaxi #2	oughteingought	NULL	NULL	NULL	NULL	188923.28	9
+		brandmaxi #2	NULL	NULL	NULL	NULL	NULL	188923.28	10
+		edu packamalg #2	oughtn stn stese	2001	4	NULL	NULL	87835.39	96
+		edu packamalg #2	oughtn stn stese	2001	NULL	NULL	NULL	153740.27	33
+		edu packamalg #2	oughtn stn stese	NULL	NULL	NULL	NULL	153740.27	31
+		edu packamalg #2	NULL	NULL	NULL	NULL	NULL	153740.27	31
+		exportiedu pack #2		2001	4	NULL	NULL	86471.10000000001	97
+		exportiedu pack #2		2001	NULL	NULL	NULL	121838.67	67
+		exportiedu pack #2		NULL	NULL	NULL	NULL	161495.27	27
+		exportiedu pack #2	NULL	NULL	NULL	NULL	NULL	161495.27	26
+		exportischolar #2	prieingeseought	2001	NULL	NULL	NULL	130663.04	55
+		exportischolar #2	prieingeseought	NULL	NULL	NULL	NULL	161638.25	24
+		exportischolar #2	NULL	NULL	NULL	NULL	NULL	161638.25	24
+		importoamalg #2	n stoughtprieingought	2001	NULL	NULL	NULL	90785.24000000001	95
+		importoamalg #2	n stoughtprieingought	NULL	NULL	NULL	NULL	154624.34	29
+		importoamalg #2	NULL	NULL	NULL	NULL	NULL	154624.34	30
+		scholarmaxi #4		2001	4	NULL	NULL	94866.78	88
+		scholarmaxi #4		2001	NULL	NULL	NULL	124086.65	66
+		scholarmaxi #4		NULL	NULL	NULL	NULL	164627.59	22
+		scholarmaxi #4	NULL	NULL	NULL	NULL	NULL	164627.59	22
+		NULL	NULL	NULL	NULL	NULL	NULL	2007702.439999999	2
+	archery	amalgmaxi #6	antioughtn stought	2001	NULL	NULL	NULL	109766.43	74
+	archery	amalgmaxi #6	antioughtn stought	NULL	NULL	NULL	NULL	129301.47	60
+	archery	amalgmaxi #6	NULL	NULL	NULL	NULL	NULL	129301.47	59
+	archery	NULL	NULL	NULL	NULL	NULL	NULL	129301.47	60
+	camcorders			NULL	NULL	NULL	NULL	108105.07	75
+	camcorders		NULL	NULL	NULL	NULL	NULL	108105.07	77
+	camcorders	NULL	NULL	NULL	NULL	NULL	NULL	108105.07	75
+	dresses		antieseoughtcally	2001	NULL	NULL	NULL	117966.72	73
+	dresses		antieseoughtcally	NULL	NULL	NULL	NULL	134270.24	50
+	dresses		NULL	NULL	NULL	NULL	NULL	134270.24	50
+	dresses	NULL	NULL	NULL	NULL	NULL	NULL	134270.24	50
+	flatware		oughteingationn st	2001	4	NULL	NULL	91869.45	93
+	flatware		oughteingationn st	2001	NULL	NULL	NULL	141841.54	47
+	flatware		oughteingationn st	NULL	NULL	NULL	NULL	178833.42	18
+	flatware		NULL	NULL	NULL	NULL	NULL	178833.42	16
+	flatware	NULL	NULL	NULL	NULL	NULL	NULL	178833.42	16
+	fragrances	importoamalg #2	priantiableeseable	NULL	NULL	NULL	NULL	126904.82	62
+	fragrances	importoamalg #2	NULL	NULL	NULL	NULL	NULL	126904.82	64
+	fragrances	NULL	NULL	NULL	NULL	NULL	NULL	126904.82	62
+	glassware			2001	NULL	NULL	NULL	94347.37000000001	89
+	glassware			NULL	NULL	NULL	NULL	94347.37000000001	89
+	glassware		NULL	NULL	NULL	NULL	NULL	94347.37	92
+	glassware	NULL	NULL	NULL	NULL	NULL	NULL	94347.37000000001	89
+	guns	importomaxi #4		2001	NULL	NULL	NULL	120887.06	72
+	guns	importomaxi #4		NULL	NULL	NULL	NULL	151223.5	35
+	guns	importomaxi #4	NULL	NULL	NULL	NULL	NULL	151223.5	35
+	guns	NULL	NULL	NULL	NULL	NULL	NULL	151223.5	35
+	mens	importoedu pack #2	pricallyesen stought	2001	NULL	NULL	NULL	107588.04	78
+	mens	importoedu pack #2	pricallyesen stought	NULL	NULL	NULL	NULL	107588.04	78
+	mens	importoedu pack #2	NULL	NULL	NULL	NULL	NULL	107588.04	80
+	mens	NULL	NULL	NULL	NULL	NULL	NULL	107588.04	80
+	newborn	amalgexporti #2		2001	NULL	NULL	NULL	103654.04	82
+	newborn	amalgexporti #2		NULL	NULL	NULL	NULL	129676.44	56
+	newborn	amalgexporti #2	NULL	NULL	NULL	NULL	NULL	129676.44	58
+	newborn	NULL	NULL	NULL	NULL	NULL	NULL	129676.44	57
+	pants	exportiimporto #2		2001	NULL	NULL	NULL	131325.6	54
+	pants	exportiimporto #2		NULL	NULL	NULL	NULL	131325.6	53
+	pants	exportiimporto #2	antibarableableought	2001	NULL	NULL	NULL	97060.35000000001	87
+	pants	exportiimporto #2	antibarableableought	NULL	NULL	NULL	NULL	124866.32	65
+	pants	exportiimporto #2	NULL	NULL	NULL	NULL	NULL	256191.92	6
+	pants	NULL	NULL	NULL	NULL	NULL	NULL	256191.92	6
+	scanners	namelessunivamalg #10	n stbaresepri	2001	NULL	NULL	NULL	136987.52	49
+	scanners	namelessunivamalg #10	n stbaresepri	NULL	NULL	NULL	NULL	177525.73	19
+	scanners	namelessunivamalg #10	NULL	NULL	NULL	NULL	NULL	177525.73	20
+	scanners	NULL	NULL	NULL	NULL	NULL	NULL	177525.73	20
+	semi-precious	amalgbrand #4	ationeseoughtanti	2001	4	NULL	NULL	101966.5	85
+	semi-precious	amalgbrand #4	ationeseoughtanti	2001	NULL	NULL	NULL	148008.6	43
+	semi-precious	amalgbrand #4	ationeseoughtanti	NULL	NULL	NULL	NULL	148008.6	43
+	semi-precious	amalgbrand #4	NULL	NULL	NULL	NULL	NULL	148008.6	43
+	semi-precious	NULL	NULL	NULL	NULL	NULL	NULL	148008.6	42
+	sports-apparel			2001	4	NULL	NULL	91145.81	94
+	sports-apparel			2001	NULL	NULL	NULL	157723.06	28
+	sports-apparel			NULL	NULL	NULL	NULL	187045.95	12
+	sports-apparel		NULL	NULL	NULL	NULL	NULL	187045.95	12
+	sports-apparel	NULL	NULL	NULL	NULL	NULL	NULL	187045.95	12
+	swimwear	edu packamalg #2	antieingoughtcally	2001	NULL	NULL	NULL	149681.33	40
+	swimwear	edu packamalg #2	antieingoughtcally	NULL	NULL	NULL	NULL	149681.33	40
+	swimwear	edu packamalg #2	NULL	NULL	NULL	NULL	NULL	149681.33	38
+	swimwear	NULL	NULL	NULL	NULL	NULL	NULL	149681.33	38
+	womens	amalgedu pack #2		2001	4	NULL	NULL	83128.60000000001	99
+	womens	amalgedu pack #2		2001	NULL	NULL	NULL	121639.84	71
+	womens	amalgedu pack #2		NULL	NULL	NULL	NULL	121639.84	68
+	womens	amalgedu pack #2	NULL	NULL	NULL	NULL	NULL	121639.84	68
+	womens	NULL	NULL	NULL	NULL	NULL	NULL	121639.84	68
+	NULL	NULL	NULL	NULL	NULL	NULL	NULL	4367777.12	1
+Fetched 100 row(s) in 19.49s

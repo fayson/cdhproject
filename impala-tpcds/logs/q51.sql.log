@@ -1,0 +1,170 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with web_tv as (
+select
+  ws_item_sk item_sk, d_date, sum(ws_sales_price) sumws,
+  row_number()
+      over (partition by ws_item_sk order by d_date) rk
+from web_sales
+    ,date_dim
+where ws_sold_date_sk=d_date_sk
+  and ws_sold_date_sk between 2451453 and 2451818
+  and d_month_seq between 1197 and 1197+11
+  and ws_item_sk is not NULL
+group by ws_item_sk, d_date
+),
+web_v1 as (
+select v1.item_sk, v1.d_date, v1.sumws, sum(v2.sumws) cume_sales
+from web_tv v1, web_tv v2
+where v1.item_sk = v2.item_sk and v1.rk >= v2.rk
+group by v1.item_sk, v1.d_date, v1.sumws
+),
+store_tv as (
+select
+  ss_item_sk item_sk, d_date, sum(ss_sales_price) sumss,
+  row_number()
+      over (partition by ss_item_sk order by d_date) rk
+from store_sales
+    ,date_dim
+where ss_sold_date_sk=d_date_sk
+  and ss_sold_date_sk between 2451453 and 2451818
+  and d_month_seq between 1197 and 1197+11
+  and ss_item_sk is not NULL
+group by ss_item_sk, d_date
+),
+store_v1 as (
+select v1.item_sk, v1.d_date, v1.sumss, sum(v2.sumss) cume_sales
+from store_tv v1, store_tv v2
+where v1.item_sk = v2.item_sk and v1.rk >= v2.rk
+group by v1.item_sk, v1.d_date, v1.sumss
+),
+v as (
+select item_sk
+     ,d_date
+     ,web_sales
+     ,store_sales
+     ,row_number() over (partition by item_sk order by d_date) rk
+     from (select case when web.item_sk is not null then web.item_sk else store.item_sk end item_sk
+                 ,case when web.d_date is not null then web.d_date else store.d_date end d_date
+                 ,web.cume_sales web_sales
+                 ,store.cume_sales store_sales
+           from web_v1 web full outer join store_v1 store on (web.item_sk = store.item_sk
+                                                          and web.d_date = store.d_date)
+          ) v1
+)
+select *
+from (
+        select v1.item_sk, v1.d_date, v1.web_sales, v1.store_sales, max(v2.web_sales) web_cumulative, max(v2.store_sales) store_cumulative
+        from v v1, v v2
+        where v1.item_sk = v2.item_sk and v1.rk >= v2.rk
+        group by v1.item_sk, v1.d_date, v1.web_sales, v1.store_sales
+) x
+where web_cumulative > store_cumulative
+order by item_sk, d_date
+limit 100
+1	1999-10-09	NULL	19.56	41.22	19.56
+1	1999-10-13	NULL	22.97	41.22	22.97
+1	1999-10-14	NULL	35.23	41.22	35.23
+1	1999-10-18	42.57	NULL	42.57	35.23
+2	1999-10-07	3.43	NULL	3.43	2.91
+2	1999-11-08	317.49	NULL	317.49	240.47
+2	1999-11-09	NULL	264.86	317.49	264.86
+2	1999-11-23	NULL	264.94	317.49	264.94
+2	1999-11-27	406.43	NULL	406.43	264.94
+2	1999-11-29	NULL	308.49	406.43	308.49
+2	1999-11-30	432.41	385.23	432.41	385.23
+2	1999-12-01	433.09	NULL	433.09	385.23
+2	1999-12-04	NULL	406.65	433.09	406.65
+2	1999-12-07	NULL	431.03	433.09	431.03
+2	1999-12-08	438.03	NULL	438.03	431.03
+2	1999-12-09	467.92	NULL	467.92	431.03
+5	2000-01-06	131.34	NULL	131.34	37.08
+5	2000-01-08	NULL	78.49000000000001	131.34	78.49000000000001
+5	2000-01-11	NULL	86.49000000000001	131.34	86.49000000000001
+8	1999-10-03	92.26000000000001	8.77	92.26000000000001	8.77
+8	1999-10-11	NULL	34.64	92.26000000000001	34.64
+8	1999-10-15	NULL	79.67	92.26000000000001	79.67
+8	1999-10-17	254.75	NULL	254.75	79.67
+8	1999-10-19	334.47	103.9	334.47	103.9
+8	1999-10-27	NULL	124.73	334.47	124.73
+8	1999-10-30	NULL	190.32	334.47	190.32
+8	1999-11-01	398.52	237.47	398.52	237.47
+8	1999-11-11	NULL	243.02	398.52	243.02
+8	1999-11-12	472.03	NULL	472.03	243.02
+8	1999-11-15	573.61	NULL	573.61	243.02
+8	1999-11-16	NULL	349.8200000000001	573.61	349.8200000000001
+8	1999-11-17	640.6799999999999	353.37	640.6799999999999	353.37
+8	1999-11-18	NULL	377.5	640.6799999999999	377.5
+8	1999-11-19	NULL	387.6800000000001	640.6799999999999	387.6800000000001
+8	1999-11-20	NULL	403.03	640.6799999999999	403.03
+8	1999-11-21	NULL	418.58	640.6799999999999	418.58
+8	1999-11-22	NULL	456.38	640.6799999999999	456.38
+8	1999-11-23	NULL	534.34	640.6799999999999	534.34
+8	1999-11-24	NULL	534.34	640.6799999999999	534.34
+8	1999-12-02	NULL	565.6800000000001	640.6799999999999	565.6800000000001
+8	1999-12-06	671.47	NULL	671.47	657.35
+8	1999-12-09	711.62	705.4700000000001	711.62	705.4700000000001
+10	1999-10-12	65.05	NULL	65.05	38.32
+16	1999-10-04	20.05	NULL	20.05	14.78
+26	1999-10-24	217.21	NULL	217.21	213.98
+34	1999-10-20	244.56	NULL	244.56	101.01
+34	1999-10-26	NULL	111.66	244.56	111.66
+34	1999-10-30	NULL	141.72	244.56	141.72
+34	1999-10-31	NULL	230.72	244.56	230.72
+40	1999-10-01	105.71	59.85	105.71	59.85
+40	1999-10-03	115.32	NULL	115.32	59.85
+40	1999-10-04	141.51	NULL	141.51	59.85
+40	1999-10-06	NULL	126.41	141.51	126.41
+44	1999-10-03	NULL	23.68	43.24	23.68
+44	1999-10-05	59.88	32.4	59.88	32.4
+44	1999-10-30	258.68	NULL	258.68	242.24
+44	1999-10-31	NULL	248.84	258.68	248.84
+44	1999-11-02	501.15	NULL	501.15	248.84
+44	1999-11-04	NULL	259.83	501.15	259.83
+44	1999-11-05	NULL	352.78	501.15	352.78
+44	1999-11-06	NULL	411.72	501.15	411.72
+44	1999-11-08	583.12	437.4400000000001	583.12	437.4400000000001
+44	1999-11-09	NULL	461.43	583.12	461.43
+44	1999-11-10	584.13	471.99	584.13	471.99
+46	1999-11-23	619.3000000000001	NULL	619.3000000000001	577.9
+46	1999-11-25	NULL	577.9	619.3000000000001	577.9
+49	1999-10-03	NULL	21.31	61.33	21.31
+50	1999-10-22	198.66	NULL	198.66	91.81999999999999
+50	1999-10-24	NULL	99.41	198.66	99.41
+50	1999-10-25	NULL	166.74	198.66	166.74
+50	1999-10-28	NULL	168.33	198.66	168.33
+50	1999-11-04	257.91	NULL	257.91	209.58
+50	1999-11-06	NULL	212.03	257.91	212.03
+50	1999-11-07	337.95	NULL	337.95	212.03
+50	1999-11-10	NULL	217.44	337.95	217.44
+50	1999-11-16	NULL	290.05	337.95	290.05
+52	1999-10-15	75.78	NULL	75.78	61.63
+52	1999-11-02	241.06	111.97	241.06	111.97
+52	1999-11-03	245.18	142.73	245.18	142.73
+52	1999-11-04	270.03	NULL	270.03	142.73
+52	1999-11-07	NULL	147.51	270.03	147.51
+52	1999-11-10	NULL	147.51	270.03	147.51
+52	1999-11-13	325.14	169.89	325.14	169.89
+52	1999-11-19	NULL	219.05	325.14	219.05
+52	1999-11-21	NULL	219.05	325.14	219.05
+52	1999-11-27	NULL	246.08	325.14	246.08
+53	2000-01-10	NULL	80.89	191.58	80.89
+53	2000-01-21	NULL	89.61	191.58	89.61
+53	2000-02-05	224.67	NULL	224.67	89.61
+53	2000-02-07	NULL	111.92	224.67	111.92
+53	2000-02-09	258.9	NULL	258.9	111.92
+53	2000-02-14	266.62	NULL	266.62	111.92
+53	2000-02-17	NULL	171.53	266.62	171.53
+53	2000-02-24	NULL	246.87	266.62	246.87
+53	2000-02-28	369.32	284.69	369.32	284.69
+53	2000-03-14	NULL	353	369.32	353
+53	2000-03-16	NULL	355.12	369.32	355.12
+53	2000-04-06	582.8200000000001	NULL	582.8200000000001	504.65
+53	2000-04-07	NULL	517.4000000000001	582.8200000000001	517.4000000000001
+53	2000-04-09	NULL	563.6300000000001	582.8200000000001	563.6300000000001
+Fetched 100 row(s) in 25.09s

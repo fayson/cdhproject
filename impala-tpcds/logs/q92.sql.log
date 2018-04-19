@@ -1,0 +1,39 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select sum(ws_ext_discount_amt)  as "Excess_Discount_Amount"
+from
+    web_sales
+   ,item
+   ,date_dim
+where
+i_manufact_id = 594
+and i_item_sk = ws_item_sk
+and d_date between '2002-01-03' and
+        (cast('2002-01-03' as timestamp) + interval 90 days)
+and d_date_sk = ws_sold_date_sk
+and ws_sold_date_sk between 2452278 and 2452368
+and ws_ext_discount_amt
+     > (
+         SELECT
+            1.3 * avg(ws_ext_discount_amt)
+         FROM
+            web_sales
+           ,date_dim
+         WHERE
+              ws_item_sk = i_item_sk
+          and d_date between '2002-01-03' and
+                             (cast('2002-01-03' as timestamp) + interval 90 days)
+          and d_date_sk = ws_sold_date_sk
+          and ws_sold_date_sk between 2452278 and 2452368
+      )
+order by sum(ws_ext_discount_amt)
+limit 100
+Query submitted at: 2018-04-19 06:54:37 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=ce4d46e415b0fa0b:1a817e6e00000000
+66528.07000000001
+Fetched 1 row(s) in 1.42s

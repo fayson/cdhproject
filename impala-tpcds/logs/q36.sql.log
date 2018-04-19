@@ -1,0 +1,148 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with results as
+ (select 
+    sum(ss_net_profit) as ss_net_profit, sum(ss_ext_sales_price) as ss_ext_sales_price,
+    sum(ss_net_profit)/sum(ss_ext_sales_price) as gross_margin
+   ,i_category
+   ,i_class
+   ,0 as g_category, 0 as g_class
+ from
+    store_sales
+   ,date_dim       d1
+   ,item
+   ,store
+ where
+    d1.d_year = 2001
+    and d1.d_date_sk = ss_sold_date_sk
+    and ss_sold_date_sk between 2451911	and 2452275
+    and i_item_sk  = ss_item_sk 
+    and s_store_sk  = ss_store_sk
+    and s_state in ('AL','SD','TN','SD',
+                 'SD','SD','TN','SD')
+ group by i_category,i_class)
+ ,
+ results_rollup as
+ (select gross_margin ,i_category ,i_class,0 as t_category, 0 as t_class, 0 as lochierarchy from results
+ union
+ select sum(ss_net_profit)/sum(ss_ext_sales_price) as gross_margin,
+   i_category, NULL AS i_class, 0 as t_category, 1 as t_class, 1 as lochierarchy from results group by i_category
+ union
+ select sum(ss_net_profit)/sum(ss_ext_sales_price) as gross_margin,
+   NULL AS i_category ,NULL AS i_class, 1 as t_category, 1 as t_class, 2 as lochierarchy from results)
+ select 
+  gross_margin ,i_category ,i_class, lochierarchy,rank() over (
+ 	partition by lochierarchy, case when t_class = 0 then i_category end 
+ 	order by gross_margin asc) as rank_within_parent
+ from results_rollup
+ order by
+   lochierarchy desc
+  ,case when lochierarchy = 0 then i_category end
+  ,rank_within_parent
+  limit 100
+-0.4332459156893295	NULL	NULL	2	1
+-0.4384183003631369		NULL	1	1
+-0.4376537455493061	Sports	NULL	1	2
+-0.4359157380215391	Children	NULL	1	3
+-0.4351523026310399	Jewelry	NULL	1	4
+-0.4345452714094295	Men	NULL	1	5
+-0.4341613808969496	Electronics	NULL	1	6
+-0.431917120395858	Books	NULL	1	7
+-0.4314168939377247	Music	NULL	1	8
+-0.4310083838959889	Home	NULL	1	9
+-0.430636849875978	Women	NULL	1	10
+-0.4302749136296877	Shoes	NULL	1	11
+-0.5309036381452356		glassware	0	1
+-0.5305483795255105		scanners	0	2
+-0.4982105224258598		womens	0	3
+-0.4903401714269239			0	4
+-0.4736031795766778		semi-precious	0	5
+-0.4605865756036309		archery	0	6
+-0.4169523440387081		fragrances	0	7
+-0.4128420365779384		pants	0	8
+-0.4101908426340125		mens	0	9
+-0.3965453163920357		dresses	0	10
+-0.3890381124789745		guns	0	11
+-0.3650877490248519		swimwear	0	12
+-0.3523368762183413		camcorders	0	13
+-0.2776033856762498		flatware	0	14
+-0.2672678974878423		newborn	0	15
+-0.2299295220695676		sports-apparel	0	16
+-0.4778158205495147	Books		0	1
+-0.4527181649764414	Books	mystery	0	2
+-0.445562696612317	Books	arts	0	3
+-0.4441398682238464	Books	business	0	4
+-0.443933287135936	Books	science	0	5
+-0.4423915236488862	Books	entertainments	0	6
+-0.4418365790548696	Books	romance	0	7
+-0.4397913101370711	Books	fiction	0	8
+-0.4371489460932069	Books	computers	0	9
+-0.4309388080507336	Books	sports	0	10
+-0.4272372643444031	Books	cooking	0	11
+-0.4257926043497239	Books	reference	0	12
+-0.4255726616634516	Books	self-help	0	13
+-0.421780430640544	Books	history	0	14
+-0.4200239920910097	Books	travel	0	15
+-0.4075291613061687	Books	parenting	0	16
+-0.4073482037349742	Books	home repair	0	17
+-0.4392216916479094	Children	newborn	0	1
+-0.4368110133657378	Children	toddlers	0	2
+-0.4358510411893202	Children	infants	0	3
+-0.432320347678153	Children		0	4
+-0.4317609219514032	Children	school-uniforms	0	5
+-0.4633085866745153	Electronics	wireless	0	1
+-0.4512337717324396	Electronics	karoke	0	2
+-0.4473712547147486	Electronics	camcorders	0	3
+-0.4471913408629121	Electronics	automotive	0	4
+-0.4469170315604475	Electronics	musical	0	5
+-0.4419393489640538	Electronics	memory	0	6
+-0.4375104328771905	Electronics	televisions	0	7
+-0.4313839002542229	Electronics	audio	0	8
+-0.4296166572176426	Electronics	portable	0	9
+-0.4286236915589889	Electronics	dvd/vcr players	0	10
+-0.4250142553487301	Electronics	cameras	0	11
+-0.4237188150138904	Electronics	stereo	0	12
+-0.4231632093380786	Electronics	monitors	0	13
+-0.4225428016840295	Electronics	personal	0	14
+-0.4188050293331744	Electronics	scanners	0	15
+-0.4151778540885603	Electronics	disk drives	0	16
+-0.3072770709056561	Electronics		0	17
+-0.5388997067453969	Home		0	1
+-0.4689260323725063	Home	wallpaper	0	2
+-0.4495718576895058	Home	furniture	0	3
+-0.4480540069728113	Home	decor	0	4
+-0.4449332448498865	Home	tables	0	5
+-0.4401575702781808	Home	lighting	0	6
+-0.4308927596193307	Home	curtains/drapes	0	7
+-0.4302231268462012	Home	rugs	0	8
+-0.4286790301140361	Home	blinds/shades	0	9
+-0.4282682427761505	Home	paint	0	10
+-0.4265761737512195	Home	kids	0	11
+-0.4265107256179488	Home	flatware	0	12
+-0.4258655976372698	Home	bathroom	0	13
+-0.4246259698206278	Home	mattresses	0	14
+-0.4204748964139092	Home	accent	0	15
+-0.4053984407568469	Home	glassware	0	16
+-0.4036974726315316	Home	bedding	0	17
+-0.5975488375080761	Jewelry		0	1
+-0.4728332199489745	Jewelry	costume	0	2
+-0.4549822515861537	Jewelry	loose stones	0	3
+-0.4507465753944924	Jewelry	diamonds	0	4
+-0.4498313448043389	Jewelry	jewelry boxes	0	5
+-0.4456883060262864	Jewelry	earings	0	6
+-0.4421623718929001	Jewelry	rings	0	7
+-0.4389902628822936	Jewelry	bracelets	0	8
+-0.437742407665706	Jewelry	semi-precious	0	9
+-0.436267662062273	Jewelry	gold	0	10
+-0.4307409315842093	Jewelry	mens watch	0	11
+-0.4274395284985132	Jewelry	womens watch	0	12
+-0.4224561077451513	Jewelry	consignment	0	13
+-0.4174099113427207	Jewelry	birdal	0	14
+-0.4172239400044501	Jewelry	estate	0	15
+-0.4154744817205958	Jewelry	custom	0	16
+Fetched 100 row(s) in 4.45s

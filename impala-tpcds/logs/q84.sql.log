@@ -1,0 +1,96 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select c_customer_id as customer_id
+        , concat(c_last_name, ',' , c_first_name) as customername
+ from customer
+     ,customer_address
+     ,customer_demographics
+     ,household_demographics
+     ,income_band
+     ,store_returns
+ where ca_city          =  'Antioch'
+   and c_current_addr_sk = ca_address_sk
+   and ib_lower_bound   >=  9901
+   and ib_upper_bound   <=  9901 + 50000
+   and ib_income_band_sk = hd_income_band_sk
+   and cd_demo_sk = c_current_cdemo_sk
+   and hd_demo_sk = c_current_hdemo_sk
+   and sr_cdemo_sk = cd_demo_sk
+ order by c_customer_id
+ limit 100
+Query submitted at: 2018-04-19 06:54:11 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=344cbebf5f85047a:1a57a6a100000000
+AAAAAAAAAFJOBAAA	Williams,Irene
+AAAAAAAAAJJGAAAA	Gillespie,Michael
+AAAAAAAAALFFAAAA	Sterling,Leo
+AAAAAAAAALFFAAAA	Sterling,Leo
+AAAAAAAABCHHAAAA	Harris,Caitlin
+AAAAAAAABFJOBAAA	Jones,Keisha
+AAAAAAAABKCABAAA	Westmoreland,Terrance
+AAAAAAAADAFNAAAA	Hall,John
+AAAAAAAADEIJBAAA	Atkins,Allen
+AAAAAAAADGAMAAAA	,Barbara
+AAAAAAAADLGHBAAA	Deleon,Ivan
+AAAAAAAADOJKAAAA	Kirk,James
+AAAAAAAAEBBIBAAA	Hart,June
+AAAAAAAAENPOAAAA	Williams,Lisa
+AAAAAAAAFALCBAAA	Gough,Janet
+AAAAAAAAFDCCBAAA	Jordan,Bertha
+AAAAAAAAFEFLAAAA	Alvarez,Jenna
+AAAAAAAAFHCNBAAA	Odonnell,Vicente
+AAAAAAAAFHCNBAAA	Odonnell,Vicente
+AAAAAAAAFIONAAAA	Stephens,Andrew
+AAAAAAAAFNGJBAAA	Nichols,Jonathan
+AAAAAAAAGGBNAAAA	Miller,Anne
+AAAAAAAAGKMKAAAA	Thomas,Violet
+AAAAAAAAGMBDBAAA	Perez,William
+AAAAAAAAHLECBAAA	Bruce,Ana
+AAAAAAAAHMODBAAA	Peters,Pedro
+AAAAAAAAHNFOAAAA	Butler,Lisa
+AAAAAAAAHNJBBAAA	Gutierrez,Juanita
+AAAAAAAAIDCMBAAA	Jackson,Robert
+AAAAAAAAIDKOAAAA	Cramer,Wendell
+AAAAAAAAIDMFBAAA	,Frank
+AAAAAAAAIFDOBAAA	Driver,Mario
+AAAAAAAAIFDOBAAA	Driver,Mario
+AAAAAAAAILDNBAAA	Pope,Yun
+AAAAAAAAIOFACAAA	Jackson,Melanie
+AAAAAAAAJBMFAAAA	Best,Jacquline
+AAAAAAAAJGJABAAA	Gonzalez,Pamela
+AAAAAAAAJICJAAAA	Mercer,Michael
+AAAAAAAAJNHCAAAA	Beard,David
+AAAAAAAAJNHCAAAA	Beard,David
+AAAAAAAAJNHCAAAA	Beard,David
+AAAAAAAAKCKEAAAA	Allen,Eddie
+AAAAAAAAKCKEAAAA	Allen,Eddie
+AAAAAAAAKCKEAAAA	Allen,Eddie
+AAAAAAAAKFJDAAAA	Nguyen,Lisa
+AAAAAAAAKMBJBAAA	Davis,Gerald
+AAAAAAAAKNDLBAAA	Miles,Bill
+AAAAAAAALBOBCAAA	Webster,Eugene
+AAAAAAAALCICBAAA	Hale,Jerry
+AAAAAAAALDOLBAAA	Higginbotham,Kristin
+AAAAAAAALFFJBAAA	Howard,Bradley
+AAAAAAAALIGGBAAA	Foley,Murray
+AAAAAAAAMIOKAAAA	Easter,Gregory
+AAAAAAAAMJPHAAAA	Martel,Edith
+AAAAAAAANBCDBAAA	Benedict,Ryan
+AAAAAAAANBHGBAAA	Metz,Bridget
+AAAAAAAANDJBAAAA	Scott,Pamela
+AAAAAAAANELIAAAA	Hoffman,Marcelo
+AAAAAAAANHBGBAAA	Warren,Joseph
+AAAAAAAANJKCAAAA	Bonilla,Nicholas
+AAAAAAAANNMNAAAA	Gaston,Joseph
+AAAAAAAANPPMAAAA	Hess,Teri
+AAAAAAAAOFLMBAAA	Ratliff,Laura
+AAAAAAAAOLIEAAAA	White,Samantha
+AAAAAAAAPCOPBAAA	Horton,Jack
+AAAAAAAAPLNFBAAA	Pena,Terri
+AAAAAAAAPOKNAAAA	Redmond,Daniel
+AAAAAAAAPOKNAAAA	Redmond,Daniel
+Fetched 68 row(s) in 1.07s

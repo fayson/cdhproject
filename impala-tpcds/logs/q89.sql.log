@@ -1,0 +1,150 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select *
+from
+  (select
+    i_category,
+    i_class,
+    i_brand,
+    s_store_name,
+    s_company_name,
+    d_moy,
+    sum(ss_sales_price) sum_sales,
+    avg(sum(ss_sales_price)) over (partition by i_category, i_brand, s_store_name, s_company_name) avg_monthly_sales
+  from
+    item,
+    store_sales,
+    date_dim,
+    store
+  where
+    ss_item_sk = i_item_sk
+    and ss_sold_date_sk = d_date_sk
+    and ss_store_sk = s_store_sk
+    and d_year in (2000)
+    and ((i_category in ('Home', 'Books', 'Electronics')
+        and i_class in ('wallpaper', 'parenting', 'musical'))
+      or (i_category in ('Shoes', 'Jewelry', 'Men')
+        and i_class in ('womens', 'birdal', 'pants')))
+    and ss_sold_date_sk between 2451545 and 2451910  -- partition key filter
+  group by
+    i_category,
+    i_class,
+    i_brand,
+    s_store_name,
+    s_company_name,
+    d_moy
+  ) tmp1
+where
+  case when (avg_monthly_sales <> 0) then (abs(sum_sales - avg_monthly_sales) / avg_monthly_sales) else null end > 0.1
+order by
+  sum_sales - avg_monthly_sales,
+  s_store_name
+limit 100
+Query submitted at: 2018-04-19 06:54:27 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=a4403fb4a8207c1c:2467069100000000
+Men	pants	exportiimporto #2	able	Unknown	3	4197.760000000001	9128.372499999999
+Shoes	womens	amalgedu pack #2	ese	Unknown	2	4408.539999999999	9111.753333333334
+Shoes	womens	amalgedu pack #2	able	Unknown	6	4010.080000000001	8598.235833333334
+Men	pants	exportiimporto #2	able	Unknown	7	4591.68	9128.372499999999
+Men	pants	exportiimporto #2	ese	Unknown	2	4448.099999999999	8965.219166666668
+Men	pants	exportiimporto #2	ese	Unknown	4	4470.750000000001	8965.219166666668
+Shoes	womens	amalgedu pack #2	able	Unknown	3	4125.690000000001	8598.235833333334
+Shoes	womens	amalgedu pack #2	able	Unknown	7	4161.27	8598.235833333334
+Shoes	womens	amalgedu pack #2	ese	Unknown	7	4785.860000000001	9111.753333333334
+Shoes	womens	amalgedu pack #2	ese	Unknown	4	4832.660000000001	9111.753333333334
+Shoes	womens	amalgedu pack #2	bar	Unknown	7	4669.710000000001	8929.658333333335
+Men	pants	exportiimporto #2	bar	Unknown	3	4508.24	8719.690000000001
+Men	pants	exportiimporto #2	able	Unknown	6	5059.700000000001	9128.372499999999
+Men	pants	exportiimporto #2	ese	Unknown	7	4978.149999999999	8965.219166666668
+Shoes	womens	amalgedu pack #2	ese	Unknown	6	5138.52	9111.753333333334
+Shoes	womens	amalgedu pack #2	bar	Unknown	4	4968.25	8929.658333333335
+Men	pants	exportiimporto #2	bar	Unknown	6	4802.299999999999	8719.690000000001
+Men	pants	exportiimporto #2	able	Unknown	2	5271.410000000001	9128.372499999999
+Shoes	womens	amalgedu pack #2	bar	Unknown	2	5085.309999999999	8929.658333333335
+Men	pants	exportiimporto #2	bar	Unknown	5	4881.129999999999	8719.690000000001
+Shoes	womens	amalgedu pack #2	bar	Unknown	1	5149.639999999999	8929.658333333335
+Shoes	womens	amalgedu pack #2	able	Unknown	5	4863.35	8598.235833333334
+Men	pants	exportiimporto #2	bar	Unknown	7	5043.809999999999	8719.690000000001
+Shoes	womens	amalgedu pack #2	ese	Unknown	5	5440.1	9111.753333333334
+Men	pants	exportiimporto #2	bar	Unknown	4	5118.68	8719.690000000001
+Men	pants	exportiimporto #2	ese	Unknown	5	5434.159999999999	8965.219166666668
+Men	pants	exportiimporto #2	able	Unknown	5	5641.240000000001	9128.372499999999
+Shoes	womens	amalgedu pack #2	ese	Unknown	1	5669.469999999999	9111.753333333334
+Men	pants	exportiimporto #2	ese	Unknown	3	5532.719999999999	8965.219166666668
+Shoes	womens	amalgedu pack #2	bar	Unknown	5	5512.849999999999	8929.658333333335
+Men	pants	exportiimporto #2	able	Unknown	1	5738.309999999999	9128.372499999999
+Men	pants	exportiimporto #2	able	Unknown	4	5745.360000000001	9128.372499999999
+Men	pants	exportiimporto #2	ese	Unknown	6	5617.080000000002	8965.219166666668
+Men	pants	exportiimporto #2	bar	Unknown	2	5388.45	8719.690000000001
+Shoes	womens	amalgedu pack #2	ese	Unknown	3	5864.170000000002	9111.753333333334
+Shoes	womens	amalgedu pack #2	bar	Unknown	3	5697.349999999999	8929.658333333335
+Shoes	womens	amalgedu pack #2	able	Unknown	2	5453.35	8598.235833333334
+Shoes	womens	amalgedu pack #1	bar	Unknown	3	2006.57	5108.131666666667
+Shoes	womens	amalgedu pack #2	able	Unknown	4	5647.2	8598.235833333334
+Shoes	womens	amalgedu pack #2	able	Unknown	1	5829.35	8598.235833333334
+Men	pants	exportiimporto #2	ation	Unknown	4	1902.34	4577.8775
+Shoes	womens	amalgedu pack #1	bar	Unknown	7	2498.97	5108.131666666667
+Men	pants	exportiimporto #2	ought	Unknown	2	1878.89	4461.27
+Shoes	womens	amalgedu pack #2	pri	Unknown	7	2213.87	4751.655000000002
+Shoes	womens	amalgedu pack #1	ese	Unknown	4	2185.26	4722.946666666666
+Men	pants	exportiimporto #2	eing	Unknown	2	1641.26	4177.777500000001
+Shoes	womens	amalgedu pack #2	n st	Unknown	6	2191.45	4612.430833333334
+Men	pants	exportiimporto #2	bar	Unknown	1	6305.91	8719.690000000001
+Shoes	womens	amalgedu pack #1	able	Unknown	4	2411.19	4797.617499999999
+Shoes	womens	amalgedu pack #2	ation	Unknown	7	2106.67	4458.273333333334
+Shoes	womens	amalgedu pack #1	ese	Unknown	2	2382.900000000001	4722.946666666666
+Men	pants	exportiimporto #1	ese	Unknown	4	2015.28	4346.074166666666
+Shoes	womens	amalgedu pack #2	pri	Unknown	4	2454.12	4751.655000000002
+Men	pants	exportiimporto #2	cally	Unknown	3	2326.75	4601.881666666667
+Men	pants	exportiimporto #2	ought	Unknown	3	2188.33	4461.27
+Shoes	womens	amalgedu pack #1	ese	Unknown	7	2461.53	4722.946666666666
+Men	pants	exportiimporto #2	cally	Unknown	2	2349.77	4601.881666666667
+Men	pants	exportiimporto #2	n st	Unknown	7	2308.85	4548.905833333333
+Men	pants	exportiimporto #2	ation	Unknown	2	2345.91	4577.8775
+Shoes	womens	amalgedu pack #2	n st	Unknown	3	2382.09	4612.430833333334
+Men	pants	exportiimporto #1	ese	Unknown	5	2123.07	4346.074166666666
+Shoes	womens	amalgedu pack #1	bar	Unknown	4	2897.47	5108.131666666667
+Men	pants	exportiimporto #2	ation	Unknown	5	2382.84	4577.8775
+Men	pants	exportiimporto #2	ought	Unknown	6	2284.68	4461.27
+Shoes	womens	amalgedu pack #1	ese	Unknown	5	2556.92	4722.946666666666
+Men	pants	exportiimporto #2	pri	Unknown	4	2173.45	4328.356666666667
+Shoes	womens	amalgedu pack #2	ought	Unknown	1	2316.7	4466.920833333334
+Shoes	womens	amalgedu pack #1	able	Unknown	6	2648.97	4797.617499999999
+Men	pants	exportiimporto #2	pri	Unknown	3	2179.93	4328.356666666667
+Men	pants	exportiimporto #2	ese	Unknown	1	6822.439999999999	8965.219166666668
+Men	pants	exportiimporto #2	n st	Unknown	6	2407.84	4548.905833333333
+Shoes	womens	amalgedu pack #2	cally	Unknown	7	2132.24	4252.005833333334
+Men	pants	exportiimporto #2	pri	Unknown	6	2212.07	4328.356666666667
+Shoes	womens	amalgedu pack #1	ese	Unknown	3	2608.74	4722.946666666666
+Shoes	womens	amalgedu pack #2	pri	Unknown	6	2638.09	4751.655000000002
+Men	pants	exportiimporto #1	bar	Unknown	5	2026.46	4127.1925
+Men	pants	exportiimporto #2	cally	Unknown	5	2535.12	4601.881666666667
+Shoes	womens	amalgedu pack #2	ation	Unknown	2	2423.09	4458.273333333334
+Men	pants	exportiimporto #2	ation	Unknown	1	2552.33	4577.8775
+Men	pants	exportiimporto #2	pri	Unknown	5	2305.28	4328.356666666667
+Men	pants	exportiimporto #2	n st	Unknown	2	2540.08	4548.905833333333
+Shoes	womens	amalgedu pack #1	able	Unknown	5	2812.84	4797.617499999999
+Shoes	womens	amalgedu pack #1	able	Unknown	2	2830.059999999999	4797.617499999999
+Shoes	womens	amalgedu pack #2	cally	Unknown	3	2286.74	4252.005833333334
+Shoes	womens	amalgedu pack #2	eing	Unknown	1	2187.95	4148.909166666666
+Men	pants	exportiimporto #2	ought	Unknown	1	2504.01	4461.27
+Shoes	womens	amalgedu pack #2	ought	Unknown	3	2514.22	4466.920833333334
+Men	pants	exportiimporto #2	ation	Unknown	3	2634.54	4577.8775
+Men	pants	exportiimporto #2	cally	Unknown	4	2660.37	4601.881666666667
+Men	pants	exportiimporto #2	ation	Unknown	7	2643.92	4577.8775
+Men	pants	exportiimporto #2	eing	Unknown	3	2244.86	4177.777500000001
+Shoes	womens	amalgedu pack #2	ought	Unknown	2	2538.87	4466.920833333334
+Men	pants	exportiimporto #2	cally	Unknown	6	2685.96	4601.881666666667
+Shoes	womens	amalgedu pack #1	bar	Unknown	6	3197.08	5108.131666666667
+Men	pants	exportiimporto #2	ation	Unknown	6	2684.96	4577.8775
+Shoes	womens	amalgedu pack #2	pri	Unknown	2	2862.48	4751.655000000002
+Shoes	womens	amalgedu pack #2	bar	Unknown	6	7051.710000000001	8929.658333333335
+Shoes	womens	amalgedu pack #2	ought	Unknown	6	2603.91	4466.920833333334
+Shoes	womens	amalgedu pack #2	eing	Unknown	4	2289.41	4148.909166666666
+Shoes	womens	amalgedu pack #1	bar	Unknown	2	3252.420000000001	5108.131666666667
+Fetched 100 row(s) in 2.19s

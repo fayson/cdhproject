@@ -1,0 +1,55 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select s_store_name,
+  s_store_id,
+  sum(case when (d_day_name = 'Sunday') then ss_sales_price else null end) sun_sales,
+  sum(case when (d_day_name = 'Monday') then ss_sales_price else null end) mon_sales,
+  sum(case when (d_day_name = 'Tuesday') then ss_sales_price else null end) tue_sales,
+  sum(case when (d_day_name = 'Wednesday') then ss_sales_price else null end) wed_sales,
+  sum(case when (d_day_name = 'Thursday') then ss_sales_price else null end) thu_sales,
+  sum(case when (d_day_name = 'Friday') then ss_sales_price else null end) fri_sales,
+  sum(case when (d_day_name = 'Saturday') then ss_sales_price else null end) sat_sales
+from
+  date_dim,
+  store_sales,
+  store
+where
+  d_date_sk = ss_sold_date_sk
+  and s_store_sk = ss_store_sk
+  and s_gmt_offset = -5
+  and d_year = 1998
+  and ss_sold_date_sk between 2450816 and 2451179  -- partition key filter
+group by
+  s_store_name,
+  s_store_id
+order by
+  s_store_name,
+  s_store_id,
+  sun_sales,
+  mon_sales,
+  tue_sales,
+  wed_sales,
+  thu_sales,
+  fri_sales,
+  sat_sales
+limit 100
+Query submitted at: 2018-04-19 06:49:04 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=d844331c898b02dd:981c900a00000000
+able	AAAAAAAACAAAAAAA	468729.1000000009	486506.3200000001	478701.6500000003	530441.0400000007	488970.9299999999	478231.6699999993	464149.48
+able	AAAAAAAAGBAAAAAA	475720.6599999992	451414.3699999989	493157.8499999997	488150.2200000004	478438.5100000001	489916.0899999994	456823.8199999998
+ation	AAAAAAAAHAAAAAAA	474743.9099999999	459837.46	480306.6299999998	482378.6799999995	495413.7899999997	444681.6599999991	492071.0900000002
+bar	AAAAAAAAEBAAAAAA	497854.6600000002	462600.8600000008	483630.8400000001	481679.28	470635.5799999998	471443.8799999998	491632.5700000006
+bar	AAAAAAAAKAAAAAAA	496544.8400000008	477323.6900000001	499752.1500000001	504258.3999999996	488995.2600000001	473725.8299999996	487684.7800000008
+cally	AAAAAAAAABAAAAAA	461732.99	480995.8499999999	461132.6299999998	475562.3000000004	495947.1799999996	471472.6700000004	480385.1100000005
+eing	AAAAAAAAIAAAAAAA	462424.7900000004	465704.7500000006	481370.1199999996	455524.5199999999	479687.64	446240.3799999993	489121.61
+ese	AAAAAAAAEAAAAAAA	474998.1299999993	436041.0699999998	493239.0100000006	510779.0899999996	441677.7399999996	452671.8099999998	482118.8000000001
+ese	AAAAAAAAOAAAAAAA	454798.9300000013	463222.0500000007	473384.2999999997	469509.4999999999	476936.940000001	480443.2999999999	489738.9800000002
+n st	AAAAAAAADBAAAAAA	485369.6000000006	451375.880000001	482235.3400000014	494262.0600000003	485741.4700000001	479539.6200000003	467269.3500000003
+ought	AAAAAAAABAAAAAAA	468807.3900000001	469553.9399999997	491755.8000000001	478514.8099999992	499619.6100000001	499144.779999999	474498.2500000005
+pri	AAAAAAAANAAAAAAA	455467.6799999996	467762.799999999	472820.1899999992	480709.9000000003	469733.8300000005	466521.6100000005	450663.8199999996
+Fetched 12 row(s) in 1.85s

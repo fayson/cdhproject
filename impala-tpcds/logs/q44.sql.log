@@ -1,0 +1,56 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select asceding.rnk, i1.i_product_name best_performing, i2.i_product_name worst_performing
+from(select *
+     from (select item_sk,rank() over (order by rank_col asc) rnk
+           from (
+		select  item_sk, rank_col from 
+			(select ss_item_sk item_sk,avg(ss_net_profit) rank_col
+			from store_sales ss1
+			where ss_store_sk = 218
+			group by ss_item_sk) a1 cross join
+			( select avg(ss_net_profit) * 0.9 cmp_col
+  			from store_sales
+  			where ss_store_sk = 218
+  			and ss_hdemo_sk is null
+ 			group by ss_store_sk limit 1
+ 			) a2
+  			where a1.rank_col > a2.cmp_col
+		)
+		V1)V11
+     where rnk  < 11) asceding,
+    (select *
+     from (select item_sk,rank() over (order by rank_col desc) rnk
+           from 
+		(
+		select item_sk, rank_col from 
+			(select ss_item_sk item_sk,avg(ss_net_profit) rank_col
+			from store_sales ss1
+			where ss_store_sk = 218
+			group by ss_item_sk) a1 
+			cross join
+			(select avg(ss_net_profit) * 0.9 cmp_col
+  			from store_sales
+  			where ss_store_sk = 218
+  			and ss_hdemo_sk is null
+  			group by ss_store_sk limit 1
+ 			) a2
+ 			where a1.rank_col > a2.cmp_col
+		)
+		V1)V11
+     where rnk  < 11) descending,
+item i1,
+item i2
+where asceding.rnk = descending.rnk
+  and i1.i_item_sk=asceding.item_sk
+  and i2.i_item_sk=descending.item_sk
+order by asceding.rnk
+limit 100
+Query submitted at: 2018-04-19 06:49:07 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=e046469899f259ad:6ed383700000000
+Fetched 0 row(s) in 1.71s

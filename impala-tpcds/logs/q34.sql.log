@@ -1,0 +1,470 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select c_last_name,
+  c_first_name,
+  c_salutation,
+  c_preferred_cust_flag,
+  ss_ticket_number,
+  cnt
+from
+  (select
+    ss_ticket_number,
+    ss_customer_sk,
+    count(*) cnt
+  from
+    store_sales,
+    date_dim,
+    store,
+    household_demographics
+  where
+    store_sales.ss_sold_date_sk = date_dim.d_date_sk
+    and store_sales.ss_store_sk = store.s_store_sk
+    and store_sales.ss_hdemo_sk = household_demographics.hd_demo_sk
+    and (date_dim.d_dom between 1 and 3
+      or date_dim.d_dom between 25 and 28)
+    and (household_demographics.hd_buy_potential = '>10000'
+      or household_demographics.hd_buy_potential = 'unknown')
+    and household_demographics.hd_vehicle_count > 0
+    and (case when household_demographics.hd_vehicle_count > 0 then household_demographics.hd_dep_count / household_demographics.hd_vehicle_count else null end) > 1.2
+    and date_dim.d_year in (1998, 1998 + 1, 1998 + 2)
+    and store.s_county in ('Saginaw County', 'Sumner County', 'Appanoose County', 'Daviess County', 'Fairfield County', 'Raleigh County', 'Ziebach County', 'Williamson County')
+    and ss_sold_date_sk between 2450816 and 2451910 -- partition key filter
+  group by
+    ss_ticket_number,
+    ss_customer_sk
+  ) dn,
+  customer
+where
+  ss_customer_sk = c_customer_sk
+  and cnt between 15 and 20
+order by
+  c_last_name,
+  c_first_name,
+  c_salutation,
+  c_preferred_cust_flag desc
+Query submitted at: 2018-04-19 06:48:16 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=546efc2b7ae542b:3069dc4f00000000
+				55640	15
+				461787	15
+		Sir	Y	246117	15
+	April			434901	16
+	Britney		N	125025	15
+	Carl		Y	82518	15
+	Colette	Miss		263726	15
+	Guadalupe		N	226830	15
+	Joanna	Ms.	N	452368	15
+	John	Mr.		18023	15
+	Joyce	Dr.	Y	16039	15
+Adams	Alex	Miss	Y	29323	16
+Adams	Pablo	Mr.	N	176372	16
+Ahmad	Kristin	Ms.	N	445764	16
+Alexander	Robert	Mr.	Y	63897	15
+Andrade	Shannon	Mr.	N	422937	15
+Andres	Eddie	Mr.	Y	155492	15
+Armijo	Christopher	Sir	N	469645	15
+Ash	Charles	Sir	N	470926	16
+Ashby	Steven	Mr.	N	295441	15
+Atkins	Debra	Dr.	Y	433933	15
+Avila	Daniel	Sir	N	182717	15
+Back	Sibyl	Mrs.	N	79884	15
+Baker	Erik	Sir	Y	69511	15
+Baldwin	Richard	Sir	Y	376671	16
+Ballard	Michelle	Miss	N	166660	16
+Banks	Karl	Mr.	Y	228659	16
+Baron	David	Sir	N	335692	16
+Barrows	Margaret	Mrs.	N	405401	15
+Beard	David	Dr.	N	109265	15
+Begley	John	Dr.	Y	20342	16
+Bell	Lois	Ms.	Y	42684	15
+Beltran	Grace	Ms.	Y	230436	16
+Benefield	Hugh	Dr.	N	325501	16
+Bentley	David	Sir	Y	458608	15
+Bernal	Michael	Dr.	N	422021	15
+Betts	Fannie	Miss	Y	296072	16
+Blake	Charles	Mr.	N	312631	15
+Blake	Norma	Mrs.	Y	9979	15
+Boland	Antoine	Mr.	N	27477	16
+Booth	Melva	Dr.	N	136216	15
+Bounds	Richard	Mr.	N	363963	16
+Bowen	Ralph	Mr.	N	341620	15
+Boyle	Eleanor	Ms.	N	173770	16
+Brewer	Joshua	Mr.	N	307216	15
+Brewer	Lance	Dr.	Y	65882	15
+Brown	Audrey	Mrs.	N	57732	15
+Brown	Carl	Sir	Y	258154	15
+Brown	Gloria	Miss	N	352286	15
+Brown	Martha	Dr.	Y	13057	16
+Brown	Patrick	Mr.	N	479783	15
+Brown	Raymond	Mr.	Y	212279	15
+Bruce	Morris	Mr.	Y	366388	16
+Bruno	Mark	Sir	Y	240303	15
+Bui	Matthew	Dr.	Y	207070	15
+Bundy	Irene	Ms.	Y	60749	15
+Bunnell	Henry	Dr.	Y	175230	15
+Burke	Leonard	Dr.	N	49165	16
+Burnham	Benjamin	Dr.	N	112716	16
+Burns	Vanessa	Miss	N	85496	15
+Caldwell	Amy	Ms.	Y	28001	15
+Caraballo	Shane	Dr.	N	112643	15
+Carey	Deborah	Ms.	Y	305030	15
+Carlos	William	Dr.	Y	196652	15
+Casillas	Andy	Sir	N	161957	15
+Chacon	Michael	Mr.	N	261172	15
+Chambers	Nettie	Miss	N	249414	15
+Chapa	Walter	Dr.	N	316848	15
+Chavez	Tiffany	Dr.	Y	402723	16
+Chen	Myong	Miss	N	62560	15
+Chen	Nathaniel	Mr.	Y	352928	15
+Chin	Paul	Dr.	Y	339356	16
+Chiu	Helena	Mrs.	Y	413044	16
+Chung	Michael	Mr.	N	315708	15
+Clark	Caleb	Dr.	N	73210	15
+Clark	Nancy	Ms.	N	259715	15
+Clement	Mike	Mr.	N	111462	15
+Cobb	Walter	Sir	N	23710	16
+Cody	Diana	Ms.	Y	368986	15
+Coleman	Cheryl	Dr.	N	7184	15
+Coleman	Thomas	Dr.	Y	226475	15
+Cook	Jessica	Miss	N	237625	15
+Cooper	Donald	Mr.	Y	63097	15
+Cooper	Wendy	Dr.	N	280750	16
+Costa	Thelma	Dr.	Y	270433	15
+Cowan	Linda	Miss	N	200817	16
+Cox	Julie	Ms.	N	166225	15
+Crowe	Carole	Mrs.	Y	178631	15
+Curran	Harry	Mr.	Y	228694	15
+Daley	Rosemary	Miss	Y	187035	16
+Daly	Clifford	Sir	Y	369477	15
+Daniels	Matthew	Mr.	N	473084	16
+Dasilva	Destiny	Dr.	N	316749	15
+Dasilva	Vivian	Dr.	Y	115755	15
+Davidson	Brandie	Mrs.	N	33536	16
+Davis	Geraldine	Dr.	Y	12536	15
+Dobson	Harry	Sir	N	408202	15
+Dougherty	Harriet	Ms.	Y	304595	16
+Dunn	Donna	Mrs.	N	147148	15
+Edgar	Rufus	Mr.	N	87139	15
+Edmond	Irene	Ms.	N	261093	15
+Edwards	Agnes	Miss	Y	162831	15
+Edwards	Carroll	Sir	N	376905	16
+Edwards	Ramona	Ms.	Y	430771	15
+Elliott	Lidia	Ms.	Y	175233	15
+Espinosa	Michale	Sir	N	229216	16
+Evans	Dannette	Ms.	Y	203554	16
+Ferguson	Julia	Miss	N	163579	15
+Fernandez	Gary	Mr.	N	148847	15
+Fernandez	Stephanie	Dr.	Y	382110	15
+Field	Brenton	Mr.	Y	380400	16
+Fisher	Brenda	Mrs.	N	371672	15
+Fisher	George			309866	16
+Flores	Gary	Dr.	N	250287	15
+Flores	Roy	Sir	N	14362	15
+Flynn	Aurora	Mrs.	Y	113923	15
+Fortner	Michael			322540	15
+Foster	Jesse	Sir	N	25626	16
+Foster	Robert	Mr.	Y	382397	15
+Fraser	Andrew	Miss	Y	52256	15
+Freeman	Ralph	Mr.	N	281041	15
+Fuller	James	Sir	Y	262437	15
+Gamboa	Lucile	Ms.	Y	216867	16
+Garcia	Scarlet	Ms.	Y	169450	16
+Gardner	Robert	Sir	N	321265	16
+Garvin	Brooke	Ms.	N	9370	15
+Garza	John	Mr.	Y	100885	15
+George	Betty	Mrs.	Y	380048	16
+Gibson	James	Dr.	N	221858	16
+Gil	Betty	Miss	Y	32455	15
+Gillespie	Chasity	Ms.	N	190691	15
+Golden	Dawn	Dr.	Y	343938	15
+Gonzalez	William	Sir	Y	241922	16
+Gordon	Reynaldo	Sir	N	256877	16
+Gould	Armand	Sir	Y	284697	16
+Granger	Steven	Sir	N	85620	15
+Graves	Janet	Dr.	N	389024	16
+Green	Wayne	Sir	N	263010	15
+Greene	Eva	Mrs.	Y	34579	15
+Gregg	Stewart	Mr.	N	374117	15
+Gregory	Peggy	Mrs.	N	479928	16
+Griffith	Frank	Dr.	N	168802	15
+Grimm	John	Dr.	N	418186	15
+Gunn	Joyce	Ms.	Y	353483	15
+Haag	Roy	Mr.	Y	402532	15
+Haas	Barry	Sir	N	269017	15
+Haight	Janice	Dr.	N	424084	15
+Hamilton	Mark	Sir	N	381125	16
+Harding	Paul	Mr.	Y	388207	15
+Hargett	Walter	Dr.	Y	131418	15
+Harris			N	435336	16
+Harris	Dorothy	Ms.	Y	111693	15
+Harris	John	Sir	Y	165346	15
+Harris	Yolanda	Ms.	N	230470	15
+Harvey	Adam	Ms.	Y	460933	15
+Hawkins	Clyde	Dr.	Y	236510	15
+Head	Shannon	Sir	N	258235	16
+Heilman	Garret	Mr.	Y	73719	16
+Henderson	Jason	Mr.	N	261064	16
+Henderson	Thomas	Dr.	Y	136844	16
+Henry	Gabriel	Dr.	Y	10691	15
+Henry	Todd	Mr.	Y	288520	15
+Hernandez	Sandra	Dr.	Y	14252	16
+Hicks	Kenneth	Sir	Y	196090	15
+Hill	Mallory	Ms.	Y	88472	15
+Hite	James			240538	15
+Hoffman	Keisha	Miss	N	321813	16
+Hoffman	Randall	Dr.	Y	166156	15
+Hood	Beulah	Dr.	N	383438	15
+Hopkins	Andre	Ms.	N	69374	16
+Horan	Madelyn	Ms.	Y	468676	16
+Howard	Brian	Dr.	Y	123691	16
+Howell	Taylor	Sir	Y	141296	15
+Huffman	Bradley	Sir	N	221290	16
+Humphrey	Bobbie	Sir	Y	243276	15
+Hunter	Bobby	Sir	Y	230277	16
+Hunter	Derrick	Mr.	Y	59463	15
+Hunter	Nathan	Dr.	N	293802	15
+Hurtado	Susan	Mrs.	N	471974	15
+Jackson	Hannah	Miss	N	12862	15
+Jackson	Richard	Sir	Y	220211	15
+Jackson	Russell	Sir	N	123052	15
+Jackson	Sergio	Dr.	N	419626	15
+James	Carl	Sir	N	221226	15
+James	Kay	Mrs.	Y	88160	16
+Jennings	Catherine	Mrs.	Y	261616	16
+Jessup	Carlos	Sir	N	258871	15
+Jewell	Doris	Ms.	N	65663	15
+Jimenez	Adalberto	Sir	N	16278	15
+Johnson	Amparo	Miss	N	104162	15
+Johnson	Cynthia	Ms.	N	17471	15
+Johnson	Evelyn	Ms.	N	13775	15
+Johnson	Florine	Dr.	N	354456	16
+Johnson	Winnie	Ms.	N	265376	15
+Jordan	Darrel	Dr.	Y	435879	16
+Jordan	Judith	Ms.	Y	463031	15
+Jordan	Vincent	Sir	Y	155931	15
+Jorgensen	Julianne	Dr.	Y	87132	16
+Joyce	Erma	Miss	N	193896	15
+Juarez	Lisa	Ms.	Y	120037	15
+Justice	Barbara	Miss	Y	372199	15
+Justice	Marlys	Miss	N	226375	15
+Kaplan	Timothy	Sir	N	271458	16
+Keegan	Thomas	Dr.	N	53396	15
+Keeton	Karen	Mrs.	N	277808	15
+Kellogg	Darlene	Miss	Y	463911	15
+Kelly	Hosea	Dr.	Y	303187	15
+Kemp	Joseph	Dr.	N	436005	15
+Kim	James	Mr.	N	236887	15
+King				401788	15
+Kirby	Stephen	Sir	Y	277684	15
+Kish	Curtis	Mr.	Y	470808	16
+Kish	Lisa	Mrs.	N	419361	15
+Knight	Joshua	Mr.	N	249128	15
+Knowles	Rita	Dr.	N	446884	15
+Larson	Mae	Mrs.	Y	119381	15
+Lawrence	Ruth	Dr.	Y	375564	16
+Lee	Lesia	Miss	N	415568	15
+Lee	William	Sir	Y	226270	16
+Leonard	Louis	Mr.	N	467011	15
+Levesque	Robert	Dr.	Y	31661	15
+Levine	Ryan	Mr.	Y	372822	15
+Lewandowski	Edwin	Mr.	N	61084	15
+Lewis	Eric	Sir	N	211173	16
+Lindsey		Dr.		385036	15
+Link	Fernando	Dr.	N	461183	16
+Long	Ashley	Dr.	Y	356392	15
+Lopez	Amy	Dr.	Y	449680	15
+Lopez	Dominique	Dr.	Y	439910	15
+Luna	James	Dr.	Y	254547	16
+Lynch	Suzanne	Miss	Y	434100	16
+Lynn	Caroline	Dr.	N	473502	16
+Mallory	Anne	Mrs.	Y	272727	15
+Marcus	Harlan	Dr.	N	388557	15
+Marino	Virginia	Miss	N	39872	15
+Martin	Barbara	Mrs.	N	50011	15
+Martin	Eleanor	Mrs.	N	202640	15
+Martin	Nicholas	Dr.	N	135178	16
+Martin	Norman	Mr.	N	178489	15
+Matthews	Angela	Ms.	N	241483	16
+Maurer	Anthony	Mrs.	Y	465927	15
+Mayfield	Greg	Dr.	N	94375	15
+Maynard	Robert	Mr.	Y	269655	15
+Mcclary	Lori	Ms.	N	304092	16
+Mcdaniels	Larry	Dr.	N	151468	16
+Mcdonald	Edwin	Sir	N	122178	15
+Mcdonnell	James	Dr.	N	336858	16
+Mcintyre	Andrew	Ms.	Y	456539	15
+Mckay	Jessica	Dr.	Y	361253	15
+Mckeown	Willie	Dr.	Y	290668	16
+Mcknight	Cheryl	Ms.	N	338863	15
+Mcpherson	Lisa	Miss	Y	35782	16
+Mcreynolds	Adam	Ms.	Y	474275	16
+Medina	Sabrina	Ms.	N	166493	16
+Meek	Ruby	Ms.	N	303620	16
+Michel	Gerald	Mr.	Y	314979	15
+Miller	Aaron	Ms.	Y	457134	15
+Miller	Christopher	Dr.	Y	315842	15
+Miller	Ignacio	Dr.	Y	279448	16
+Miller	Michael	Dr.	Y	84116	15
+Miller	Scott	Mr.	N	225795	16
+Mills	Natalie	Miss	Y	284509	15
+Mojica	Stephen	Mr.	Y	439509	15
+Moore	Kimberly	Mrs.	N	343043	15
+Moore	Marie	Dr.	N	136244	15
+Moore	Mark	Mr.	N	171238	16
+Morris	Bonita	Mrs.	N	12960	15
+Morris	Michael	Mr.	N	288675	16
+Morris	Paul	Mr.	Y	461297	16
+Morton	Robert	Sir	N	320231	15
+Moss	Sandra	Miss	Y	349796	15
+Munoz	Esperanza	Ms.	Y	393789	16
+Napier	Marilyn	Mrs.	Y	240549	16
+Nathan	Marcia	Dr.	Y	381955	16
+Neal	Rosa	Miss	N	200033	15
+Nelson	Mattie	Dr.	N	474526	15
+Nicholson	Anna	Mrs.	N	206284	15
+Noel	Ryan	Dr.	N	429947	16
+Norris	Julia	Ms.	N	121343	15
+Ortega	Michele	Miss	Y	293029	15
+Ortiz	Kimberly	Dr.	Y	200312	15
+Osgood	Yvette	Mrs.	Y	268364	15
+Pacheco	Lena	Mrs.	N	366118	15
+Parker	Allison	Dr.	Y	293479	15
+Parker	Cynthia	Mrs.	N	257444	15
+Parker	Michael	Mr.	N	250673	15
+Partin	Robert	Sir	N	378346	16
+Pearson	Stephanie	Miss	N	42741	15
+Pelletier	Andrea	Mrs.	N	62471	15
+Peterson	Taylor	Mr.	Y	295847	15
+Philips	Elbert	Mr.	N	245287	15
+Phillips	Scott	Dr.	Y	195003	15
+Poirier	Lorie	Mrs.	N	163423	16
+Porter	Floyd	Dr.	Y	255340	15
+Portillo	Cornelius	Sir	Y	294472	16
+Potter	David	Mr.	N	477579	16
+Potter	Jennifer	Ms.	N	29979	15
+Prescott	Denise	Mrs.	N	453534	15
+Price	Florence	Ms.	Y	83835	15
+Purcell	Amy	Ms.	Y	124398	16
+Radford	Harry	Mr.	N	174527	15
+Reed	Aleida	Dr.	N	405775	15
+Rendon	Elois	Mrs.	N	47752	15
+Reynolds	Bruce	Dr.	Y	20716	15
+Reynolds	Eddie	Mr.	N	281048	16
+Reynolds	Gary	Mr.	N	394863	15
+Reynolds	Glen	Dr.	N	370040	15
+Richardson	Joyce	Miss	Y	310795	15
+Rivera	Francisco	Sir	N	367563	15
+Roberts	Polly	Ms.	Y	344244	15
+Robinson	Annette	Mrs.	Y	437626	15
+Robinson	John	Dr.	N	468219	15
+Rodriquez	Cora	Ms.	N	165730	15
+Rojas	Freddie	Sir	N	382820	15
+Rose	Helen	Dr.	Y	254712	15
+Rose	Sylvia	Mrs.	N	300303	15
+Roush	Katherine	Ms.	N	413977	15
+Russell	Robert	Mr.	N	27497	16
+Salazar	Linda	Dr.	Y	389159	16
+Salinas	Norman	Mr.	N	305367	16
+Salley	Terrie	Miss	Y	235550	15
+Sanborn	Carly	Miss	Y	372992	15
+Sargent	Brett	Dr.	Y	390948	15
+Schmidt	Hector	Dr.	Y	234350	16
+Schwartz	Cornell	Mr.	Y	302033	15
+Scott	Catherine	Ms.	Y	233051	15
+Searcy	Arthur	Miss	Y	39446	16
+Shaffer		Dr.	N	216653	15
+Shaffer	Rita	Mrs.	Y	64282	15
+Shaw	Anneliese	Dr.	Y	28551	16
+Silverman	Daniel	Dr.	Y	420605	15
+Simmons	Bonnie	Ms.	N	467311	16
+Simmons	Nicholas	Dr.	N	258205	15
+Smart	Randall	Sir	Y	7880	15
+Smith	Dorothy	Mrs.	Y	276312	15
+Smith	Kelly	Sir	Y	283831	16
+Smith	Sterling	Dr.	N	27500	16
+Snyder	Joseph	Dr.	N	78926	16
+Snyder	Rosa	Dr.	Y	7269	16
+Somers	Claudia	Mrs.	N	179702	15
+South	Mario	Sir	N	468396	15
+Stamper	Andrew	Dr.	N	333679	15
+Stanley	Gayla	Dr.	Y	46248	16
+Stewart	Allan	Mr.	N	358741	15
+Stewart	Elaine	Miss	N	388762	15
+Stidham	Joseph	Mr.	N	184598	16
+Stone	Kathryn	Ms.	Y	113894	15
+Stuart	Nicole	Ms.	N	167446	15
+Suggs	Sasha	Dr.	N	29032	15
+Summers	Nancy	Dr.	N	135449	16
+Sweat	Louis	Dr.	Y	214214	16
+Swenson	William	Mr.	N	262403	16
+Tanner	Alfredo	Mr.	N	123535	15
+Tate	Jordan	Sir	Y	274376	15
+Tatum	Petrina	Dr.	N	149298	15
+Taylor	Eric	Sir	Y	175123	15
+Taylor	Kayla	Ms.	N	276366	16
+Terry	Daniel	Dr.	Y	24547	15
+Thomas	Lisa	Dr.	N	451629	15
+Thomas	Robert	Dr.	N	431706	15
+Thomas	Ruth	Miss	Y	183154	15
+Tisdale	Margaret	Mrs.	N	18888	15
+Tolbert	Jeannine	Miss	Y	418628	15
+Tomlinson	Kermit	Mr.	Y	369500	16
+Tompkins	Wesley	Dr.	Y	63153	15
+Torres	Chanel	Mrs.	Y	429418	16
+Torres	Marie	Dr.	Y	319763	15
+Totten	Richard	Sir	Y	446418	15
+Trammell	Francesca	Ms.	Y	409993	15
+Tran	Brooke	Miss	Y	76869	15
+Tucker	Nila	Mrs.	N	225723	15
+Turpin	Edward	Mr.	N	325029	15
+Upshaw	James	Dr.	N	74295	15
+Vazquez	Jose	Dr.	N	82227	15
+Vazquez	Matthew	Sir	N	16945	15
+Velasco	John	Dr.	N	469671	15
+Voss	Paul	Mr.	N	365612	16
+Waller	Chester	Mr.	Y	32596	15
+Wang	Daniel	Sir	N	382865	16
+Ward	Jennifer	Miss	N	259335	15
+Ward	Sharon	Mrs.	N	411212	15
+Washington	Andrea	Dr.	N	403634	16
+Waterman	Melodie	Miss	Y	217862	15
+Weaver	Barry	Mr.	N	300307	15
+Weaver	Karen	Dr.	Y	40132	15
+Webber	Steven	Dr.	Y	273476	16
+Weiss	Kathryn	Miss	N	277377	15
+Wellman	Ronnie	Sir	Y	280604	16
+Wells	Colton	Mr.	N	433776	16
+West	Betty	Dr.	N	432670	15
+West	Samantha	Mrs.	N	419669	15
+Wheatley	Mirta	Ms.	N	216258	15
+White	Donald	Mr.	N	401452	15
+White	Robert	Dr.	N	254047	15
+White	Samuel	Dr.	Y	370199	15
+Wickham	Freda	Ms.	Y	412542	15
+Wilkins	Elizabeth	Dr.	N	91655	15
+Williams		Dr.		99233	15
+Williams	Archie	Mr.	N	113007	15
+Williams	Floyd	Sir	N	453026	15
+Williams	Jillian	Miss	N	11753	15
+Williams	Richard	Sir	N	273404	15
+Willis	Emily	Ms.	N	34735	15
+Wilson	Annetta	Mrs.	Y	476049	15
+Wilson	David	Sir	Y	260975	15
+Wilson	Gregory	Dr.	Y	6580	15
+Wilson	Joshua	Mr.	Y	226220	16
+Wilson	Susan	Dr.	Y	37538	16
+Wilson	Wanda	Dr.	Y	89977	16
+Wolfe	Ann	Miss	Y	58559	16
+Wolfe	Christopher	Mr.	Y	104878	15
+Wood	Richard	Sir	Y	372051	15
+Woods	Celia	Mrs.	Y	216299	15
+Wright	Mitchell	Sir	N	90306	15
+Wyatt	Christopher	Sir	N	86699	15
+Yates	Francis	Dr.	Y	99782	15
+Young	Evelyn	Mrs.	Y	279348	15
+Yu	Kathleen	Mrs.	Y	187617	16
+Fetched 418 row(s) in 1.94s

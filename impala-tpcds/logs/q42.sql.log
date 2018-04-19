@@ -1,0 +1,45 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select dt.d_year,
+  item.i_category_id,
+  item.i_category,
+  sum(ss_ext_sales_price)
+from
+  date_dim dt,
+  store_sales,
+  item
+where
+  dt.d_date_sk = store_sales.ss_sold_date_sk
+  and store_sales.ss_item_sk = item.i_item_sk
+  and item.i_manager_id = 1
+  and dt.d_moy = 12
+  and dt.d_year = 1998
+  and ss_sold_date_sk between 2451149 and 2451179  -- partition key filter
+group by
+  dt.d_year,
+  item.i_category_id,
+  item.i_category
+order by
+  sum(ss_ext_sales_price) desc,
+  dt.d_year,
+  item.i_category_id,
+  item.i_category
+limit 100
+Query submitted at: 2018-04-19 06:49:02 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=2b4475548c57f69e:ac17d52600000000
+1998	1	Women	862306.1300000001
+1998	6	Jewelry	862076.3300000001
+1998	7	Home	726102.6
+1998	10	Electronics	704992.96
+1998	2	Men	640134.5600000001
+1998	5	Music	623784.1900000002
+1998	3	Children	571542.8700000001
+1998	4	Shoes	533659.9799999999
+1998	9	Books	467550.2399999999
+1998	8	Sports	417644.6899999999
+Fetched 10 row(s) in 1.52s

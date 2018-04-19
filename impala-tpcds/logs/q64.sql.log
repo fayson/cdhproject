@@ -1,0 +1,227 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with cs_ui as
+ (select cs_item_sk
+        ,sum(cs_ext_list_price) as sale,sum(cr_refunded_cash+cr_reversed_charge+cr_store_credit) as refund
+  from catalog_sales
+      ,catalog_returns
+  where cs_item_sk = cr_item_sk
+    and cs_order_number = cr_order_number
+  group by cs_item_sk
+  having sum(cs_ext_list_price)>2*sum(cr_refunded_cash+cr_reversed_charge+cr_store_credit)),
+cross_sales as
+ (select i_product_name product_name
+     ,i_item_sk item_sk
+     ,s_store_name store_name
+     ,s_zip store_zip
+     ,ad1.ca_street_number b_street_number
+     ,ad1.ca_street_name b_streen_name
+     ,ad1.ca_city b_city
+     ,ad1.ca_zip b_zip
+     ,ad2.ca_street_number c_street_number
+     ,ad2.ca_street_name c_street_name
+     ,ad2.ca_city c_city
+     ,ad2.ca_zip c_zip
+     ,d1.d_year as syear
+     ,d2.d_year as fsyear
+     ,d3.d_year s2year
+     ,count(*) cnt
+     ,sum(ss_wholesale_cost) s1
+     ,sum(ss_list_price) s2
+     ,sum(ss_coupon_amt) s3
+  FROM   store_sales
+        ,store_returns
+        ,cs_ui
+        ,date_dim d1
+        ,date_dim d2
+        ,date_dim d3
+        ,store
+        ,customer
+        ,customer_demographics cd1
+        ,customer_demographics cd2
+        ,promotion
+        ,household_demographics hd1
+        ,household_demographics hd2
+        ,customer_address ad1
+        ,customer_address ad2
+        ,income_band ib1
+        ,income_band ib2
+        ,(select * from item 
+	 where i_color in ('lavender','metallic','beige','gainsboro','chartreuse','lemon') and
+	 i_current_price between 6 and 6 + 10 and
+         i_current_price between 6 + 1 and 6 + 15) item1
+  WHERE  
+	 ss_store_sk = s_store_sk AND
+         ss_sold_date_sk = d1.d_date_sk AND
+         ss_sold_date_sk between 2451180 and 2451910 AND
+         ss_customer_sk = c_customer_sk AND
+         ss_cdemo_sk= cd1.cd_demo_sk AND
+         ss_hdemo_sk = hd1.hd_demo_sk AND
+         ss_addr_sk = ad1.ca_address_sk and
+         ss_item_sk = i_item_sk and
+         ss_item_sk = sr_item_sk and
+         ss_ticket_number = sr_ticket_number and
+         ss_item_sk = cs_ui.cs_item_sk and
+         c_current_cdemo_sk = cd2.cd_demo_sk AND
+         c_current_hdemo_sk = hd2.hd_demo_sk AND
+         c_current_addr_sk = ad2.ca_address_sk and
+         c_first_sales_date_sk = d2.d_date_sk and
+         c_first_shipto_date_sk = d3.d_date_sk and
+         ss_promo_sk = p_promo_sk and
+         hd1.hd_income_band_sk = ib1.ib_income_band_sk and
+         hd2.hd_income_band_sk = ib2.ib_income_band_sk and
+         cd1.cd_marital_status <> cd2.cd_marital_status
+group by i_product_name
+       ,i_item_sk
+       ,s_store_name
+       ,s_zip
+       ,ad1.ca_street_number
+       ,ad1.ca_street_name
+       ,ad1.ca_city
+       ,ad1.ca_zip
+       ,ad2.ca_street_number
+       ,ad2.ca_street_name
+       ,ad2.ca_city
+       ,ad2.ca_zip
+       ,d1.d_year
+       ,d2.d_year
+       ,d3.d_year
+)
+select cs1.product_name col1
+     ,cs1.store_name col2
+     ,cs1.store_zip col3
+     ,cs1.b_street_number col4
+     ,cs1.b_streen_name col5
+     ,cs1.b_city col6
+     ,cs1.b_zip col7
+     ,cs1.c_street_number col8
+     ,cs1.c_street_name col9
+     ,cs1.c_city col10
+     ,cs1.c_zip col11
+     ,cs1.syear col12
+     ,cs1.cnt col13
+     ,cs1.s1 col14
+     ,cs1.s2 col15
+     ,cs1.s3 col16
+     ,cs2.s1 col17
+     ,cs2.s2 col18
+     ,cs2.s3 col19
+     ,cs2.syear col20
+     ,cs2.cnt col21
+from cross_sales cs1,cross_sales cs2
+where cs1.item_sk=cs2.item_sk and
+     cs1.syear = 1999 and
+     cs2.syear = 1999 + 1 and
+     cs2.cnt <= cs1.cnt and
+     cs1.store_name = cs2.store_name and
+     cs1.store_zip = cs2.store_zip
+order by cs1.product_name
+       ,cs1.store_name
+       ,cs2.cnt
+limit 100
+ableeseantieingought	bar	31904	415	Second 	Lakewood	18877	571	9th 6th	Summit	60499	1999	1	94.45	169.06	0	47.6	82.34	0	2000	1
+ableeseantieingought	bar	31904	795	South Church	Red Hill	14338	633	10th Main	Mountain View	44466	1999	1	26.23	40.39	0	47.6	82.34	0	2000	1
+antiationoughtoughtable	n st	35709	720	Second Hill	Glendale	23951	586	Third Adams	Franklin	39101	1999	1	54.79	88.75	4413.36	24.7	38.03	523.98	2000	1
+antibarable	able	31904	412	First 11th	Clifton	28014	591	4th 	Phoenix	62276	1999	1	100	126	50.97	11.02	16.41	0	2000	1
+antibarable	able	31904	412	First 11th	Clifton	28014	591	4th 	Phoenix	62276	1999	1	100	126	50.97	23.29	44.94	0	2000	1
+antibarable	ese	31904	770	Maple Lincoln	Sunnyside	61952	129	Park Central	Oak Grove	28370	1999	1	74.02	88.08	0	78.03	99.87	0	2000	1
+antibarable	ese	31904	770	Maple Lincoln	Sunnyside	61952	129	Park Central	Oak Grove	28370	1999	1	74.02	88.08	0	88.97	149.46	0	2000	1
+antibarable	n st	35709	752	Mill First	Allentown	71838	727	Cedar 2nd	Hillcrest	63003	1999	1	69.31999999999999	87.34	0	37.07	45.96	0	2000	1
+antibarable	pri	31904	243	Hill 	Antioch	58605	3	6th 	Brownsville	79310	1999	1	52.39	77.53	0	71.8	93.34	0	2000	1
+antibarable	pri	31904	243	Hill 	Antioch	58605	3	6th 	Brownsville	79310	1999	1	52.39	77.53	0	98.59999999999999	179.45	0	2000	1
+anticallyeingableought	able	31904	562	10th Adams	Franklin	79101	728	Jackson Sycamore	Riverdale	79391	1999	1	13.28	13.94	0	97.77	100.7	0	2000	1
+anticallyeingableought	bar	31904	364	Forest Pine	Edgewood	40069	729	5th North	Dewey	71160	1999	1	15.48	28.79	0	97.83	131.09	0	2000	1
+anticallyeingableought	bar	31904	833	Second 	Georgetown	97057	203	Railroad 	Waterloo	41675	1999	1	16.42	18.88	120.94	97.83	131.09	0	2000	1
+anticallyeingcally	able	31904	35	12th 	Plainview	23683	641	Lakeview 	Liberty	63451	1999	1	33.49	41.52	0	47.77	92.67	0	2000	1
+anticallyeingcally	able	31904	652	Cherry 	Oakland	09843	924	Laurel 	Lebanon	62898	1999	1	76.13	114.19	7.95	47.77	92.67	0	2000	1
+anticallyeingcally	n st	35709	26	5th 14th	Glenwood	73511	31	Williams Forest	Five Forks	32293	1999	1	81.86	111.32	0	95.09999999999999	190.2	335.69	2000	1
+anticallyeingcally	n st	35709	150	2nd 	Shady Grove	32812	829	Center 9th	Winslow	78525	1999	1	80.66	106.47	0	95.09999999999999	190.2	335.69	2000	1
+anticallyeingcally	pri	31904	29	Adams Park	Valley View	75124	825	Meadow Valley	Crossroads	30534	1999	1	99.23	126.02	0	16.81	20.5	390.54	2000	1
+anticallyeingcally	pri	31904	29	Adams Park	Valley View	75124	825	Meadow Valley	Crossroads	30534	1999	1	99.23	126.02	0	76.33	98.45999999999999	783.27	2000	1
+anticallyoughtantiable	able	31904	677	Smith 	Milo	60116	148	Oak 	Walnut Grove	87752	1999	1	79.25	147.4	0	3.76	4.32	0	2000	1
+anticallyoughtantiable	able	31904	921	Sixth 	New Hope	49431		9th 	Union Hill		1999	1	50.49	60.58	0	3.76	4.32	0	2000	1
+anticallyoughtantiable	bar	31904	345	13th Lakeview	Newport	41521	115	Wilson Miller			1999	1	16.73	24.42	0	24.59	33.93	0	2000	1
+anticallyoughtantiable	bar	31904	345	13th Lakeview	Newport	41521	115	Wilson Miller			1999	1	16.73	24.42	0	41.82	73.59999999999999	51.52	2000	1
+antieingeseoughtought	ation	31904	113	Walnut 	Greenville	21387	938	Pine 	Harmony	45804	1999	1	4.79	6.7	0	20.42	37.36	0	2000	1
+antieingeseoughtought	ese	31904	800	3rd 	Mount Zion	78054	154	First Jefferson	Franklin	59101	1999	1	54.11	74.67	0	87.88	115.12	0	2000	1
+antieingeseoughtought	ese	31904	800	3rd 	Mount Zion	78054	154	First Jefferson	Franklin	59101	1999	1	54.11	74.67	0	82.27	94.61	116.46	2000	1
+antieingeseoughtought	ese	31904	443	Johnson 15th	New Town	89634	430	3rd 	Macedonia	61087	1999	1	73.06999999999999	142.48	0	82.27	94.61	116.46	2000	1
+antieingeseoughtought	ese	31904	443	Johnson 15th	New Town	89634	430	3rd 	Macedonia	61087	1999	1	73.06999999999999	142.48	0	87.88	115.12	0	2000	1
+ationablebarese	able	31904	314	Center Elm	Lakewood	48877	232	Mill 6th	Fairfield	46192	1999	1	52.04	101.99	0	94.79000000000001	179.15	0	2000	1
+ationablebarese	able	31904	456	Church Washington	Woodville	74289	228	Forest Sycamore	Bethel		1999	1	24.48	44.3	0	94.79000000000001	179.15	0	2000	1
+ationablebarese	eing	35709	844	Center 	Salem	28048	867	8th Hill	Mount Pleasant	21933	1999	1	24.26	29.11	0	17.47	20.09	0	2000	1
+ationablebarese	ese	31904	933	10th Valley	Mountain View	64466	888	Sunset 	Mount Zion	48054	1999	1	86.75	107.57	0	90.17	120.82	0	2000	1
+ationablebarese	ese	31904	933	10th Valley	Mountain View	64466	888	Sunset 	Mount Zion	48054	1999	1	86.75	107.57	0	15.67	26.79	0	2000	1
+ationablen station	cally	31904	386	Pine 	Wilson	46971	41	9th 	Lincoln	61289	1999	1	55.7	79.09	0	96.73999999999999	139.3	3007.91	2000	1
+ationablen station	cally	31904	534	Oak Seventh	New Hope	59431	687	Williams 14th	Highland	79454	1999	1	13.76	19.4	0	41.95	75.09	0	2000	1
+ationablen station	cally	31904	534	Oak Seventh	New Hope	59431	687	Williams 14th	Highland	79454	1999	1	13.76	19.4	0	96.73999999999999	139.3	3007.91	2000	1
+ationablen station	cally	31904	386	Pine 	Wilson	46971	41	9th 	Lincoln	61289	1999	1	55.7	79.09	0	41.95	75.09	0	2000	1
+ationablen station	ought	31904	361	11th Fourth	Marion	20399	544	College Willow	Lakeside	79532	1999	1	34.12	58	0	29.22	58.14	0	2000	1
+ationationantieingought	able	31904	996	Oak 	Friendship	34536	45	Johnson 2nd	Milo	50116	1999	1	66.59	128.51	688.85	38.43	53.8	0	2000	1
+ationationantieingought	able	31904	996	Oak 	Friendship	34536	45	Johnson 2nd	Milo	50116	1999	1	66.59	128.51	688.85	54.24	57.49	0	2000	1
+ationationantieingought	bar	31904	369	Fifth Highland	Mount Zion	28054	387	Second Church	Highland Park	66534	1999	1	57.01	63.28	0	93.52	127.18	0	2000	1
+ationationantieingought	bar	31904	369	Fifth Highland	Mount Zion	28054	387	Second Church	Highland Park	66534	1999	1	57.01	63.28	0	18.87	28.87	0	2000	1
+ationationantieingought	bar	31904	369	Fifth Highland	Mount Zion	28054	387	Second Church	Highland Park	66534	1999	1	57.01	63.28	0	61.76	74.11	0	2000	1
+ationbarcallyn st	cally	31904	813	Poplar Wilson	Mount Zion	28054	972	Walnut 	Oakdale	49584	1999	1	52.79	59.65	0	77.97	88.09999999999999	0	2000	1
+ationbarcallyn st	ought	31904	931	10th 2nd	Ludlow	75566	805		Philadelphia	55591	1999	1	3.32	5.14	0	12.38	15.97	0	2000	1
+ationbareseeseought	ation	31904	967	Dogwood 	Riverdale	99391	553	Park 	Pleasant Hill	33604	1999	1	84.56999999999999	145.46	0	60.67	107.38	0	2000	1
+ationbareseeseought	cally	31904	831	Williams 	Centerville	40059	621	Elm 15th	Hillcrest	63003	1999	1	89.93000000000001	94.42	2974.69	89.70999999999999	174.93	0	2000	1
+ationeingn stbarought	ese	31904	896				867	3rd Johnson	Midway	51904	1999	1	60.06	115.91	0	39.01	55.39	0	2000	1
+ationeingn stbarought	ese	31904	896				867	3rd Johnson	Midway	51904	1999	1	60.06	115.91	0	1.06	1.88	0	2000	1
+ationeingn stbarought	ese	31904	896				867	3rd Johnson	Midway	51904	1999	1	60.06	115.91	0	56.27	96.78	0	2000	1
+ationeseationought	ation	31904	358	Chestnut 	Centerville	50059	870	Dogwood 	Liberty	63451	1999	1	55.2	94.94	0	24.77	44.58	0	2000	1
+ationeseationought	bar	31904	393	Miller Lincoln	Buena Vista	45752	851	1st Johnson	Antioch	78605	1999	1	79.95999999999999	141.52	0	68.34	127.11	0	2000	1
+ationeseationought	bar	31904	760	Woodland 1st	Summit	20499	530	Dogwood 2nd	Valley View	75124	1999	1	35.38	64.03	0	68.34	127.11	0	2000	1
+ationeseationought	bar	31904	831	Railroad 	Shiloh	59275	149	Cherry 	Harmony	25804	1999	1	44.46	58.24	0	68.34	127.11	0	2000	1
+ationeseationought	ought	31904	65	13th Pine	Williamsville	18754	533	11th East	Five Forks	62293	1999	1	55.62	56.17	0	48.25	88.78	1385.92	2000	1
+ationoughtn stable	able	31904	477	North Lincoln	Highland	39454	644	West 	Lebanon	52898	1999	1	91.84999999999999	104.7	0	96.95	145.42	0	2000	1
+ationoughtn stable	able	31904	721	Davis 	Sunnyside	71952		Pine Pine		43451	1999	1	82.76000000000001	144	0	96.95	145.42	0	2000	1
+ationoughtn stable	able	31904	542	Williams Elm	Hamilton	62808	553	Eigth East	Union Hill	97746	1999	1	72.56	105.93	0	96.95	145.42	0	2000	1
+ationoughtn stable	ought	31904			Green Acres	37683	736	Chestnut 	Cordova	16938	1999	1	24.55	41.24	100.94	42.13	61.08	523.42	2000	1
+ationoughtn stable	pri	31904	861	1st 	Five Forks	72293					1999	1	4.23	7.44	0	77.42	89.03	0	2000	1
+barbarbareing	able	31904	350	12th 	Antioch	68605	612	Twelfth 	Wesley	01818	1999	1	71.79000000000001	85.43000000000001	0	9.32	16.31	0	2000	1
+barbarbareing	able	31904	568	Birch 	Oakwood	10169	279	Jefferson 5th	Greenville	21387	1999	1	38.57	45.51	0	9.32	16.31	0	2000	1
+barbarbareing	bar	31904	750	15th 	Midway	41904			Woodville	64289	1999	1	39.26	57.31	0	81.34	107.36	0	2000	1
+barbarbareing	bar	31904	750	15th 	Midway	41904			Woodville	64289	1999	1	39.26	57.31	0	45.4	51.75	0	2000	1
+barbarbareing	cally	31904	83	Hill 2nd	Green Acres	47683	712				1999	1	98.90000000000001	133.51	0	92.81999999999999	175.42	0	2000	1
+barbarbareing	eing	35709	877	Ash 4th	Sulphur Springs	68354	170	5th 1st	Midway	81904	1999	1	11.03	13.67	0	44.59	45.92	0	2000	1
+barbarbareing	eing	35709	877	Ash 4th	Sulphur Springs	68354	170	5th 1st	Midway	81904	1999	1	11.03	13.67	0	19.12	33.65	0	2000	1
+barbarbareing	ese	31904	954	Fifth 2nd	Springdale	28883	910	West 	Oak Grove	38370	1999	1	73.33	123.92	0	68.95	111.69	0	2000	1
+barbarbareing	ese	31904		Valley 	Riverdale	79391	22	Ridge View	Acme	40164	1999	1	64.55	98.11	0	95.33	126.78	62.64	2000	1
+barbarbareing	ese	31904	954	Fifth 2nd	Springdale	28883	910	West 	Oak Grove	38370	1999	1	73.33	123.92	0	95.33	126.78	62.64	2000	1
+barbarbareing	ese	31904		Valley 	Riverdale	79391	22	Ridge View	Acme	40164	1999	1	64.55	98.11	0	68.95	111.69	0	2000	1
+barcallybarpriable	ese	31904	304	Lee Sunset	Ashland	24244	51	2nd 	Jamestown	56867	1999	1	64.98999999999999	87.73	0	86.06999999999999	168.69	1082.24	2000	1
+barcallybarpriable	ese	31904	304	Lee Sunset	Ashland	24244	51	2nd 	Jamestown	56867	1999	1	64.98999999999999	87.73	0	55.74	65.77	0	2000	1
+baroughtationoughtable	able	31904	696	10th Mill	Woodland	74854	779	Fourth Miller	Lakeview	09179	1999	1	91.06	171.19	0	67.23	90.08	0	2000	1
+callyanticallyableought	able	31904	977	Green 	Dayton	62633	318	6th 	Woodville	44289	1999	1	96.53	166.99	160.52	93.86	146.42	0	2000	1
+callyanticallyableought	able	31904	977	Green 	Dayton	62633	318	6th 	Woodville	44289	1999	1	96.53	166.99	160.52	47.01	90.72	0	2000	1
+callyanticallyableought	able	31904	977	Green 	Dayton	62633	318	6th 	Woodville	44289	1999	1	96.53	166.99	160.52	12.15	14.7	0	2000	1
+callyanticallyableought	ation	31904	522	Davis 	Five Points	86098	449	Broadway 	Belmont	20191	1999	1	76.01000000000001	90.45	0	95.78	144.62	2381.9	2000	1
+callyanticallyableought	ation	31904	522	Davis 	Five Points	86098	449	Broadway 	Belmont	20191	1999	1	76.01000000000001	90.45	0	59.54	97.05	0	2000	1
+callyanticallyableought	ation	31904	22	Fifteenth 	Five Forks	72293	832	Spring Woodland	Hopewell	70587	1999	1	1.49	1.9	0	95.78	144.62	2381.9	2000	1
+callyanticallyableought	ation	31904	22	Fifteenth 	Five Forks	72293	832	Spring Woodland	Hopewell	70587	1999	1	1.49	1.9	0	59.54	97.05	0	2000	1
+callyanticallyableought	ese	31904	987	Dogwood Sycamore	Frogtown	09384	371	13th 	Harmon	25623	1999	1	7.97	13.07	0	48.95	74.40000000000001	0	2000	1
+callyanticallyableought	ese	31904	987	Dogwood Sycamore	Frogtown	09384	371	13th 	Harmon	25623	1999	1	7.97	13.07	0	34.16	38.94	447.01	2000	1
+callyanticallyableought	ought	31904	230	Forest 13th	Page	10296	20	Hickory Johnson	Oakdale	09584	1999	1	22	34.1	0	34.79	63.66	781.77	2000	1
+callyeingeingableable	n st	35709	971	Miller 	Walnut Grove	27752	393	Maple 6th	Richville	75945	1999	1	75.45	110.91	66.88	86.37	97.59	166.11	2000	1
+callyeingoughtationought	cally	31904	896	Washington Church	Deerfield	39840	336	North Dogwood	Woodlawn	94098	1999	1	93.79000000000001	109.73	0	6.27	6.7	0	2000	1
+callyeseeseableought	able	31904	230	Valley Wilson	Lakewood	48877	308	Walnut Eigth	Glenwood	53511	1999	1	36.97	69.13	0	40.46	41.26	353.24	2000	1
+callyeseeseableought	able	31904	589	Third 	Wilson	76971	592	Johnson Church	Shady Grove	42812	1999	1	74.13	111.93	0	40.46	41.26	353.24	2000	1
+callyeseeseableought	ation	31904	249	11th Pine	Plainview	53683	194	12th 	Stringtown	50162	1999	1	12.65	18.72	0	79.22	91.89	0	2000	1
+callyeseeseableought	ation	31904	249	11th Pine	Plainview	53683	194	12th 	Stringtown	50162	1999	1	12.65	18.72	0	1.95	3.86	0	2000	1
+callyeseeseableought	ation	31904	276	Fourth 	Florence	43394	271	Davis Davis	Friendship	24536	1999	1	53.16	62.72	0	79.22	91.89	0	2000	1
+callyeseeseableought	ation	31904	276	Fourth 	Florence	43394	271	Davis Davis	Friendship	24536	1999	1	53.16	62.72	0	1.95	3.86	0	2000	1
+callyeseeseableought	cally	31904	908	7th 	Woodville	04889	471	River 	Green Acres	08283	1999	1	53.92	99.20999999999999	0	90.88	150.86	0	2000	1
+callyeseeseableought	ese	31904	981	Second Franklin	Crossroads	90534	786	Williams 	Florence	73394	1999	1	74.47	130.32	0	88.37	110.46	0	2000	1
+callyeseeseableought	n st	35709	542	River Wilson	Mount Vernon	38482	796	Washington Miller	Clinton	28222	1999	1	66.01000000000001	97.69	0	72.79000000000001	145.58	0	2000	1
+callyn stbarationought	able	31904	810	Lake Chestnut	Concord	94107	565	Woodland 	Wilson	96971	1999	1	28.9	41.32	0	95.31	121.99	0	2000	1
+callyn stbarationought	able	31904	653	3rd 	Riverdale	19391	520	12th Central	Mount Zion	28054	1999	1	41.82	52.27	0	95.31	121.99	0	2000	1
+callyn stbarationought	able	31904	101				880	Main Twelfth	Shady Grove	62812	1999	1	37.51	41.26	0	95.31	121.99	0	2000	1
+callyoughtableable	ation	31904	313	View 	Florence	43394	739	7th 	Greenville	71387	1999	1	3.77	7.46	0	82.76000000000001	128.27	2465.23	2000	1
+callyoughtableable	bar	31904	877	East 	Oakwood	60169	751	Walnut 	Stringtown	90162	1999	1	31.57	35.98	280.98	99.54000000000001	103.52	0	2000	1
+Fetched 100 row(s) in 5.66s

@@ -1,0 +1,786 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with frequent_ss_items as
+ (select substr(i_item_desc,1,30) itemdesc,i_item_sk item_sk,d_date solddate,count(*) cnt
+  from store_sales,date_dim,item
+  where ss_sold_date_sk = d_date_sk
+    and ss_sold_date_sk between 2451180 and 2452640
+    and ss_item_sk = i_item_sk
+    and d_year in (1999,1999 + 1,1999 + 2,1999 + 3)
+  group by substr(i_item_desc,1,30),i_item_sk,d_date
+  having count(*) =4),
+ max_store_sales as
+ (select max(csales) tpcds_cmax
+  from (select c_customer_sk,sum(ss_quantity*ss_sales_price) csales
+        from store_sales
+            ,customer
+            ,date_dim 
+        where ss_customer_sk = c_customer_sk
+         and ss_sold_date_sk = d_date_sk
+	 and ss_sold_date_sk between 2451180 and 2452640
+         and d_year in (1999,1999+1,1999+2,1999+3)
+        group by c_customer_sk) x),
+ best_ss_customer as
+ (
+select t1.* from (
+select c_customer_sk,sum(ss_quantity*ss_sales_price) ssales
+from store_sales ,customer
+where ss_customer_sk = c_customer_sk
+group by c_customer_sk) t1,
+(select tpcds_cmax * 95/100 as c1 from max_store_sales) t2
+where t1.ssales = t2.c1
+)
+ select  c_last_name,c_first_name,sales
+ from ((select c_last_name,c_first_name,sum(cs_quantity*cs_list_price) sales
+        from catalog_sales
+            ,customer
+            ,date_dim 
+        where d_year = 1999 
+         and d_moy = 3 
+         and cs_sold_date_sk = d_date_sk 
+         and cs_sold_date_sk between 2451239 and 2451269
+         and cs_item_sk in (select distinct item_sk from frequent_ss_items)
+         and cs_bill_customer_sk in (select distinct c_customer_sk from best_ss_customer)
+         and cs_bill_customer_sk = c_customer_sk 
+       group by c_last_name,c_first_name)
+      union all
+      (select c_last_name,c_first_name,sum(ws_quantity*ws_list_price) sales
+       from web_sales
+           ,customer
+           ,date_dim 
+       where d_year = 1999 
+         and d_moy = 3 
+         and ws_sold_date_sk = d_date_sk 
+         and ws_sold_date_sk between 2451239 and 2451269
+         and ws_item_sk in (select distinct item_sk from frequent_ss_items)
+         and ws_bill_customer_sk in (select distinct c_customer_sk from best_ss_customer)
+         and ws_bill_customer_sk = c_customer_sk
+       group by c_last_name,c_first_name)) y
+     order by c_last_name,c_first_name,sales
+  limit 100
+WARNINGS: Memory limit exceeded: Error occurred on backend ip-172-31-30-69.ap-southeast-1.compute.internal:22000 by fragment 164e0dbe49915bb9:3e895fc100000039
+Memory left in process limit: -4.75 MB
+Query(164e0dbe49915bb9:3e895fc100000000): Reservation=246.69 MB ReservationLimit=1.60 GB OtherMemory=42.99 MB Total=289.68 MB Peak=326.26 MB
+  Unclaimed reservations: Reservation=36.94 MB OtherMemory=0 Total=36.94 MB Peak=170.94 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000000: Reservation=0 OtherMemory=8.41 KB Total=8.41 KB Peak=307.50 KB
+    EXCHANGE_NODE (id=106): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    PLAN_ROOT_SINK: Total=0 Peak=0
+    CodeGen: Total=420.00 B Peak=299.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000004f: Reservation=0 OtherMemory=107.46 KB Total=107.46 KB Peak=1.59 MB
+    SORT_NODE (id=57): Total=4.00 KB Peak=4.00 KB
+    UNION_NODE (id=0): Total=0 Peak=0
+    AGGREGATION_NODE (id=81): Total=42.12 KB Peak=42.12 KB
+      Exprs: Total=42.12 KB Peak=42.12 KB
+    EXCHANGE_NODE (id=80): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    AGGREGATION_NODE (id=105): Total=42.12 KB Peak=42.12 KB
+      Exprs: Total=42.12 KB Peak=42.12 KB
+    EXCHANGE_NODE (id=104): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    DataStreamSender (dst_id=106): Total=3.12 KB Peak=3.12 KB
+    CodeGen: Total=8.09 KB Peak=1.49 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000024: Reservation=0 OtherMemory=2.54 MB Total=2.54 MB Peak=5.03 MB
+    AGGREGATION_NODE (id=28): Total=42.12 KB Peak=42.12 KB
+      Exprs: Total=42.12 KB Peak=42.12 KB
+    HASH_JOIN_NODE (id=27): Total=58.25 KB Peak=58.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=27): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=27) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=23): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    HASH_JOIN_NODE (id=22): Total=42.25 KB Peak=42.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=22): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=22) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=60): Total=17.12 KB Peak=17.12 KB
+      Exprs: Total=17.12 KB Peak=17.12 KB
+    EXCHANGE_NODE (id=59): Total=0 Peak=0
+    DataStreamRecvr: Total=2.33 MB Peak=2.33 MB
+    EXCHANGE_NODE (id=67): Total=0 Peak=0
+    DataStreamRecvr: Total=4.01 KB Peak=4.01 KB
+    EXCHANGE_NODE (id=79): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    DataStreamSender (dst_id=80): Total=9.35 KB Peak=9.35 KB
+    CodeGen: Total=21.87 KB Peak=3.30 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000002: Reservation=0 OtherMemory=0 Total=0 Peak=25.25 MB
+    AGGREGATION_NODE (id=14): Reservation=0 OtherMemory=0 Total=0 Peak=8.79 MB
+    HASH_JOIN_NODE (id=13): Reservation=0 OtherMemory=0 Total=0 Peak=6.49 MB
+      Hash Join Builder (join_node_id=13): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=11): Total=0 Peak=9.87 MB
+    EXCHANGE_NODE (id=58): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.33 MB
+    DataStreamSender (dst_id=59): Total=0 Peak=106.57 KB
+    CodeGen: Total=0 Peak=1.72 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000001: Reservation=0 OtherMemory=0 Total=0 Peak=2.11 MB
+    HDFS_SCAN_NODE (id=12): Total=0 Peak=2.05 MB
+    DataStreamSender (dst_id=58): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=216.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000000d: Reservation=0 OtherMemory=0 Total=0 Peak=78.68 KB
+    AGGREGATION_NODE (id=66): Total=0 Peak=28.00 KB
+    EXCHANGE_NODE (id=65): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=8.02 KB
+    DataStreamSender (dst_id=67): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=0
+  Fragment 164e0dbe49915bb9:3e895fc10000000a: Reservation=0 OtherMemory=0 Total=0 Peak=3.21 MB
+    AGGREGATION_NODE (id=21): Total=0 Peak=16.00 KB
+    AGGREGATION_NODE (id=64): Reservation=0 OtherMemory=0 Total=0 Peak=3.12 MB
+    EXCHANGE_NODE (id=63): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=172.10 KB
+    DataStreamSender (dst_id=65): Total=0 Peak=14.22 KB
+    CodeGen: Total=0 Peak=329.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000007: Reservation=0 OtherMemory=0 Total=0 Peak=29.02 MB
+    AGGREGATION_NODE (id=20): Reservation=0 OtherMemory=0 Total=0 Peak=8.86 MB
+    HASH_JOIN_NODE (id=19): Reservation=0 OtherMemory=0 Total=0 Peak=6.62 MB
+      Hash Join Builder (join_node_id=19): Total=0 Peak=21.12 KB
+    HASH_JOIN_NODE (id=18): Reservation=0 OtherMemory=0 Total=0 Peak=2.47 MB
+      Hash Join Builder (join_node_id=18): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=15): Total=0 Peak=11.66 MB
+    EXCHANGE_NODE (id=61): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=29.96 KB
+    EXCHANGE_NODE (id=62): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.33 MB
+    DataStreamSender (dst_id=63): Total=0 Peak=106.57 KB
+    CodeGen: Total=0 Peak=2.89 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000005: Reservation=0 OtherMemory=0 Total=0 Peak=1.04 MB
+    HDFS_SCAN_NODE (id=17): Total=0 Peak=1023.54 KB
+    DataStreamSender (dst_id=61): Total=0 Peak=29.53 KB
+    CodeGen: Total=0 Peak=377.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000006: Reservation=0 OtherMemory=0 Total=0 Peak=2.11 MB
+    HDFS_SCAN_NODE (id=16): Total=0 Peak=2.05 MB
+    DataStreamSender (dst_id=62): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000021: Reservation=0 OtherMemory=1.24 MB Total=1.24 MB Peak=1.49 MB
+    HASH_JOIN_NODE (id=26): Total=58.25 KB Peak=58.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=26): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=26) Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=78): Total=0 Peak=0
+    DataStreamRecvr: Total=1.13 MB Peak=1.13 MB
+    AGGREGATION_NODE (id=77): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=76): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    DataStreamSender (dst_id=79): Total=12.09 KB Peak=12.09 KB
+    CodeGen: Total=8.18 KB Peak=1.39 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000016: Reservation=80.00 MB OtherMemory=220.73 KB Total=80.22 MB Peak=80.61 MB
+    AGGREGATION_NODE (id=10): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=75): Reservation=80.00 MB OtherMemory=91.19 KB Total=80.09 MB Peak=80.17 MB
+      Exprs: Total=55.12 KB Peak=55.12 KB
+    EXCHANGE_NODE (id=74): Total=0 Peak=0
+    DataStreamRecvr: Total=61.79 KB Peak=558.49 KB
+    DataStreamSender (dst_id=76): Total=42.66 KB Peak=42.66 KB
+    CodeGen: Total=3.97 KB Peak=724.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000013: Reservation=21.88 MB OtherMemory=11.68 MB Total=33.56 MB Peak=33.68 MB
+    AGGREGATION_NODE (id=9): Reservation=19.00 MB OtherMemory=79.12 KB Total=19.08 MB Peak=19.13 MB
+      Exprs: Total=55.12 KB Peak=55.12 KB
+    HASH_JOIN_NODE (id=8): Reservation=2.88 MB OtherMemory=108.66 KB Total=2.98 MB Peak=3.08 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=8): Total=13.12 KB Peak=21.12 KB
+        Hash Join Builder (join_node_id=8) Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=72): Total=0 Peak=0
+    DataStreamRecvr: Total=11.27 MB Peak=11.27 MB
+    EXCHANGE_NODE (id=73): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=1.11 MB
+    DataStreamSender (dst_id=74): Total=91.83 KB Peak=187.83 KB
+    CodeGen: Total=9.71 KB Peak=1.69 MB
+  Fragment 164e0dbe49915bb9:3e895fc10000000f: Reservation=1.94 MB OtherMemory=7.73 MB Total=9.67 MB Peak=9.70 MB
+    Runtime Filter Bank: Total=1.00 MB Peak=1.00 MB
+    HASH_JOIN_NODE (id=7): Reservation=1.94 MB OtherMemory=59.25 KB Total=2.00 MB Peak=2.03 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=7): Total=13.12 KB Peak=21.12 KB
+        Hash Join Builder (join_node_id=7) Exprs: Total=13.12 KB Peak=13.12 KB
+    HDFS_SCAN_NODE (id=4): Total=6.54 MB Peak=6.55 MB
+      Exprs: Total=4.00 KB Peak=4.00 KB
+    EXCHANGE_NODE (id=71): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=67.06 KB
+    DataStreamSender (dst_id=72): Total=84.69 KB Peak=100.69 KB
+    CodeGen: Total=8.07 KB Peak=1.46 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000012: Reservation=0 OtherMemory=0 Total=0 Peak=6.15 MB
+    HDFS_SCAN_NODE (id=6): Total=0 Peak=6.13 MB
+    DataStreamSender (dst_id=73): Total=0 Peak=387.35 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000000e: Reservation=0 OtherMemory=0 Total=0 Peak=2.63 MB
+    HDFS_SCAN_NODE (id=5): Total=0 Peak=2.61 MB
+    DataStreamSender (dst_id=71): Total=0 Peak=13.22 KB
+    CodeGen: Total=0 Peak=377.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000020: Reservation=0 OtherMemory=0 Total=0 Peak=7.63 MB
+    HASH_JOIN_NODE (id=25): Reservation=0 OtherMemory=0 Total=0 Peak=6.11 MB
+      Hash Join Builder (join_node_id=25): Total=0 Peak=21.12 KB
+    EXCHANGE_NODE (id=69): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=613.59 KB
+    EXCHANGE_NODE (id=70): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.19 MB
+    DataStreamSender (dst_id=78): Total=0 Peak=96.09 KB
+    CodeGen: Total=0 Peak=1.18 MB
+  Fragment 164e0dbe49915bb9:3e895fc10000001c: Reservation=0 OtherMemory=0 Total=0 Peak=3.15 MB
+    HASH_JOIN_NODE (id=24): Reservation=0 OtherMemory=0 Total=0 Peak=1.99 MB
+      Hash Join Builder (join_node_id=24): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=1): Total=0 Peak=132.02 KB
+    EXCHANGE_NODE (id=68): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=4.24 KB
+    DataStreamSender (dst_id=69): Total=0 Peak=14.20 KB
+    CodeGen: Total=0 Peak=1.46 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000019: Reservation=0 OtherMemory=0 Total=0 Peak=1.08 MB
+    HDFS_SCAN_NODE (id=3): Total=0 Peak=1.05 MB
+    DataStreamSender (dst_id=68): Total=0 Peak=22.57 KB
+    CodeGen: Total=0 Peak=378.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000001d: Reservation=0 OtherMemory=0 Total=0 Peak=4.50 MB
+    HDFS_SCAN_NODE (id=2): Total=0 Peak=4.36 MB
+    DataStreamSender (dst_id=70): Total=0 Peak=93.35 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000004a: Reservation=0 OtherMemory=2.54 MB Total=2.54 MB Peak=5.82 MB
+    AGGREGATION_NODE (id=56): Total=42.12 KB Peak=42.12 KB
+      Exprs: Total=42.12 KB Peak=42.12 KB
+    HASH_JOIN_NODE (id=55): Total=58.25 KB Peak=58.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=55): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=55) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=51): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    HASH_JOIN_NODE (id=50): Total=42.25 KB Peak=42.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=50): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=50) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=84): Total=17.12 KB Peak=17.12 KB
+      Exprs: Total=17.12 KB Peak=17.12 KB
+    EXCHANGE_NODE (id=83): Total=0 Peak=0
+    DataStreamRecvr: Total=2.33 MB Peak=2.33 MB
+    EXCHANGE_NODE (id=91): Total=0 Peak=0
+    DataStreamRecvr: Total=4.01 KB Peak=4.01 KB
+    EXCHANGE_NODE (id=103): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    DataStreamSender (dst_id=104): Total=9.35 KB Peak=9.35 KB
+    CodeGen: Total=21.87 KB Peak=3.30 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000028: Reservation=0 OtherMemory=0 Total=0 Peak=24.23 MB
+    AGGREGATION_NODE (id=42): Reservation=0 OtherMemory=0 Total=0 Peak=8.77 MB
+    HASH_JOIN_NODE (id=41): Reservation=0 OtherMemory=0 Total=0 Peak=6.49 MB
+      Hash Join Builder (join_node_id=41): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=39): Total=0 Peak=9.82 MB
+    EXCHANGE_NODE (id=82): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.33 MB
+    DataStreamSender (dst_id=83): Total=0 Peak=106.57 KB
+    CodeGen: Total=0 Peak=1.69 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000027: Reservation=0 OtherMemory=0 Total=0 Peak=2.11 MB
+    HDFS_SCAN_NODE (id=40): Total=0 Peak=2.06 MB
+    DataStreamSender (dst_id=82): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=216.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000033: Reservation=0 OtherMemory=0 Total=0 Peak=78.68 KB
+    AGGREGATION_NODE (id=90): Total=0 Peak=28.00 KB
+    EXCHANGE_NODE (id=89): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=8.02 KB
+    DataStreamSender (dst_id=91): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=0
+  Fragment 164e0dbe49915bb9:3e895fc100000030: Reservation=0 OtherMemory=0 Total=0 Peak=3.18 MB
+    AGGREGATION_NODE (id=49): Total=0 Peak=16.00 KB
+    AGGREGATION_NODE (id=88): Reservation=0 OtherMemory=0 Total=0 Peak=3.12 MB
+    EXCHANGE_NODE (id=87): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=125.08 KB
+    DataStreamSender (dst_id=89): Total=0 Peak=14.22 KB
+    CodeGen: Total=0 Peak=329.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000002d: Reservation=0 OtherMemory=0 Total=0 Peak=28.97 MB
+    AGGREGATION_NODE (id=48): Reservation=0 OtherMemory=0 Total=0 Peak=8.86 MB
+    HASH_JOIN_NODE (id=47): Reservation=0 OtherMemory=0 Total=0 Peak=6.62 MB
+      Hash Join Builder (join_node_id=47): Total=0 Peak=21.12 KB
+    HASH_JOIN_NODE (id=46): Reservation=0 OtherMemory=0 Total=0 Peak=2.47 MB
+      Hash Join Builder (join_node_id=46): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=43): Total=0 Peak=11.60 MB
+    EXCHANGE_NODE (id=85): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=29.96 KB
+    EXCHANGE_NODE (id=86): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.33 MB
+    DataStreamSender (dst_id=87): Total=0 Peak=106.57 KB
+    CodeGen: Total=0 Peak=2.89 MB
+  Fragment 164e0dbe49915bb9:3e895fc10000002b: Reservation=0 OtherMemory=0 Total=0 Peak=1.04 MB
+    HDFS_SCAN_NODE (id=45): Total=0 Peak=1023.54 KB
+    DataStreamSender (dst_id=85): Total=0 Peak=29.53 KB
+    CodeGen: Total=0 Peak=377.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000002c: Reservation=0 OtherMemory=0 Total=0 Peak=2.11 MB
+    HDFS_SCAN_NODE (id=44): Total=0 Peak=2.06 MB
+    DataStreamSender (dst_id=86): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000047: Reservation=2.12 MB OtherMemory=1.11 MB Total=3.24 MB Peak=3.40 MB
+    Runtime Filter Bank: Total=1.00 MB Peak=1.00 MB
+    HASH_JOIN_NODE (id=54): Reservation=2.12 MB OtherMemory=58.25 KB Total=2.18 MB Peak=2.21 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=54): Total=13.12 KB Peak=37.12 KB
+        Hash Join Builder (join_node_id=54) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=98): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=97): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    EXCHANGE_NODE (id=102): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=357.69 KB
+    DataStreamSender (dst_id=103): Total=12.09 KB Peak=12.09 KB
+    CodeGen: Total=9.85 KB Peak=1.43 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000039: Reservation=21.88 MB OtherMemory=5.27 MB Total=27.14 MB Peak=33.65 MB
+    AGGREGATION_NODE (id=37): Reservation=19.00 MB OtherMemory=79.12 KB Total=19.08 MB Peak=19.13 MB
+      Exprs: Total=55.12 KB Peak=55.12 KB
+    HASH_JOIN_NODE (id=36): Reservation=2.88 MB OtherMemory=108.66 KB Total=2.98 MB Peak=3.08 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=36): Total=13.12 KB Peak=21.12 KB
+        Hash Join Builder (join_node_id=36) Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=93): Total=0 Peak=0
+    DataStreamRecvr: Total=4.87 MB Peak=11.27 MB
+    EXCHANGE_NODE (id=94): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=1.11 MB
+    DataStreamSender (dst_id=95): Total=75.83 KB Peak=187.83 KB
+    CodeGen: Total=9.71 KB Peak=1.69 MB
+  Fragment 164e0dbe49915bb9:3e895fc10000003c: Reservation=80.00 MB OtherMemory=249.43 KB Total=80.24 MB Peak=80.40 MB
+    AGGREGATION_NODE (id=38): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=96): Reservation=80.00 MB OtherMemory=119.95 KB Total=80.12 MB Peak=80.17 MB
+      Exprs: Total=55.12 KB Peak=55.12 KB
+    EXCHANGE_NODE (id=95): Total=0 Peak=0
+    DataStreamRecvr: Total=61.73 KB Peak=3.17 MB
+    DataStreamSender (dst_id=97): Total=42.66 KB Peak=42.66 KB
+    CodeGen: Total=3.97 KB Peak=724.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000035: Reservation=1.94 MB OtherMemory=10.31 MB Total=12.25 MB Peak=12.28 MB
+    Runtime Filter Bank: Total=2.00 MB Peak=2.00 MB
+    HASH_JOIN_NODE (id=35): Reservation=1.94 MB OtherMemory=110.25 KB Total=2.05 MB Peak=2.05 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=35): Total=13.12 KB Peak=21.12 KB
+        Hash Join Builder (join_node_id=35) Exprs: Total=13.12 KB Peak=13.12 KB
+    HDFS_SCAN_NODE (id=32): Total=8.03 MB Peak=8.06 MB
+      Exprs: Total=4.00 KB Peak=4.00 KB
+    EXCHANGE_NODE (id=92): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=67.06 KB
+    DataStreamSender (dst_id=93): Total=100.69 KB Peak=100.69 KB
+    CodeGen: Total=8.33 KB Peak=1.50 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000034: Reservation=0 OtherMemory=0 Total=0 Peak=2.59 MB
+    HDFS_SCAN_NODE (id=33): Total=0 Peak=2.57 MB
+    DataStreamSender (dst_id=92): Total=0 Peak=13.22 KB
+    CodeGen: Total=0 Peak=377.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000046: Reservation=0 OtherMemory=0 Total=0 Peak=14.53 MB
+    HASH_JOIN_NODE (id=53): Reservation=0 OtherMemory=0 Total=0 Peak=2.06 MB
+      Hash Join Builder (join_node_id=53): Total=0 Peak=21.12 KB
+    HASH_JOIN_NODE (id=52): Reservation=0 OtherMemory=0 Total=0 Peak=10.10 MB
+      Hash Join Builder (join_node_id=52): Total=0 Peak=21.12 KB
+    EXCHANGE_NODE (id=99): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=202.88 KB
+    EXCHANGE_NODE (id=100): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.75 MB
+    EXCHANGE_NODE (id=101): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=4.24 KB
+    DataStreamSender (dst_id=102): Total=0 Peak=96.09 KB
+    CodeGen: Total=0 Peak=2.27 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000038: Reservation=0 OtherMemory=0 Total=0 Peak=6.15 MB
+    HDFS_SCAN_NODE (id=34): Total=0 Peak=6.13 MB
+    DataStreamSender (dst_id=94): Total=0 Peak=387.35 KB
+    CodeGen: Total=0 Peak=216.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000041: Reservation=0 OtherMemory=0 Total=0 Peak=3.26 MB
+    HDFS_SCAN_NODE (id=29): Total=0 Peak=2.24 MB
+    DataStreamSender (dst_id=99): Total=0 Peak=94.36 KB
+    CodeGen: Total=0 Peak=334.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000042: Reservation=0 OtherMemory=0 Total=0 Peak=4.50 MB
+    HDFS_SCAN_NODE (id=30): Total=0 Peak=4.37 MB
+    DataStreamSender (dst_id=100): Total=0 Peak=93.35 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000043: Reservation=0 OtherMemory=0 Total=0 Peak=1.08 MB
+    HDFS_SCAN_NODE (id=31): Total=0 Peak=1.05 MB
+    DataStreamSender (dst_id=101): Total=0 Peak=22.57 KB
+    CodeGen: Total=0 Peak=378.00 KBProcess: memory limit exceeded. Limit=2.00 GB Total=2.00 GB Peak=2.12 GB
+  Buffer Pool: Free Buffers: Total=1.38 GB
+  Buffer Pool: Clean Pages: Total=0
+  Buffer Pool: Unused Reservation: Total=-39.94 MB
+  RequestPool=root.default: Total=289.68 MB Peak=1.73 GB
+    Query(164e0dbe49915bb9:3e895fc100000000): Reservation=246.69 MB ReservationLimit=1.60 GB OtherMemory=42.99 MB Total=289.68 MB Peak=326.26 MB
+  RequestPool=fe-eval-exprs: Total=0 Peak=28.00 KB
+  Untracked Memory: Total=387.96 MB
+
+Memory limit exceeded: Error occurred on backend ip-172-31-30-69.ap-southeast-1.compute.internal:22000 by fragment 164e0dbe49915bb9:3e895fc100000039
+Memory left in process limit: -4.75 MB
+Query(164e0dbe49915bb9:3e895fc100000000): Reservation=246.69 MB ReservationLimit=1.60 GB OtherMemory=42.99 MB Total=289.68 MB Peak=326.26 MB
+  Unclaimed reservations: Reservation=36.94 MB OtherMemory=0 Total=36.94 MB Peak=170.94 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000000: Reservation=0 OtherMemory=8.41 KB Total=8.41 KB Peak=307.50 KB
+    EXCHANGE_NODE (id=106): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    PLAN_ROOT_SINK: Total=0 Peak=0
+    CodeGen: Total=420.00 B Peak=299.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000004f: Reservation=0 OtherMemory=107.46 KB Total=107.46 KB Peak=1.59 MB
+    SORT_NODE (id=57): Total=4.00 KB Peak=4.00 KB
+    UNION_NODE (id=0): Total=0 Peak=0
+    AGGREGATION_NODE (id=81): Total=42.12 KB Peak=42.12 KB
+      Exprs: Total=42.12 KB Peak=42.12 KB
+    EXCHANGE_NODE (id=80): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    AGGREGATION_NODE (id=105): Total=42.12 KB Peak=42.12 KB
+      Exprs: Total=42.12 KB Peak=42.12 KB
+    EXCHANGE_NODE (id=104): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    DataStreamSender (dst_id=106): Total=3.12 KB Peak=3.12 KB
+    CodeGen: Total=8.09 KB Peak=1.49 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000024: Reservation=0 OtherMemory=2.54 MB Total=2.54 MB Peak=5.03 MB
+    AGGREGATION_NODE (id=28): Total=42.12 KB Peak=42.12 KB
+      Exprs: Total=42.12 KB Peak=42.12 KB
+    HASH_JOIN_NODE (id=27): Total=58.25 KB Peak=58.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=27): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=27) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=23): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    HASH_JOIN_NODE (id=22): Total=42.25 KB Peak=42.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=22): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=22) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=60): Total=17.12 KB Peak=17.12 KB
+      Exprs: Total=17.12 KB Peak=17.12 KB
+    EXCHANGE_NODE (id=59): Total=0 Peak=0
+    DataStreamRecvr: Total=2.33 MB Peak=2.33 MB
+    EXCHANGE_NODE (id=67): Total=0 Peak=0
+    DataStreamRecvr: Total=4.01 KB Peak=4.01 KB
+    EXCHANGE_NODE (id=79): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    DataStreamSender (dst_id=80): Total=9.35 KB Peak=9.35 KB
+    CodeGen: Total=21.87 KB Peak=3.30 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000002: Reservation=0 OtherMemory=0 Total=0 Peak=25.25 MB
+    AGGREGATION_NODE (id=14): Reservation=0 OtherMemory=0 Total=0 Peak=8.79 MB
+    HASH_JOIN_NODE (id=13): Reservation=0 OtherMemory=0 Total=0 Peak=6.49 MB
+      Hash Join Builder (join_node_id=13): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=11): Total=0 Peak=9.87 MB
+    EXCHANGE_NODE (id=58): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.33 MB
+    DataStreamSender (dst_id=59): Total=0 Peak=106.57 KB
+    CodeGen: Total=0 Peak=1.72 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000001: Reservation=0 OtherMemory=0 Total=0 Peak=2.11 MB
+    HDFS_SCAN_NODE (id=12): Total=0 Peak=2.05 MB
+    DataStreamSender (dst_id=58): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=216.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000000d: Reservation=0 OtherMemory=0 Total=0 Peak=78.68 KB
+    AGGREGATION_NODE (id=66): Total=0 Peak=28.00 KB
+    EXCHANGE_NODE (id=65): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=8.02 KB
+    DataStreamSender (dst_id=67): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=0
+  Fragment 164e0dbe49915bb9:3e895fc10000000a: Reservation=0 OtherMemory=0 Total=0 Peak=3.21 MB
+    AGGREGATION_NODE (id=21): Total=0 Peak=16.00 KB
+    AGGREGATION_NODE (id=64): Reservation=0 OtherMemory=0 Total=0 Peak=3.12 MB
+    EXCHANGE_NODE (id=63): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=172.10 KB
+    DataStreamSender (dst_id=65): Total=0 Peak=14.22 KB
+    CodeGen: Total=0 Peak=329.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000007: Reservation=0 OtherMemory=0 Total=0 Peak=29.02 MB
+    AGGREGATION_NODE (id=20): Reservation=0 OtherMemory=0 Total=0 Peak=8.86 MB
+    HASH_JOIN_NODE (id=19): Reservation=0 OtherMemory=0 Total=0 Peak=6.62 MB
+      Hash Join Builder (join_node_id=19): Total=0 Peak=21.12 KB
+    HASH_JOIN_NODE (id=18): Reservation=0 OtherMemory=0 Total=0 Peak=2.47 MB
+      Hash Join Builder (join_node_id=18): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=15): Total=0 Peak=11.66 MB
+    EXCHANGE_NODE (id=61): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=29.96 KB
+    EXCHANGE_NODE (id=62): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.33 MB
+    DataStreamSender (dst_id=63): Total=0 Peak=106.57 KB
+    CodeGen: Total=0 Peak=2.89 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000005: Reservation=0 OtherMemory=0 Total=0 Peak=1.04 MB
+    HDFS_SCAN_NODE (id=17): Total=0 Peak=1023.54 KB
+    DataStreamSender (dst_id=61): Total=0 Peak=29.53 KB
+    CodeGen: Total=0 Peak=377.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000006: Reservation=0 OtherMemory=0 Total=0 Peak=2.11 MB
+    HDFS_SCAN_NODE (id=16): Total=0 Peak=2.05 MB
+    DataStreamSender (dst_id=62): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000021: Reservation=0 OtherMemory=1.24 MB Total=1.24 MB Peak=1.49 MB
+    HASH_JOIN_NODE (id=26): Total=58.25 KB Peak=58.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=26): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=26) Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=78): Total=0 Peak=0
+    DataStreamRecvr: Total=1.13 MB Peak=1.13 MB
+    AGGREGATION_NODE (id=77): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=76): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    DataStreamSender (dst_id=79): Total=12.09 KB Peak=12.09 KB
+    CodeGen: Total=8.18 KB Peak=1.39 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000016: Reservation=80.00 MB OtherMemory=220.73 KB Total=80.22 MB Peak=80.61 MB
+    AGGREGATION_NODE (id=10): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=75): Reservation=80.00 MB OtherMemory=91.19 KB Total=80.09 MB Peak=80.17 MB
+      Exprs: Total=55.12 KB Peak=55.12 KB
+    EXCHANGE_NODE (id=74): Total=0 Peak=0
+    DataStreamRecvr: Total=61.79 KB Peak=558.49 KB
+    DataStreamSender (dst_id=76): Total=42.66 KB Peak=42.66 KB
+    CodeGen: Total=3.97 KB Peak=724.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000013: Reservation=21.88 MB OtherMemory=11.68 MB Total=33.56 MB Peak=33.68 MB
+    AGGREGATION_NODE (id=9): Reservation=19.00 MB OtherMemory=79.12 KB Total=19.08 MB Peak=19.13 MB
+      Exprs: Total=55.12 KB Peak=55.12 KB
+    HASH_JOIN_NODE (id=8): Reservation=2.88 MB OtherMemory=108.66 KB Total=2.98 MB Peak=3.08 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=8): Total=13.12 KB Peak=21.12 KB
+        Hash Join Builder (join_node_id=8) Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=72): Total=0 Peak=0
+    DataStreamRecvr: Total=11.27 MB Peak=11.27 MB
+    EXCHANGE_NODE (id=73): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=1.11 MB
+    DataStreamSender (dst_id=74): Total=91.83 KB Peak=187.83 KB
+    CodeGen: Total=9.71 KB Peak=1.69 MB
+  Fragment 164e0dbe49915bb9:3e895fc10000000f: Reservation=1.94 MB OtherMemory=7.73 MB Total=9.67 MB Peak=9.70 MB
+    Runtime Filter Bank: Total=1.00 MB Peak=1.00 MB
+    HASH_JOIN_NODE (id=7): Reservation=1.94 MB OtherMemory=59.25 KB Total=2.00 MB Peak=2.03 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=7): Total=13.12 KB Peak=21.12 KB
+        Hash Join Builder (join_node_id=7) Exprs: Total=13.12 KB Peak=13.12 KB
+    HDFS_SCAN_NODE (id=4): Total=6.54 MB Peak=6.55 MB
+      Exprs: Total=4.00 KB Peak=4.00 KB
+    EXCHANGE_NODE (id=71): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=67.06 KB
+    DataStreamSender (dst_id=72): Total=84.69 KB Peak=100.69 KB
+    CodeGen: Total=8.07 KB Peak=1.46 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000012: Reservation=0 OtherMemory=0 Total=0 Peak=6.15 MB
+    HDFS_SCAN_NODE (id=6): Total=0 Peak=6.13 MB
+    DataStreamSender (dst_id=73): Total=0 Peak=387.35 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000000e: Reservation=0 OtherMemory=0 Total=0 Peak=2.63 MB
+    HDFS_SCAN_NODE (id=5): Total=0 Peak=2.61 MB
+    DataStreamSender (dst_id=71): Total=0 Peak=13.22 KB
+    CodeGen: Total=0 Peak=377.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000020: Reservation=0 OtherMemory=0 Total=0 Peak=7.63 MB
+    HASH_JOIN_NODE (id=25): Reservation=0 OtherMemory=0 Total=0 Peak=6.11 MB
+      Hash Join Builder (join_node_id=25): Total=0 Peak=21.12 KB
+    EXCHANGE_NODE (id=69): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=613.59 KB
+    EXCHANGE_NODE (id=70): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.19 MB
+    DataStreamSender (dst_id=78): Total=0 Peak=96.09 KB
+    CodeGen: Total=0 Peak=1.18 MB
+  Fragment 164e0dbe49915bb9:3e895fc10000001c: Reservation=0 OtherMemory=0 Total=0 Peak=3.15 MB
+    HASH_JOIN_NODE (id=24): Reservation=0 OtherMemory=0 Total=0 Peak=1.99 MB
+      Hash Join Builder (join_node_id=24): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=1): Total=0 Peak=132.02 KB
+    EXCHANGE_NODE (id=68): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=4.24 KB
+    DataStreamSender (dst_id=69): Total=0 Peak=14.20 KB
+    CodeGen: Total=0 Peak=1.46 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000019: Reservation=0 OtherMemory=0 Total=0 Peak=1.08 MB
+    HDFS_SCAN_NODE (id=3): Total=0 Peak=1.05 MB
+    DataStreamSender (dst_id=68): Total=0 Peak=22.57 KB
+    CodeGen: Total=0 Peak=378.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000001d: Reservation=0 OtherMemory=0 Total=0 Peak=4.50 MB
+    HDFS_SCAN_NODE (id=2): Total=0 Peak=4.36 MB
+    DataStreamSender (dst_id=70): Total=0 Peak=93.35 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000004a: Reservation=0 OtherMemory=2.54 MB Total=2.54 MB Peak=5.82 MB
+    AGGREGATION_NODE (id=56): Total=42.12 KB Peak=42.12 KB
+      Exprs: Total=42.12 KB Peak=42.12 KB
+    HASH_JOIN_NODE (id=55): Total=58.25 KB Peak=58.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=55): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=55) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=51): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    HASH_JOIN_NODE (id=50): Total=42.25 KB Peak=42.25 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=50): Total=13.12 KB Peak=13.12 KB
+        Hash Join Builder (join_node_id=50) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=84): Total=17.12 KB Peak=17.12 KB
+      Exprs: Total=17.12 KB Peak=17.12 KB
+    EXCHANGE_NODE (id=83): Total=0 Peak=0
+    DataStreamRecvr: Total=2.33 MB Peak=2.33 MB
+    EXCHANGE_NODE (id=91): Total=0 Peak=0
+    DataStreamRecvr: Total=4.01 KB Peak=4.01 KB
+    EXCHANGE_NODE (id=103): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    DataStreamSender (dst_id=104): Total=9.35 KB Peak=9.35 KB
+    CodeGen: Total=21.87 KB Peak=3.30 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000028: Reservation=0 OtherMemory=0 Total=0 Peak=24.23 MB
+    AGGREGATION_NODE (id=42): Reservation=0 OtherMemory=0 Total=0 Peak=8.77 MB
+    HASH_JOIN_NODE (id=41): Reservation=0 OtherMemory=0 Total=0 Peak=6.49 MB
+      Hash Join Builder (join_node_id=41): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=39): Total=0 Peak=9.82 MB
+    EXCHANGE_NODE (id=82): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.33 MB
+    DataStreamSender (dst_id=83): Total=0 Peak=106.57 KB
+    CodeGen: Total=0 Peak=1.69 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000027: Reservation=0 OtherMemory=0 Total=0 Peak=2.11 MB
+    HDFS_SCAN_NODE (id=40): Total=0 Peak=2.06 MB
+    DataStreamSender (dst_id=82): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=216.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000033: Reservation=0 OtherMemory=0 Total=0 Peak=78.68 KB
+    AGGREGATION_NODE (id=90): Total=0 Peak=28.00 KB
+    EXCHANGE_NODE (id=89): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=8.02 KB
+    DataStreamSender (dst_id=91): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=0
+  Fragment 164e0dbe49915bb9:3e895fc100000030: Reservation=0 OtherMemory=0 Total=0 Peak=3.18 MB
+    AGGREGATION_NODE (id=49): Total=0 Peak=16.00 KB
+    AGGREGATION_NODE (id=88): Reservation=0 OtherMemory=0 Total=0 Peak=3.12 MB
+    EXCHANGE_NODE (id=87): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=125.08 KB
+    DataStreamSender (dst_id=89): Total=0 Peak=14.22 KB
+    CodeGen: Total=0 Peak=329.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000002d: Reservation=0 OtherMemory=0 Total=0 Peak=28.97 MB
+    AGGREGATION_NODE (id=48): Reservation=0 OtherMemory=0 Total=0 Peak=8.86 MB
+    HASH_JOIN_NODE (id=47): Reservation=0 OtherMemory=0 Total=0 Peak=6.62 MB
+      Hash Join Builder (join_node_id=47): Total=0 Peak=21.12 KB
+    HASH_JOIN_NODE (id=46): Reservation=0 OtherMemory=0 Total=0 Peak=2.47 MB
+      Hash Join Builder (join_node_id=46): Total=0 Peak=21.12 KB
+    HDFS_SCAN_NODE (id=43): Total=0 Peak=11.60 MB
+    EXCHANGE_NODE (id=85): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=29.96 KB
+    EXCHANGE_NODE (id=86): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.33 MB
+    DataStreamSender (dst_id=87): Total=0 Peak=106.57 KB
+    CodeGen: Total=0 Peak=2.89 MB
+  Fragment 164e0dbe49915bb9:3e895fc10000002b: Reservation=0 OtherMemory=0 Total=0 Peak=1.04 MB
+    HDFS_SCAN_NODE (id=45): Total=0 Peak=1023.54 KB
+    DataStreamSender (dst_id=85): Total=0 Peak=29.53 KB
+    CodeGen: Total=0 Peak=377.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc10000002c: Reservation=0 OtherMemory=0 Total=0 Peak=2.11 MB
+    HDFS_SCAN_NODE (id=44): Total=0 Peak=2.06 MB
+    DataStreamSender (dst_id=86): Total=0 Peak=42.66 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000047: Reservation=2.12 MB OtherMemory=1.11 MB Total=3.24 MB Peak=3.40 MB
+    Runtime Filter Bank: Total=1.00 MB Peak=1.00 MB
+    HASH_JOIN_NODE (id=54): Reservation=2.12 MB OtherMemory=58.25 KB Total=2.18 MB Peak=2.21 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=54): Total=13.12 KB Peak=37.12 KB
+        Hash Join Builder (join_node_id=54) Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=98): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=97): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=0
+    EXCHANGE_NODE (id=102): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=357.69 KB
+    DataStreamSender (dst_id=103): Total=12.09 KB Peak=12.09 KB
+    CodeGen: Total=9.85 KB Peak=1.43 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000039: Reservation=21.88 MB OtherMemory=5.27 MB Total=27.14 MB Peak=33.65 MB
+    AGGREGATION_NODE (id=37): Reservation=19.00 MB OtherMemory=79.12 KB Total=19.08 MB Peak=19.13 MB
+      Exprs: Total=55.12 KB Peak=55.12 KB
+    HASH_JOIN_NODE (id=36): Reservation=2.88 MB OtherMemory=108.66 KB Total=2.98 MB Peak=3.08 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=36): Total=13.12 KB Peak=21.12 KB
+        Hash Join Builder (join_node_id=36) Exprs: Total=13.12 KB Peak=13.12 KB
+    EXCHANGE_NODE (id=93): Total=0 Peak=0
+    DataStreamRecvr: Total=4.87 MB Peak=11.27 MB
+    EXCHANGE_NODE (id=94): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=1.11 MB
+    DataStreamSender (dst_id=95): Total=75.83 KB Peak=187.83 KB
+    CodeGen: Total=9.71 KB Peak=1.69 MB
+  Fragment 164e0dbe49915bb9:3e895fc10000003c: Reservation=80.00 MB OtherMemory=249.43 KB Total=80.24 MB Peak=80.40 MB
+    AGGREGATION_NODE (id=38): Total=13.12 KB Peak=13.12 KB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+    AGGREGATION_NODE (id=96): Reservation=80.00 MB OtherMemory=119.95 KB Total=80.12 MB Peak=80.17 MB
+      Exprs: Total=55.12 KB Peak=55.12 KB
+    EXCHANGE_NODE (id=95): Total=0 Peak=0
+    DataStreamRecvr: Total=61.73 KB Peak=3.17 MB
+    DataStreamSender (dst_id=97): Total=42.66 KB Peak=42.66 KB
+    CodeGen: Total=3.97 KB Peak=724.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000035: Reservation=1.94 MB OtherMemory=10.31 MB Total=12.25 MB Peak=12.28 MB
+    Runtime Filter Bank: Total=2.00 MB Peak=2.00 MB
+    HASH_JOIN_NODE (id=35): Reservation=1.94 MB OtherMemory=110.25 KB Total=2.05 MB Peak=2.05 MB
+      Exprs: Total=13.12 KB Peak=13.12 KB
+      Hash Join Builder (join_node_id=35): Total=13.12 KB Peak=21.12 KB
+        Hash Join Builder (join_node_id=35) Exprs: Total=13.12 KB Peak=13.12 KB
+    HDFS_SCAN_NODE (id=32): Total=8.03 MB Peak=8.06 MB
+      Exprs: Total=4.00 KB Peak=4.00 KB
+    EXCHANGE_NODE (id=92): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=67.06 KB
+    DataStreamSender (dst_id=93): Total=100.69 KB Peak=100.69 KB
+    CodeGen: Total=8.33 KB Peak=1.50 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000034: Reservation=0 OtherMemory=0 Total=0 Peak=2.59 MB
+    HDFS_SCAN_NODE (id=33): Total=0 Peak=2.57 MB
+    DataStreamSender (dst_id=92): Total=0 Peak=13.22 KB
+    CodeGen: Total=0 Peak=377.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000046: Reservation=0 OtherMemory=0 Total=0 Peak=14.53 MB
+    HASH_JOIN_NODE (id=53): Reservation=0 OtherMemory=0 Total=0 Peak=2.06 MB
+      Hash Join Builder (join_node_id=53): Total=0 Peak=21.12 KB
+    HASH_JOIN_NODE (id=52): Reservation=0 OtherMemory=0 Total=0 Peak=10.10 MB
+      Hash Join Builder (join_node_id=52): Total=0 Peak=21.12 KB
+    EXCHANGE_NODE (id=99): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=202.88 KB
+    EXCHANGE_NODE (id=100): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=2.75 MB
+    EXCHANGE_NODE (id=101): Total=0 Peak=0
+    DataStreamRecvr: Total=0 Peak=4.24 KB
+    DataStreamSender (dst_id=102): Total=0 Peak=96.09 KB
+    CodeGen: Total=0 Peak=2.27 MB
+  Fragment 164e0dbe49915bb9:3e895fc100000038: Reservation=0 OtherMemory=0 Total=0 Peak=6.15 MB
+    HDFS_SCAN_NODE (id=34): Total=0 Peak=6.13 MB
+    DataStreamSender (dst_id=94): Total=0 Peak=387.35 KB
+    CodeGen: Total=0 Peak=216.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000041: Reservation=0 OtherMemory=0 Total=0 Peak=3.26 MB
+    HDFS_SCAN_NODE (id=29): Total=0 Peak=2.24 MB
+    DataStreamSender (dst_id=99): Total=0 Peak=94.36 KB
+    CodeGen: Total=0 Peak=334.50 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000042: Reservation=0 OtherMemory=0 Total=0 Peak=4.50 MB
+    HDFS_SCAN_NODE (id=30): Total=0 Peak=4.37 MB
+    DataStreamSender (dst_id=100): Total=0 Peak=93.35 KB
+    CodeGen: Total=0 Peak=49.00 KB
+  Fragment 164e0dbe49915bb9:3e895fc100000043: Reservation=0 OtherMemory=0 Total=0 Peak=1.08 MB
+    HDFS_SCAN_NODE (id=31): Total=0 Peak=1.05 MB
+    DataStreamSender (dst_id=101): Total=0 Peak=22.57 KB
+    CodeGen: Total=0 Peak=378.00 KBProcess: memory limit exceeded. Limit=2.00 GB Total=2.00 GB Peak=2.12 GB
+  Buffer Pool: Free Buffers: Total=1.38 GB
+  Buffer Pool: Clean Pages: Total=0
+  Buffer Pool: Unused Reservation: Total=-39.94 MB
+  RequestPool=root.default: Total=289.68 MB Peak=1.73 GB
+    Query(164e0dbe49915bb9:3e895fc100000000): Reservation=246.69 MB ReservationLimit=1.60 GB OtherMemory=42.99 MB Total=289.68 MB Peak=326.26 MB
+  RequestPool=fe-eval-exprs: Total=0 Peak=28.00 KB
+  Untracked Memory: Total=387.96 MB (1 of 2 similar)
+
+
+Could not execute command: with frequent_ss_items as
+ (select substr(i_item_desc,1,30) itemdesc,i_item_sk item_sk,d_date solddate,count(*) cnt
+  from store_sales,date_dim,item
+  where ss_sold_date_sk = d_date_sk
+    and ss_sold_date_sk between 2451180 and 2452640
+    and ss_item_sk = i_item_sk
+    and d_year in (1999,1999 + 1,1999 + 2,1999 + 3)
+  group by substr(i_item_desc,1,30),i_item_sk,d_date
+  having count(*) =4),
+ max_store_sales as
+ (select max(csales) tpcds_cmax
+  from (select c_customer_sk,sum(ss_quantity*ss_sales_price) csales
+        from store_sales
+            ,customer
+            ,date_dim 
+        where ss_customer_sk = c_customer_sk
+         and ss_sold_date_sk = d_date_sk
+	 and ss_sold_date_sk between 2451180 and 2452640
+         and d_year in (1999,1999+1,1999+2,1999+3)
+        group by c_customer_sk) x),
+ best_ss_customer as
+ (
+select t1.* from (
+select c_customer_sk,sum(ss_quantity*ss_sales_price) ssales
+from store_sales ,customer
+where ss_customer_sk = c_customer_sk
+group by c_customer_sk) t1,
+(select tpcds_cmax * 95/100 as c1 from max_store_sales) t2
+where t1.ssales = t2.c1
+)
+ select  c_last_name,c_first_name,sales
+ from ((select c_last_name,c_first_name,sum(cs_quantity*cs_list_price) sales
+        from catalog_sales
+            ,customer
+            ,date_dim 
+        where d_year = 1999 
+         and d_moy = 3 
+         and cs_sold_date_sk = d_date_sk 
+         and cs_sold_date_sk between 2451239 and 2451269
+         and cs_item_sk in (select distinct item_sk from frequent_ss_items)
+         and cs_bill_customer_sk in (select distinct c_customer_sk from best_ss_customer)
+         and cs_bill_customer_sk = c_customer_sk 
+       group by c_last_name,c_first_name)
+      union all
+      (select c_last_name,c_first_name,sum(ws_quantity*ws_list_price) sales
+       from web_sales
+           ,customer
+           ,date_dim 
+       where d_year = 1999 
+         and d_moy = 3 
+         and ws_sold_date_sk = d_date_sk 
+         and ws_sold_date_sk between 2451239 and 2451269
+         and ws_item_sk in (select distinct item_sk from frequent_ss_items)
+         and ws_bill_customer_sk in (select distinct c_customer_sk from best_ss_customer)
+         and ws_bill_customer_sk = c_customer_sk
+       group by c_last_name,c_first_name)) y
+     order by c_last_name,c_first_name,sales
+  limit 100

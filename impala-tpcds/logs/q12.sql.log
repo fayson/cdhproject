@@ -1,0 +1,141 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select i_item_desc 
+      ,i_category 
+      ,i_class 
+      ,i_current_price
+      ,sum(ws_ext_sales_price) as itemrevenue 
+      ,sum(ws_ext_sales_price)*100/sum(sum(ws_ext_sales_price)) over
+          (partition by i_class) as revenueratio
+from	
+	web_sales
+    	,item 
+    	,date_dim
+where 
+	ws_item_sk = i_item_sk 
+  	and i_category in ('Women', 'Children', 'Books')
+  	and ws_sold_date_sk = d_date_sk
+  	and ws_sold_date_sk between 2451959 and 2451989
+	and d_date between cast('2001-02-18' as timestamp) 
+				and (cast('2001-02-18' as timestamp) + interval 30 days)
+group by 
+	i_item_id
+        ,i_item_desc 
+        ,i_category
+        ,i_class
+        ,i_current_price
+order by 
+	i_category
+        ,i_class
+        ,i_item_id
+        ,i_item_desc
+        ,revenueratio
+limit 100
+Query submitted at: 2018-04-19 06:45:32 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=2e4cce11290bf72e:7582be1a00000000
+	Books		82.97	22365.56	60.55677261738148
+Hands complete very by a schools. Growing, public animals would support british exhibitions. Armed areas select brilliant streets. Broad, basic hours	Books		NULL	5977.6	16.18489159214701
+Conditions shall occur once again after a products; agricultural, public walls give now a little public sides. Still alternative seats	Books	arts	6.5	1141.2	0.6353622165923739
+No longer soft cameras mean select, small policies. Also famous arms could want irish, different connections. Attacks should remove black r	Books	arts	1.52	6250.17	3.479777309217628
+Far particular products turn specif	Books	arts	3.41	296.24	0.1649313906793944
+National, upper principles fill relatives. Components make. Rarely unusual plants might not deal	Books	arts	7.27	546.35	0.3041799395682119
+Badly difficult intervals should not get today new followers. Standards examine. Young, actual departments might knock special, national assumptions. Successful wi	Books	arts	0.29	1539.45	0.8570875958054066
+New, expected possibilities will not determine with a areas. Great friends fall probably other elections; internal, professional conservatives respond. Early planes establish in 	Books	arts	7.03	100.8	0.05612032197030432
+Periods shall 	Books	arts	2.27	8426.5	4.6914473520116
+Badly outside representatives should tax original decisions. Signs trust well front, literary laws. Social sizes can involve for example to a effects. Lists might appear small purposes. Conv	Books	arts	1.48	5258.990000000001	2.927938611494155
+Little days answer in a emotions; players touch.	Books	arts	2.58	786.24	0.4377385113683737
+Minor heads close common children; recently strong firms provide. Useful, young men ought to create changes. Popular, common regulations might decide. Points fit. Obvious, glad officials 	Books	arts	3.88	2481.7	1.381684553905796
+Local, religious hours turn always other prices. Tonight subject stars bring firmly members; high, full-time officials find over positions. Benefits may not relax far so various bonds. Direct feat	Books	arts	9.66	3570.55	1.987900948522521
+Drugs require comfortable, estimated terms. Conflicts may not let then old courses. Physical, dead females appreciate anyway labour, nation	Books	arts	7.45	12950.5	7.210180849964544
+Taxes should emerge maximum studies. Literary forms dig pos	Books	arts	2.18	1254.3	0.6983305540411975
+Free feet experience too powerful coins. Mild details 	Books	arts	1.16	2307.42	1.284654298816663
+Particularly human attempts used to clear real, united styles. As well disciplinary minu	Books	arts	7.1	4486.93	2.498094804148984
+Glad users understand very almost original jobs. Towns can understand. Supreme, following days work by a parents; german, crucial weapons work sure; fair pictur	Books	arts	7.18	1727.94	0.9620292573945203
+Especially true items might supply particularly. Black, automatic words might develop post-war problems. Fresh, visible workers could not appe	Books	arts	4.23	174.14	0.09695231019750787
+Communications grab as. Never new minutes release unfair occ	Books	arts	1.09	339.15	0.1888214999625864
+Issues might not lose very bold, different opportunities. Of course absolute areas might balance bottom mechanisms. A	Books	arts	0.75	141.56	0.07881342041782023
+Critical, other girls see gentle factors. Good, classic tactics cause as always only nations. Other, reasonable objects may develop	Books	arts	8.789999999999999	320.64	0.1785160717912537
+Years light glasses. Contemporary members might detect even drawings. Private instructions ought to expect well main streets. Children will say well; usually young members ought to ensure enough. 	Books	arts	4.78	2317.28	1.290143846183996
+Golden estates meet as yet hands. About solid proteins used to tell. Once causal boots imagine frequently new elections; flexible, other ways find re	Books	arts	9.76	7222.72	4.021243768862663
+Brilliant, acceptable resources might not pick as. Positive, married parties support only strongly impossible needs. Photogra	Books	arts	2.44	12000.97	6.681530757499633
+Teams will provide journalists. Minu	Books	arts	1.68	661.76	0.368434367728855
+Members reinforce ever successful, economic members. Useful suggestions should want working, profitable holes. Past mountains might not explore specially cities. Bases 	Books	arts	4.74	5753.95	3.203507208343577
+Perfect, central readers would call really closely other plants. Voters cannot acquire by now no longer n	Books	arts	7.45	228.54	0.1272394680862435
+Ago possible girls should know holidays. A	Books	arts	7.37	8151.67	4.538435962258637
+Minutes mig	Books	arts	1.43	1300.72	0.724174853107284
+Correct, certain humans cut	Books	arts	37.98	7168.8	3.991223850602357
+Common, old modules express alone enterprises. British, other obligations provide criminal, old details. Complete eyes used to make inside radical t	Books	arts	6.17	1068.12	0.5946749831639032
+Natural, particular words speak dangerous suppliers. Necess	Books	arts	2.82	8689.1	4.837649698731858
+Environmental drawings keep. Matters recall in common. Creative effects used to encompass there single, agricultural lights. Sometimes local years attempt eventuall	Books	arts	2.07	8385.299999999999	4.66850928390469
+Probably similar words should annoy ancient roots. Other, environmental ways will discover eyes. Painful, public programmes might get generally constantly prime word	Books	arts	1.79	90.81999999999999	0.05056396469586347
+Problems compete with a sets. Interesting, automatic pounds tell complete hills. 	Books	arts	1.2	485.62	0.2703685590795554
+A little special changes would not turn certainly terms. Big, immediate earn	Books	arts	7.77	653.8299999999999	0.3640193463675007
+Immediate, darling	Books	arts	0.22	543.02	0.3023259646459787
+Supporters can grow around continuing symptoms. Organic men must make much measures. Perhaps special conclusions get already employees. Only tough reco	Books	arts	2.88	17585.37	9.790641134592564
+Human, eastern systems remove playe	Books	arts	1.72	1957.5	1.089836609691178
+Provisions must get special cells. Ago simple officials may not treat corporate words; contemporary groups would understand figures.	Books	arts	9.449999999999999	4884.56	2.719474998841961
+Only tall games meet both in a periods; bad, misleading homes think to a months. Clear detailed numbers	Books	arts	0.22	22.33	0.01243221021425491
+Most increased losses shall not buy below loans. Merely strategic reports come on a members. Considerable, mad ingredients should conver	Books	arts	45.91	795.72	0.4430164940298666
+Forces should not like too; only sufficient facts might not think vast police. Here occasional weeks see exte	Books	arts	5.58	3.76	0.002093377089368494
+Central copies overlook directly mental states. Patient, high problems shall prevent briefly courts. Instances go so functional houses. Girls would ensure like 	Books	arts	2.68	1992.64	1.109400777489159
+Short, good factors look working, flexible governments. Fig	Books	arts	4.33	958.99	0.5339169401418863
+Banks would not read abroad museums. Here old childr	Books	arts	4.04	13270.5	7.388340602251224
+Young, initial pounds may prevent large, bad relations. At once absolute industries might escape. Perhaps open roots cannot give so exten	Books	arts	2.59	3525.48	1.962808260911393
+Reductions control more universal defendants. Political times will beat somewhat; educ	Books	arts	8.49	3195.16	1.778902856613468
+Cle	Books	arts	2.56	62.58	0.03484136655656393
+Only automatic principles used to accept too hot colleagues. Modern arguments enjoy general, likely respondents; good years should look 	Books	arts	7.49	5307.6	2.955002191364952
+Proceedings see then equal quantities. New, complex magistrates overcome good, single institutions	Books	arts	7.33	726.72	0.4046007974430511
+Inner, obvious members capture social teams. Literary studies agree developments. Aware, prime injuries must help sites. More corporate problems may explore still days. Unable commun	Books	arts	6.02	903.84	0.5032122203337287
+Commercial years cannot ge	Books	arts	79.33	2388.32	1.329695311191639
+Separately junior costs will not play however from a women. Oth	Books	arts	4.21	2610.96	1.453649958845097
+Old eyes could not give later issues. Claims might	Books	arts	9	599.0599999999999	0.3335261912651835
+Lovers should not afford good, technological gains; distinctive cats might not find ambitious, different	Books	business	0.15	2581.92	1.773898805487412
+Ultimate, other objects might not install good 	Books	business	2.57	2043.57	1.404027383470406
+Total pp. accept with a questions; able, generous a	Books	business	5.25	2934.71	2.016281900078996
+Id	Books	business	3.47	5033.7	3.458385394273248
+Good, hot candidates could open negative friends. Great, coastal rights satisfy simply rural months. Never political men shall press only wh	Books	business	1.56	6.3	0.004328392233132976
+Scientific demonstrations reach even; futures can know just valid courts. Forward crucial prices can help peculiar, common taxes. Common cells might trust by now work	Books	business	4.73	405.08	0.2783087501265883
+Originally major industries matter mediterranean bodies. Cases should not 	Books	business	45.06	985.01	0.6767475608822719
+Planned cigarettes shall reply; special teeth save particularly social, major crews. Tons admit indeed; exactly future companies focus both continuing men. Private, only shots	Books	business	6.42	7668.48	5.268601471735805
+Just genuine talks say much on a events. All right desperate birds must love. Now small complaints become main, good officers. Pp. could not 	Books	business	2.42	10226.23	7.025894366068482
+Ultimate stands will like bright, possible tickets. Lips hesitate. Miners could not see today drinks. Only unions must convert very written movements. Senior options must not generate 	Books	business	5.29	146	0.1003087723868912
+Secondary, red structures may seek eyes. High true titles should make now junior fat thoughts. Partly excellent authorities receive direct, net parties. Parents look most also other issues. Empty, con	Books	business	8.59	1169.08	0.8032121891922381
+Wonderful systems ask also very parliamentary orders; british companies	Books	business	87.12	673.1700000000001	0.4624990158060517
+Emotional sources can use on a countr	Books	business	3.27	2683.84	1.843922573170096
+Men wait away easy, head years. Only, capitalist artis	Books	business	9.859999999999999	6600.42	4.53479470847866
+Women ignore. Sure, new collections must not look there entire seats. New, regional others sleep too large children. New points issue in a men; times might go local, german males. Inc, short se	Books	business	7.95	3789.6	2.603630985187417
+Single hours ought to say. Sources would contribute civil rivers. Good, central patients put too to the spirits. Sho	Books	business	3.27	3043.88	2.091286754061715
+Sen	Books	business	9.83	107.61	0.0739330616202285
+Swiftly dominant criticisms shall not get healthy shoulders. Connections cannot get in order great days. About	Books	business	3.16	7779.4	5.344808656894393
+Especially firm buses listen major, individual calls. New daughters help internal, general eggs. Here l	Books	business	2.81	1279.89	0.8793437992483438
+Annual, pure thoughts cannot understand poor developers. Following things shall advise. Costs may turn thereby social, small years. New unions provide young colours. Important, loca	Books	business	8.92	4533.3	3.114587382612972
+Of course large structures describe. Used factors would know commercial benefits. Then appropriate circumstances should not know so new terms; ev	Books	business	0.63	17730.8	12.18188206464035
+Of course cultural circumstances provide most local activities. Democratic 	Books	business	1.65	3002.22	2.06266440161214
+Hands may not allow only in a lands; linear, other pubs say; social, precise women identify for a patients. Preferences develop alone now rich motives. Ever good tas	Books	business	3.68	1416.45	0.9731668537493975
+Modern records retain about there civil plans. Social bodies survive. Great, living losses bother late, coherent others. About british sports ought to use cautiously from 	Books	business	1.94	233.07	0.1601299012343338
+Soon automatic daughters would not keep elegant, civil cards. Practical goals may come pr	Books	business	61.74	8941.02	6.142895480045492
+American, other circumstances tackle also with the facts. Passive	Books	business	0.71	5961.05	4.09551786052656
+Narrow, famous years shall address se	Books	business	3.43	4195.8	2.882709227266562
+New teachers might demand never assets. Deeply bright ministers make generally never prime imports. Odd writings step common readers; talks take young, r	Books	business	2.95	1446.9	0.9940874162095402
+Problems 	Books	business	5.8	1025.64	0.7046622555540486
+Slow sets should support over examples. Possible fears will penetrate; earnings like however welsh discipline	Books	business	98.40000000000001	5220.58	3.586780622928469
+Facts can highlig	Books	business	1.18	1109.68	0.76240163385127
+Lively, regular decisions ought to think separately clear networks; english, little levels ought to keep years. Students make then until the organisers. Significant, st	Books	business	2.42	4100.48	2.817219965732874
+Only convenient parents could organise there other, inevitable weeks. Great, great resources would see more as usual massive buildings. Proteins respond mor	Books	business	2.98	10508.1	7.219552130949941
+No longer national paren	Books	business	84.29000000000001	6878.76	4.726027199616793
+Local, unlikely bits sign completely. Areas feel only manufacturing legs. Amounts must go personal, very things; areas could take clo	Books	business	5.2	7238.24	4.973006634532132
+Alone countries must use so old, international functions. Only public cases see in a words. Normal methods forget even communist changes; technical numbers convert either natu	Books	business	4.67	2481.6	1.704974312022666
+Certainly remaining flowers can wonder then just significant papers; places secure below as a bombs. Other, domestic members must allow very polite thi	Books	business	0.6	369	0.2535201165120743
+Shows used to guarantee other, central rates. Large, large meetings calcula	Books	computers	1.04	27.9	0.01171608179622399
+Bad, basic students consider even; institutions shall show 	Books	computers	1.01	9199.18	3.863023130400998
+Diseases ought to move at first so total months. Circumstances may argue students. Reasonable organizations get also. Enormous, personal issues must exp	Books	computers	2.58	1469.76	0.6171981498501139
+Companies must not use thus. Heavy, poor buildings shall not persuade however important parties. Various drawings might not make; deputies would not	Books	computers	2.71	2908.2	1.22124405303866
+Subjects may remain officials. Forward, straight objects used to see wh	Books	computers	6.97	3041.4	1.277178895162568
+External improvements effect so tough words. Great roads cause quickly popular, black stories. Clearly white members might ask enough details. Min	Books	computers	31.74	827.88	0.3476526809124703
+Services shall live by no means classic subject	Books	computers	4.61	22.14	0.009297277812487428
+Fetched 100 row(s) in 1.48s

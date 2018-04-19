@@ -1,0 +1,56 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with results as
+( select
+    sum(ss_net_profit) as total_sum ,s_state ,s_county, 0 as gstate, 0 as g_county
+ from
+    store_sales
+   ,date_dim       d1
+   ,store
+ where
+   -- d1.d_year = [YEAR]
+ d1.d_month_seq between 1209 and 1209+11
+ and d1.d_date_sk = ss_sold_date_sk
+ and ss_sold_date_sk between 2451819 and 2452183
+ and s_store_sk  = ss_store_sk
+ and s_state in
+             ( select s_state
+               from  (select s_state as s_state,
+ 			    rank() over ( partition by s_state order by sum(ss_net_profit) desc) as ranking
+                      from   store_sales, store, date_dim
+                      where  d_month_seq between 1209 and 1209+11
+				-- d_year =[YEAR] 
+ 			    and d_date_sk = ss_sold_date_sk
+ 			    and ss_sold_date_sk between 2451819 and 2452183
+ 			    and s_store_sk  = ss_store_sk
+                      group by s_state
+                     ) tmp1 
+               where ranking <= 5)
+  group by s_state,s_county) ,  
+ 
+ results_rollup as
+( select total_sum ,s_state ,s_county, 0 as g_state, 0 as g_county, 0 as lochierarchy from results
+ union
+ select sum(total_sum) as total_sum,s_state, NULL as s_county, 0 as g_state, 1 as g_county, 1 as lochierarchy from results group by s_state
+ union
+ select sum(total_sum) as total_sum ,NULL as s_state ,NULL as s_county, 1 as g_state, 1 as g_county, 2 as lochierarchy from results)
+
+ select total_sum ,s_state ,s_county, lochierarchy 
+   ,rank() over (
+ 	partition by lochierarchy, 
+ 	case when g_county = 0 then s_state end 
+ 	order by total_sum desc) as rank_within_parent
+ from results_rollup
+ order by
+   lochierarchy desc
+  ,case when lochierarchy = 0 then s_state end
+  ,rank_within_parent
+-874299768.7500011	NULL	NULL	2	1
+-874299768.7500011	TN	NULL	1	1
+-874299768.7500011	TN	Williamson County	0	1
+Fetched 3 row(s) in 5.32s

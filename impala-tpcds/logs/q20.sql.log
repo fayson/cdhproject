@@ -1,0 +1,137 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select i_item_desc 
+       ,i_category 
+       ,i_class 
+       ,i_current_price
+       ,sum(cs_ext_sales_price) as itemrevenue 
+       ,sum(cs_ext_sales_price)*100/sum(sum(cs_ext_sales_price)) over
+           (partition by i_class) as revenueratio
+ from catalog_sales
+     ,item 
+     ,date_dim
+ where cs_item_sk = i_item_sk 
+   and i_category in ('Sports', 'Women', 'Men')
+   and cs_sold_date_sk = d_date_sk
+   and cs_sold_date_sk between 2451628 and 2451658
+   and d_date between cast('2000-03-24' as timestamp) 
+ 				and (cast('2000-03-24' as timestamp) + interval 30 days)
+ group by i_item_id
+         ,i_item_desc 
+         ,i_category
+         ,i_class
+         ,i_current_price
+ order by i_category
+         ,i_class
+         ,i_item_id
+         ,i_item_desc
+         ,revenueratio
+limit 100
+Query submitted at: 2018-04-19 06:46:58 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=7343509b61a86200:f2cbd2d200000000
+Pale funds could accept relations. Mines would include thus historical tenants. Philosophical shoulders can understand significantly by now simple paren	Men		NULL	26586.67	69.31702575766819
+Positions see lovely months. Proper patterns may not appeal in a c	Men	accessories	5.21	5953.3	0.3381363773138726
+Blue, old hands cannot 	Men	accessories	3.14	22047.06	1.252232039175178
+Dominant, christian pp. may not raise	Men	accessories	6.49	2075.59	0.1178896550465962
+Other neighbours might become; other, minimum streets may watch elderly, sure events. Records take most to a tanks. Possible troops give potentially in a waves. Also logical practices mean over	Men	accessories	3.68	863.23	0.04902985990772417
+Variations used to direct now. Controversial hours ought to admire then main clients; general, unable boys contain so for a prisoners. Little great profits cann	Men	accessories	3.33	1983.08	0.1126352589527816
+Figures will not wish late primary, sure members. Recently true techniques could bring a little radically economic processes. Distant lips ought to go only civil words. Days claim aback in the kids; 	Men	accessories	4.09	19205.87	1.090857726800462
+High, jewish legs should not direct existing, current points. Opposite effects make women. Organisers suggest mo	Men	accessories	6.86	550.6800000000001	0.03127760070199779
+Rarely jewish assessments shall reduce still on board commercial values. Increased, different expressions ought to burn. Political sales tell. Studies contain necessary, great nights. Images will pr	Men	accessories	4.2	15630.24	0.8877685871947298
+Shy, high tactics reconsider. Still important groups might not go with a wages. Boundaries dry	Men	accessories	5.26	2361.01	0.134100980666492
+Great, necessary assumptions call quickly women. Public police answer probably still serious children. Roughly cultural years improve changes. Essential, easy roads make. More 	Men	accessories	2.34	1344.87	0.07638611690291232
+So main parents become sure hot, unfair individuals. Substantial pupils contribute also successful proposals. Only independent places undertake casually legal, old babies. Inte	Men	accessories	1.91	455.5	0.02587155356969563
+Today previous months address. Identical, appropriate details may remain at all final, small variations. So middle	Men	accessories	87.37	2894.8	0.1644192607542369
+Parameters try very into a copies. Good levels take victorian developments. Important, financial views may not recall ill simple numb	Men	accessories	8.56	156.51	0.008889477166175769
+Inc institutions ought to work hopelessly including a patients. Personal awards use white birds; shares go more contemporary books. Chemicals come countries. New, responsible rank	Men	accessories	0.8100000000000001	9765.799999999999	0.5546792927572636
+Cats win fiercely urban rises. Most central passages make feelings. Other, rare services know now sometimes signif	Men	accessories	2.08	326	0.01851619421233979
+Only necessary occasions subdue similarly for example political metres. Values shut then countries. Loudly basic profits would arise mentally apparent rooms; eyes may know anywhere views. Approx fu	Men	accessories	4.68	511.92	0.02907610472754904
+Inner members make at least complete soldiers. Other workers indicate sophisticated, natural roads. Parents look; national, consc	Men	accessories	3.67	6127.36	0.34802266186786
+Roads provide at least changing consultan	Men	accessories	7.02	1137.6	0.06461356606122008
+Sad, following examples shall not mak	Men	accessories	3.42	2416.05	0.1372271503887226
+	Men	accessories	NULL	7369.81	0.4185915130921593
+Free eyes talk biolog	Men	accessories	4.93	10855.14	0.6165517804973564
+Fingers go instead vast, high premises. Modern artists continue shortly specified, real mothers. Probably cri	Men	accessories	0.52	8975.779999999999	0.5098076248074701
+Concer	Men	accessories	0.87	1331.31	0.0756159341007058
+Heavily changing backs last more. General, human actions like deeply head fields. Days shall leave.	Men	accessories	8.69	4272.78	0.2426859641306786
+Possible things must suggest at first; equivalent, poor families fight partly too particular occasions. Professional claims present probably. Trials comply simila	Men	accessories	7.92	2992.88	0.1699900224976304
+Social plans achieve secondary, bad bag	Men	accessories	2.76	6867.389999999999	0.3900549907112889
+Markets shift new spots. Other, short farmers will get; significant minutes might use there objectives. Liberal	Men	accessories	4	64.59999999999999	0.003669159957414572
+Supreme, minor years take forward needs. Concepts will not spend kind claims. Tired, retail proposals could not go etc round arts. Farmers could not leave continuous	Men	accessories	2.07	75.81999999999999	0.004306435107912892
+Knees could no suitable, wild enemies. Always international personnel cl	Men	accessories	4.81	137.34	0.007800656788720083
+Grey names get. Soon historic shops turn always layers. K	Men	accessories	3.33	2633.88	0.1495994896073544
+Simply corporate shows get legs. Other towns remove situations; better international flights love perhaps interesting transactions.	Men	accessories	4.83	245.67	0.01395359948510895
+Businesses used to come nuclear children. Thi	Men	accessories	4.28	23697.12	1.345952380960496
+Round, faint kids try more than normal times. Carefully irrelevant members acknowledge suddenly possibly slow passengers; more new nations will not make much independent, clear statements; democr	Men	accessories	21.51	3766.43	0.2139262250527085
+Certain photographs seize then pink events; weari	Men	accessories	9.050000000000001	17572.16	0.998066034632849
+Thorough, disastrous lives can tick different activities. A	Men	accessories	8.529999999999999	298.74	0.01696787686808095
+Individual, good votes return between the notes. Thoughtfully high attitudes would not return also meetings.	Men	accessories	54.17	18934.71	1.075456342682001
+Competent women must work substantially in a months. Standard, united police will hide at a women. Specialist activities create directly. About beautiful terms can tell at first incidents. More i	Men	accessories	6.29	10175.12	0.5779279081406836
+Previous workers account in order patient, normal clergy	Men	accessories	3.87	3547.95	0.2015169670419355
+Also perfect samples measure american plants. Interactions publish less whole parties. Others try single, sexual countries. Long years clear certain, roy	Men	accessories	6.1	6060.47	0.344223434165825
+Per annum healthy words tell christian, deep miles. Subject mountains may say more than causal standards. Yet female aspects will not play structures. Questions redu	Men	accessories	72.40000000000001	1574.17	0.08940993080748139
+Military, national problems run international, good tears. Actually similar rooms let social, international books. Enterprises should amount too con	Men	accessories	0.28	1652.94	0.09388392043357342
+Documents receive for a busine	Men	accessories	2.09	8489.370000000001	0.4821804406761076
+Supposed provisions exercise past figures. Now old theories shall not relax ultimately to a clothes. Jobs 	Men	accessories	2.85	26885.92	1.527070295390892
+Alive, clear questions pay principal workers; large levels may need as 	Men	accessories	8.74	3703.16	0.2103326066238289
+Particular recordings will refer a	Men	accessories	1.76	5559.05	0.3157437099267102
+Plans must not provide more col	Men	accessories	0.35	828.8	0.04707429988707736
+Firstly other eyes can compete obviously. Immediate, public studies keep in a factors; religious, political scientists can say early linguistic counties; left, result	Men	accessories	4.25	4942.08	0.2807009604077308
+Male, human sales perform studies. Dependent, hostile services answer principles. Formal men show	Men	accessories	8.66	717.5700000000001	0.04075664257959713
+Married applicants get just between a changes. Only recent arguments exert up a members. Entire, capable result	Men	accessories	8.710000000000001	5238.490000000001	0.2975364976055211
+Mediterranean laws used to come ago in the stages. Thousands approach home. Real views will not fend other, old books. Political, small limits could not go industries. Ordinary trousers re	Men	accessories	64.92	811.85	0.04611157138431921
+Equal, lucky unions allow strong surroundings. Together yellow women love once by	Men	accessories	0.85	9316.23	0.529144552168179
+Religious areas grow rapidly on a efforts; statutory networks make for a resources; sides speak easily adequately exact areas; free, occasional comments could not require. Speedily eastern alte	Men	accessories	1.09	1156.39	0.06568080314480863
+Rare standards will not identify that local, necessary ideas. Safe, sma	Men	accessories	7.62	2065.56	0.1173199696847871
+Children receive tools. Places sit passionately to a patients. Managers can admire prices. Claims would produce; leading characteristics provide never 	Men	accessories	8.359999999999999	9174.949999999999	0.5211201107009416
+Young fields might intervene str	Men	accessories	3.26	318.01	0.0180623770597122
+Savi	Men	accessories	0.24	12465.71	0.7080291636647432
+Responsible communists prevent new, physical	Men	accessories	8.050000000000001	25.6	0.001454032428944474
+Typically internal agents run figures. Blue aff	Men	accessories	60.76	10612.56	0.6027736872702724
+Never important workers attempt equal devices. Sure friends explore a little only common magazines. Precious policies create by a legs; individual, current needs make problems. Extra committees cann	Men	accessories	44.51	5505.4	0.3126964896215199
+Small processes might grab only. Particular, possible respects could make recently. Loans might handle also available, old teachers. Low, regional pat	Men	accessories	8.98	17828.67	1.012635325974589
+Spatial patients retrieve sufficiently. Honours may not help great, double shoulders; patients ought to proceed legally also great materials. Strict ot	Men	accessories	7.19	2934.48	0.1666730110191008
+Annual, other lips distinguish currently for a years. Public members teach now stupid, special years. Th	Men	accessories	3.59	20234.29	1.1492700717448
+Long-term, wide studies shall take twice away conscious cases. Much primary objects would not remember also dead, english developments. Studies might	Men	accessories	1.25	3326	0.1889106194792704
+Days reduce therefore able languages. Policies might show then particularly relevant subjects; competitors will cause writers. Issues deal large lines. Lengthy children would 	Men	accessories	9	250.17	0.01420919112300934
+Open other others put just significant, important times. Lively seats shall understand more annual, advanced plans. Ameri	Men	accessories	6.92	1028.34	0.05840780109299847
+Items drop heavily with a markets. Young, large times might 	Men	accessories	3.6	2312.78	0.1313616062896172
+Available, sure	Men	accessories	0.21	8256.84	0.4689731687736677
+Sufficient, possible parents regard effects. Visual requirements intervene more. Other clothes would not find. Risks	Men	accessories	0.85	1932.58	0.1097669527941216
+Small, smart years shall think never typical, aware services; later liable meals should not count. Well intense instructions should master for instance chemical leading threats. New, normal do	Men	accessories	9.449999999999999	12579.69	0.7145030158620513
+European, surprising fears might transmit instructions. Often ugly drugs could not go all right. So particular products would not start mater	Men	accessories	9.82	5334.429999999999	0.3029857113255575
+Only, s	Men	accessories	5.45	5231.67	0.2971491342787476
+Special months produce in a facts. Statistical cells must dismiss hills. So available lette	Men	accessories	1.09	6280.2	0.3567036898537925
+Small, local shoulders could ensure just here teenage men; clearly increased exchanges may read a little attractive, silen	Men	accessories	6.43	15237.89	0.8654838362769031
+Islamic, special families should not continue mostly early problems. Banks doubt there. Then exp	Men	accessories	8.73	2253.8	0.1280116518888694
+Important practitioners use apparen	Men	accessories	3.42	7524.38	0.4273708018633291
+Physical, complete reasons boost models. Subsequent companies used to disappear straight forms. Also social refugees might present 	Men	accessories	1.83	634.14	0.03601797361292379
+Various, standard sources shall not manage never in a levels. Sound, existing factors would make either around the awards. Home domestic stars reach swiftly local, peaceful vegetables.	Men	accessories	2.58	5787.53	0.3287209493550396
+Countries must lose home. Difficult structures could believe conservatives. Things may not stand african pounds. Readers	Men	accessories	65.8	4949.04	0.2810962754743501
+Programmes meet there average colours. Difficult students say etc cultural times. Children mig	Men	accessories	3.45	5494.95	0.3121029490401734
+Likely advantages might save ago black hours. Thousands offer good organisation	Men	accessories	1.88	17314.91	0.9834547126662098
+Goals should find however on a samples. Accidents used to blind alone local days. Reasons depend at least against a accident	Men	accessories	0.97	332.54	0.0188876540594217
+Similarly active groups end satisfactory efforts. Other terms might not express usually acres. Superi	Men	accessories	3.89	4523.98	0.2569536573396962
+Super, large attacks produce later in a guidelines. Thirdly british meals give 	Men	accessories	4.35	178.16	0.01011915693518545
+Styles may benefit in a associations. Other, other parts know other, video-taped vegetables. Other, fast conditions enhance 	Men	accessories	3.39	3507.98	0.1992467453159624
+Comments discriminate massive, central questions. Times should survive at a students. American, political terms might satisfy sti	Men	accessories	0.65	4507.77	0.2560329594618373
+Back, gri	Men	accessories	3.84	11908.55	0.6763835110041688
+Soviet records can prevent only at the areas. Independent, historical flowers choose things. Considerable relationships used to want. S	Men	accessories	2.06	19199.42	1.090491378786137
+Only likely stories gain car	Men	accessories	4.15	6951.48	0.3948311464515209
+Women express at a technologies. Studies should	Men	accessories	1.56	2933.72	0.1666298444313666
+No longer broad players can give either as a records. Especially black years should speak mildly important unlikely films. Attractive, strong falls will ensure victorian, independent values	Men	accessories	6.7	3234.46	0.1837113175829588
+Late, medium imports know sentences. Centres shall not sell further in a roads. Workers hit very in a interviews; imports may wait on a rooms. Pp. come as. Rarely environmental children might not re	Men	accessories	2.8	1800.82	0.102283229636398
+Strategic, new principles shall ask young techniques. Full projects will refine main, red questions; mixed, fine levels develop current houses. A	Men	accessories	3.27	5343.57	0.3035048463412041
+Only, visible areas would not experience later early, specialist feet; initiatives upset maybe at the conflicts. Wrong, final p	Men	accessories	3.43	1570.33	0.08919182594313971
+Months last tight; mere, important months shall return now yesterday lucky subjects. Instantly new chiefs translate totally other months. Major transactions show exactly social, pleasant sh	Men	accessories	3.65	5469.77	0.3106727718307664
+Large girls should buy under deep, long windows. Breasts prefer. Patients build. Wealthy newspapers read more just speakers; sure attitudes m	Men	accessories	2.13	3190.53	0.1812161752156334
+Seco	Men	accessories	0.82	3160.79	0.1795269984798206
+Linguistic trends warrant really associated, true ways. Only substantial others shall not rais	Men	accessories	0.93	4664.54	0.2649372041448695
+Indian, old classes must not see always years. Military, proud hands allocate pupils. Generally funny assumpti	Men	accessories	27.12	7552.85	0.4289878449591123
+Gold, effective positions matter grey areas; independently upper offices should use perhaps in a numbers; generally specialist centres should t	Men	accessories	2.92	438.9	0.02492870441655195
+Fetched 100 row(s) in 1.54s

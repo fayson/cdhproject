@@ -1,0 +1,130 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select ca_zip
+       ,sum(cs_sales_price)
+ from catalog_sales
+     ,customer
+     ,customer_address
+     ,date_dim
+ where
+        cs_sold_date_sk between 2450905 and 2450997
+        and cs_bill_customer_sk = c_customer_sk
+        and c_current_addr_sk = ca_address_sk
+        and ( substr(ca_zip,1,5) in ('85669', '86197','88274','83405','86475',
+                                   '85392', '85460', '80348', '81792')
+              or ca_state in ('CA','WA','GA')
+              or cs_sales_price > 500)
+        and cs_sold_date_sk = d_date_sk
+        and cs_sold_date_sk between 2450906 and 2450996
+        and d_qoy = 2 and d_year = 1998
+ group by ca_zip
+ order by ca_zip
+ limit 100
+Query submitted at: 2018-04-19 06:46:37 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=2c4831d2919397f8:bee4731800000000
+	4731.179999999999
+30069	2512.110000000001
+30116	668.47
+30125	358.41
+30150	2051.78
+30162	1841.48
+30169	3120.53
+30191	534.96
+30319	321.93
+30399	2277.57
+30408	919.4000000000001
+30411	523.0600000000001
+30499	2855.62
+30534	325.86
+30573	805.77
+30587	1256.17
+30631	321.68
+30725	444.98
+30732	781.78
+30919	143.6
+31087	1561.62
+31150	744.3799999999999
+31387	511.34
+31521	1072.68
+31620	162.08
+31669	1002.4
+31675	339.87
+31711	404.47
+31749	2063.380000000001
+31757	1663.92
+31852	945.21
+31854	311.0000000000001
+31904	834.64
+31933	222.84
+31952	1852.03
+32123	256.26
+32150	429.03
+32284	759.0599999999999
+32293	1366.51
+32477	1514.13
+32808	1071.4
+32812	2058.54
+32898	988.49
+32924	549.4299999999999
+33003	1999.18
+33027	224.06
+33235	700.9599999999999
+33301	263.71
+33372	739.3700000000001
+33394	1332.39
+33425	569.53
+33451	1966.64
+33511	2121.42
+33604	946.5999999999999
+33628	899.7499999999999
+33683	1215.94
+33790	710
+33868	713.1099999999999
+33951	1644.01
+34027	926.09
+34074	477.05
+34092	1036.87
+34107	1048.06
+34136	1657.07
+34174	462.56
+34190	444.02
+34240	324.94
+34244	3138.1
+34289	888.5399999999997
+34338	3513.34
+34466	460.9300000000001
+34536	1577.05
+34593	450.54
+34854	1999.99
+34975	1797.82
+35038	2944.56
+35115	275.92
+35124	1556.68
+35281	1626.96
+35495	945.5099999999999
+35508	602.74
+35669	540.95
+35709	807.78
+35752	1323.13
+35802	800.2500000000001
+35804	920.7
+35817	691.3100000000001
+36000	511.96
+36060	2154.11
+36098	608.55
+36115	573.5999999999999
+36192	963.1499999999999
+36277	514.26
+36457	107.91
+36534	1237.25
+36557	825.13
+36575	1075.16
+36614	1339.06
+36668	647.48
+36787	3165.33
+Fetched 100 row(s) in 1.63s

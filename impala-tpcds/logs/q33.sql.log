@@ -1,0 +1,183 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with ss as (
+ select
+          i_manufact_id,sum(ss_ext_sales_price) total_sales
+ from
+ 	store_sales,
+ 	date_dim,
+         customer_address,
+         item
+ where
+         i_manufact_id in (select
+  i_manufact_id
+from
+ item
+where i_category in ('Books'))
+ and     ss_item_sk              = i_item_sk
+ and     ss_sold_date_sk         = d_date_sk
+ and ss_sold_date_sk between 2450874 and 2450904
+ and     d_year                  = 1998
+ and     d_moy                   = 3
+ and     ss_addr_sk              = ca_address_sk
+ and     ca_gmt_offset           = -6 
+ group by i_manufact_id),
+ cs as (
+ select
+          i_manufact_id,sum(cs_ext_sales_price) total_sales
+ from
+ 	catalog_sales,
+ 	date_dim,
+         customer_address,
+         item
+ where
+         i_manufact_id               in (select
+  i_manufact_id
+from
+ item
+where i_category in ('Books'))
+ and     cs_item_sk              = i_item_sk
+ and     cs_sold_date_sk         = d_date_sk
+ and cs_sold_date_sk between 2450874 and 2450904
+ and     d_year                  = 1998
+ and     d_moy                   = 3
+ and     cs_bill_addr_sk         = ca_address_sk
+ and     ca_gmt_offset           = -6 
+ group by i_manufact_id),
+ ws as (
+ select
+          i_manufact_id,sum(ws_ext_sales_price) total_sales
+ from
+ 	web_sales,
+ 	date_dim,
+         customer_address,
+         item
+ where
+         i_manufact_id               in (select
+  i_manufact_id
+from
+ item
+where i_category in ('Books'))
+ and     ws_item_sk              = i_item_sk
+ and     ws_sold_date_sk         = d_date_sk
+ and ws_sold_date_sk between 2450874 and 2450904
+ and     d_year                  = 1998
+ and     d_moy                   = 3
+ and     ws_bill_addr_sk         = ca_address_sk
+ and     ca_gmt_offset           = -6
+ group by i_manufact_id)
+ select  i_manufact_id ,sum(total_sales) total_sales
+ from  (select * from ss 
+        union all
+        select * from cs 
+        union all
+        select * from ws) tmp1
+ group by i_manufact_id
+ order by total_sales
+ limit 100
+864	1889.66
+893	1989.24
+817	2104.55
+948	2357.45
+757	2520.57
+763	3130.59
+464	3850.09
+815	5189.38
+703	5769.3
+921	6662.33
+833	7596.58
+823	8134.49
+869	8624.5
+827	8902.560000000001
+927	9146.84
+998	9218.49
+901	9480.450000000001
+920	9920.039999999999
+847	9972.48
+711	10040.15
+931	10552.83
+738	10739.07
+825	11088.92
+780	11375.09
+835	11469.36
+936	11644.78
+999	11770.82
+895	12429.48
+699	12449.98
+786	12544.18
+805	13346.98
+695	14185.75
+905	14478.68
+730	14505.32
+879	15326.08
+991	15815.9
+803	15918.83
+892	16217.54
+686	16991.69
+934	16997.47
+875	17115.48
+990	17402.48
+740	17449.98
+761	17498.56
+844	17499.6
+852	18289.79
+943	18342.81
+701	18379.21
+853	18468.69
+772	19243.91
+784	19248.69
+828	19383.12
+767	19557.21
+992	19855.71
+964	20103.43
+993	20325.11
+750	20492.74
+840	20644.26
+537	20995.9
+661	21414.7
+856	21549.38
+710	21589.05
+980	22030.66
+693	22721.89
+765	22837.53
+897	23133.17
+713	23173.93
+891	23407.05
+696	23609.31
+812	24437.91
+700	24519.27
+789	24947.1
+754	25186.83
+979	25498.06
+1000	25611.58
+714	26113.92
+746	26239.92
+677	26331.99
+727	26409.37
+826	26572.79
+705	27161.71
+756	27339.74
+884	27358.03000000001
+962	27382.05
+430	27817.53000000001
+667	28383.96
+939	28428.07
+883	28567.35
+622	29062.03
+978	29185.61
+922	29194.76
+782	29211.44
+796	29487.93
+913	29540.97
+917	29547.55
+523	29620.4
+769	29653.36
+381	29823.72
+483	30168.83
+771	30187.23
+Fetched 100 row(s) in 3.33s

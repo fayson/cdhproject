@@ -1,0 +1,176 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with ss as (
+ select i_item_id,sum(ss_ext_sales_price) total_sales
+ from
+ 	store_sales,
+ 	date_dim,
+         customer_address,
+         item
+ where i_item_id in (select
+     i_item_id
+from item
+where i_color in ('plum','peach','sandy'))
+ and     ss_item_sk              = i_item_sk
+ and     ss_sold_date_sk         = d_date_sk
+ and     ss_sold_date_sk between 2451331 and 2451360
+ and     d_year                  = 1999
+ and     d_moy                   = 6
+ and     ss_addr_sk              = ca_address_sk
+ and     ca_gmt_offset           = -5 
+ group by i_item_id),
+ cs as (
+ select i_item_id,sum(cs_ext_sales_price) total_sales
+ from
+ 	catalog_sales,
+ 	date_dim,
+         customer_address,
+         item
+ where
+         i_item_id               in (select
+  i_item_id
+from item
+where i_color in ('plum','peach','sandy'))
+ and     cs_item_sk              = i_item_sk
+ and     cs_sold_date_sk         = d_date_sk
+ and     cs_sold_date_sk between 2451331 and 2451360
+ and     d_year                  = 1999
+ and     d_moy                   = 6
+ and     cs_bill_addr_sk         = ca_address_sk
+ and     ca_gmt_offset           = -5 
+ group by i_item_id),
+ ws as (
+ select i_item_id,sum(ws_ext_sales_price) total_sales
+ from
+ 	web_sales,
+ 	date_dim,
+         customer_address,
+         item
+ where
+         i_item_id               in (select
+  i_item_id
+from item
+where i_color in ('plum','peach','sandy'))
+ and     ws_item_sk              = i_item_sk
+ and     ws_sold_date_sk         = d_date_sk
+ and     ws_sold_date_sk between 2451331 and 2451360
+ and     d_year                  = 1999
+ and     d_moy                   = 6
+ and     ws_bill_addr_sk         = ca_address_sk
+ and     ca_gmt_offset           = -5
+ group by i_item_id)
+ select  i_item_id ,sum(total_sales) total_sales
+ from  (select * from ss 
+        union all
+        select * from cs 
+        union all
+        select * from ws) tmp1
+ group by i_item_id
+ order by total_sales
+ limit 100
+AAAAAAAAHCNDAAAA	0
+AAAAAAAAKCMEAAAA	0
+AAAAAAAAKOEGAAAA	0.96
+AAAAAAAAEAHCAAAA	1.62
+AAAAAAAAIOIFAAAA	2.55
+AAAAAAAACPIDAAAA	3.42
+AAAAAAAAIABFAAAA	9.76
+AAAAAAAAKIAFAAAA	10.8
+AAAAAAAAICCEAAAA	15.12
+AAAAAAAACFCBAAAA	19.24
+AAAAAAAAKHGCAAAA	20.02
+AAAAAAAABELDAAAA	24.72
+AAAAAAAAIDJFAAAA	28.08
+AAAAAAAADEOEAAAA	28.13
+AAAAAAAAIGGCAAAA	28.2
+AAAAAAAACKIAAAAA	28.38
+AAAAAAAADBOBAAAA	28.5
+AAAAAAAAKGFFAAAA	29.8
+AAAAAAAAFGMCAAAA	32.37
+AAAAAAAAGJMBAAAA	32.85
+AAAAAAAAIPGCAAAA	35.35
+AAAAAAAAIOGEAAAA	38.43
+AAAAAAAAAJBAAAAA	39.12
+AAAAAAAAEIEGAAAA	39.12
+AAAAAAAAAENFAAAA	41.04
+AAAAAAAAKHAAAAAA	47.52
+AAAAAAAACCBFAAAA	50.75
+AAAAAAAAIBKAAAAA	53.11
+AAAAAAAAJHPDAAAA	56.26
+AAAAAAAAAGODAAAA	57.95
+AAAAAAAAONEDAAAA	60.59
+AAAAAAAAMIMCAAAA	63.91
+AAAAAAAAFDFAAAAA	68.23999999999999
+AAAAAAAABCMEAAAA	69.16
+AAAAAAAADFLAAAAA	73.44
+AAAAAAAAOGPDAAAA	77.52
+AAAAAAAACODDAAAA	78.61
+AAAAAAAAJIACAAAA	81.5
+AAAAAAAACFNFAAAA	83.26000000000001
+AAAAAAAAOAOAAAAA	84.55
+AAAAAAAAOAPAAAAA	85.68000000000001
+AAAAAAAAIIKFAAAA	86.37
+AAAAAAAACGHBAAAA	87.76000000000001
+AAAAAAAAMKNCAAAA	88.02
+AAAAAAAAODJFAAAA	88.95
+AAAAAAAAKMCEAAAA	91.53
+AAAAAAAAOKBAAAAA	93.8
+AAAAAAAAMPMEAAAA	94.5
+AAAAAAAAMHAGAAAA	96.44
+AAAAAAAACKABAAAA	97.58
+AAAAAAAAIFBAAAAA	98.8
+AAAAAAAAMGHDAAAA	100.8
+AAAAAAAALEMBAAAA	102.96
+AAAAAAAAIECFAAAA	107.78
+AAAAAAAAACCBAAAA	108.43
+AAAAAAAAKAKFAAAA	113
+AAAAAAAAMICDAAAA	117
+AAAAAAAAAKDDAAAA	119.95
+AAAAAAAAIMJFAAAA	120.96
+AAAAAAAAOBDCAAAA	121.5
+AAAAAAAAGMBEAAAA	121.88
+AAAAAAAAIHAFAAAA	123.12
+AAAAAAAAIAPAAAAA	123.84
+AAAAAAAAIDEBAAAA	128.38
+AAAAAAAAAMDBAAAA	131.7
+AAAAAAAACNEBAAAA	136.22
+AAAAAAAAGCKBAAAA	137.3
+AAAAAAAAMMJEAAAA	141.64
+AAAAAAAAEIKEAAAA	147.28
+AAAAAAAAELICAAAA	151.12
+AAAAAAAAGNEGAAAA	152.8
+AAAAAAAACPAGAAAA	153.52
+AAAAAAAAAADFAAAA	157.85
+AAAAAAAAEJJDAAAA	162.11
+AAAAAAAAEPPDAAAA	162.84
+AAAAAAAAFMCAAAAA	165.6
+AAAAAAAACKBDAAAA	166.7
+AAAAAAAAEBODAAAA	168.63
+AAAAAAAAGBKCAAAA	173.81
+AAAAAAAAECFCAAAA	173.88
+AAAAAAAAKCEAAAAA	183
+AAAAAAAACGDCAAAA	187.98
+AAAAAAAAENJFAAAA	188
+AAAAAAAABMDDAAAA	191.86
+AAAAAAAAGBECAAAA	194.7
+AAAAAAAAMDNDAAAA	199.67
+AAAAAAAABFEGAAAA	203.68
+AAAAAAAALCCBAAAA	204.36
+AAAAAAAACPJCAAAA	205.14
+AAAAAAAAMMEGAAAA	215.5
+AAAAAAAAKBJDAAAA	219.35
+AAAAAAAAJPGEAAAA	219.42
+AAAAAAAAIOFBAAAA	224.07
+AAAAAAAABLBDAAAA	226.87
+AAAAAAAACPDGAAAA	237.94
+AAAAAAAAEMJAAAAA	239.4
+AAAAAAAAKHFAAAAA	242.51
+AAAAAAAACFDDAAAA	247.36
+AAAAAAAAMOAAAAAA	253.6
+AAAAAAAAJNCEAAAA	257.03
+Fetched 100 row(s) in 3.78s

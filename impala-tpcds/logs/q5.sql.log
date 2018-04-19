@@ -1,0 +1,911 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with ssr as
+ (select s_store_id,
+        sum(sales_price) as sales,
+        sum(profit) as profit,
+        sum(return_amt) as sreturns,
+        sum(net_loss) as profit_loss
+ from
+  ( select  ss_store_sk as store_sk,
+            ss_sold_date_sk  as date_sk,
+            ss_ext_sales_price as sales_price,
+            ss_net_profit as profit,
+            cast(0 as decimal(7,2)) as return_amt,
+            cast(0 as decimal(7,2)) as net_loss
+    from store_sales
+    union all
+    select sr_store_sk as store_sk,
+           sr_returned_date_sk as date_sk,
+           cast(0 as decimal(7,2)) as sales_price,
+           cast(0 as decimal(7,2)) as profit,
+           sr_return_amt as return_amt,
+           sr_net_loss as net_loss
+    from store_returns
+   ) salesreturns,
+     date_dim,
+     store
+ where date_sk = d_date_sk
+      and date_sk between 2452133 and 2452147
+      and d_date between cast('2001-08-11' as timestamp)
+                  and (cast('2001-08-11' as timestamp) +  interval 14 days)
+       and store_sk = s_store_sk
+ group by s_store_id)
+ ,
+ csr as
+ (select cp_catalog_page_id,
+        sum(sales_price) as sales,
+        sum(profit) as profit,
+        sum(return_amt) as sreturns,
+        sum(net_loss) as profit_loss
+ from
+  ( select  cs_catalog_page_sk as page_sk,
+            cs_sold_date_sk  as date_sk,
+            cs_ext_sales_price as sales_price,
+            cs_net_profit as profit,
+            cast(0 as decimal(7,2)) as return_amt,
+            cast(0 as decimal(7,2)) as net_loss
+    from catalog_sales
+    union all
+    select cr_catalog_page_sk as page_sk,
+           cr_returned_date_sk as date_sk,
+           cast(0 as decimal(7,2)) as sales_price,
+           cast(0 as decimal(7,2)) as profit,
+           cr_return_amount as return_amt,
+           cr_net_loss as net_loss
+    from catalog_returns
+   ) salesreturns,
+     date_dim,
+     catalog_page
+ where date_sk = d_date_sk
+      and date_sk between 2452133 and 2452147
+      and d_date between cast('2001-08-11' as timestamp)
+                  and (cast('2001-08-11' as timestamp) +  interval 14 days)
+       and page_sk = cp_catalog_page_sk
+ group by cp_catalog_page_id)
+ ,
+ wsr as
+ (select web_site_id,
+        sum(sales_price) as sales,
+        sum(profit) as profit,
+        sum(return_amt) as sreturns,
+        sum(net_loss) as profit_loss
+ from
+  ( select  ws_web_site_sk as wsr_web_site_sk,
+            ws_sold_date_sk  as date_sk,
+            ws_ext_sales_price as sales_price,
+            ws_net_profit as profit,
+            cast(0 as decimal(7,2)) as return_amt,
+            cast(0 as decimal(7,2)) as net_loss
+    from web_sales
+    union all
+    select ws_web_site_sk as wsr_web_site_sk,
+           wr_returned_date_sk as date_sk,
+           cast(0 as decimal(7,2)) as sales_price,
+           cast(0 as decimal(7,2)) as profit,
+           wr_return_amt as return_amt,
+           wr_net_loss as net_loss
+    from web_returns left outer join web_sales on
+         ( wr_item_sk = ws_item_sk
+           and wr_order_number = ws_order_number)
+   ) salesreturns,
+     date_dim,
+     web_site
+ where date_sk = d_date_sk
+      and date_sk between 2452133 and 2452147
+      and d_date between cast('2001-08-11' as timestamp)
+                  and (cast('2001-08-11' as timestamp) +  interval 14 days)
+       and wsr_web_site_sk = web_site_sk
+ group by web_site_id)
+ ,
+ results as
+ (select channel
+        , id
+        , sum(sales) as sales
+        , sum(sreturns) as sreturns
+        , sum(profit) as profit
+ from 
+ (select 'store channel' as channel
+        , concat('store' , s_store_id) as id
+        , sales
+        , sreturns
+        , (profit - profit_loss) as profit
+ from   ssr
+ union all
+ select 'catalog channel' as channel
+        , concat('catalog_page' , cp_catalog_page_id) as id
+        , sales
+        , sreturns
+        , (profit - profit_loss) as profit
+ from  csr
+ union all
+ select 'web channel' as channel
+        , concat('web_site' , web_site_id) as id
+        , sales
+        , sreturns
+        , (profit - profit_loss) as profit
+ from   wsr
+ ) x
+ group by channel, id)
+select channel, id, sales, sreturns, profit from ( 
+  select channel, id, sales, sreturns, profit from results
+  union
+  select channel, null as id, sum(sales), sum(sreturns), sum(profit) from results group by channel
+  union
+  select null as channel, null as id, sum(sales), sum(sreturns), sum(profit) from results) foo
+order by channel, id
+catalog channel	catalog_pageAAAAAAAAAAABAAAA	0	5922.91	-4394.37
+catalog channel	catalog_pageAAAAAAAAAAEBAAAA	0	188.5	-572.35
+catalog channel	catalog_pageAAAAAAAAAAHBAAAA	0	10138.99	-3719.64
+catalog channel	catalog_pageAAAAAAAAAAIBAAAA	174064.03	0	-61088.72000000002
+catalog channel	catalog_pageAAAAAAAAAAKBAAAA	166261.55	0	-2203.259999999999
+catalog channel	catalog_pageAAAAAAAAABHBAAAA	0	6461.81	-4708.860000000001
+catalog channel	catalog_pageAAAAAAAAABIBAAAA	0	308.36	-722.8
+catalog channel	catalog_pageAAAAAAAAABKBAAAA	178903.08	0	-28043.92999999999
+catalog channel	catalog_pageAAAAAAAAACEBAAAA	0	3222.78	-1974.08
+catalog channel	catalog_pageAAAAAAAAACHBAAAA	0	17427.76	-7976.23
+catalog channel	catalog_pageAAAAAAAAACKBAAAA	198625.86	0	-8531.590000000004
+catalog channel	catalog_pageAAAAAAAAADEBAAAA	0	103.74	-1236.64
+catalog channel	catalog_pageAAAAAAAAADHBAAAA	0	14090.55	-6527.6
+catalog channel	catalog_pageAAAAAAAAADIBAAAA	0	3121.35	-1073.41
+catalog channel	catalog_pageAAAAAAAAAEEBAAAA	0	7.08	-175.62
+catalog channel	catalog_pageAAAAAAAAAEHBAAAA	326899.0499999999	4455.200000000001	-21381.47999999999
+catalog channel	catalog_pageAAAAAAAAAEJBAAAA	0	3298.86	-2629.67
+catalog channel	catalog_pageAAAAAAAAAFHBAAAA	371227.86	0	-45553.85999999999
+catalog channel	catalog_pageAAAAAAAAAFIBAAAA	0	1049.44	-194.09
+catalog channel	catalog_pageAAAAAAAAAGHBAAAA	412671.9999999999	0	-7997.229999999992
+catalog channel	catalog_pageAAAAAAAAAGIBAAAA	0	650.88	-341.62
+catalog channel	catalog_pageAAAAAAAAAHHBAAAA	352773.29	343.54	-70422.92000000001
+catalog channel	catalog_pageAAAAAAAAAHIBAAAA	0	1936.26	-286.35
+catalog channel	catalog_pageAAAAAAAAAIHBAAAA	368654.5399999999	4332.099999999999	-43299.12
+catalog channel	catalog_pageAAAAAAAAAJHBAAAA	320765.04	8284	-39999.69
+catalog channel	catalog_pageAAAAAAAAAKHBAAAA	345426.26	12183.46	-31142.98
+catalog channel	catalog_pageAAAAAAAAALHBAAAA	186474.98	9725.540000000001	-1202.440000000002
+catalog channel	catalog_pageAAAAAAAAALIBAAAA	0	584.28	-360.66
+catalog channel	catalog_pageAAAAAAAAALPAAAAA	0	4580.75	-2549.73
+catalog channel	catalog_pageAAAAAAAAAMABAAAA	0	2872.8	-1349.87
+catalog channel	catalog_pageAAAAAAAAAMHBAAAA	191958.64	524	-39022.14
+catalog channel	catalog_pageAAAAAAAAAMJBAAAA	174432.6599999999	0	-14144.7
+catalog channel	catalog_pageAAAAAAAAAMPAAAAA	0	8555.35	-2152.71
+catalog channel	catalog_pageAAAAAAAAANGBAAAA	0	7106.400000000001	-1318.27
+catalog channel	catalog_pageAAAAAAAAANHBAAAA	189953.63	7766.900000000001	-38930.53
+catalog channel	catalog_pageAAAAAAAAANJBAAAA	184549.89	0	-39538.3
+catalog channel	catalog_pageAAAAAAAAAOABAAAA	0	575.52	-2561.91
+catalog channel	catalog_pageAAAAAAAAAOGBAAAA	0	3933.85	-4125.32
+catalog channel	catalog_pageAAAAAAAAAOHBAAAA	158484.17	4799.51	-26544.25
+catalog channel	catalog_pageAAAAAAAAAOIBAAAA	0	613.26	-1071.02
+catalog channel	catalog_pageAAAAAAAAAOJBAAAA	209172.32	0	27576.81999999999
+catalog channel	catalog_pageAAAAAAAAAPDBAAAA	0	4433.26	-2014.32
+catalog channel	catalog_pageAAAAAAAAAPGBAAAA	0	7131.570000000001	-2857.35
+catalog channel	catalog_pageAAAAAAAAAPHBAAAA	197800.15	0	-24651.95
+catalog channel	catalog_pageAAAAAAAAAPJBAAAA	195317.85	331.2	-11327.4
+catalog channel	catalog_pageAAAAAAAABAABAAAA	0	1384.6	-751.67
+catalog channel	catalog_pageAAAAAAAABAHBAAAA	0	6020.16	-3864.76
+catalog channel	catalog_pageAAAAAAAABAIBAAAA	241348.33	0	-18228.93
+catalog channel	catalog_pageAAAAAAAABAKBAAAA	157832.33	0	-23568.88
+catalog channel	catalog_pageAAAAAAAABBEBAAAA	0	1527.6	-501.81
+catalog channel	catalog_pageAAAAAAAABBHBAAAA	0	16519.86	-8983.15
+catalog channel	catalog_pageAAAAAAAABBKBAAAA	172014.35	0	-32154.79
+catalog channel	catalog_pageAAAAAAAABCEBAAAA	0	2280.14	-2561.900000000001
+catalog channel	catalog_pageAAAAAAAABCHBAAAA	0	11317.24	-12022.99
+catalog channel	catalog_pageAAAAAAAABCJBAAAA	0	2604.98	-455.11
+catalog channel	catalog_pageAAAAAAAABCKBAAAA	162208.46	0	-46636.77
+catalog channel	catalog_pageAAAAAAAABDHBAAAA	0	3245.28	-1551.93
+catalog channel	catalog_pageAAAAAAAABDIBAAAA	0	53.2	-109.04
+catalog channel	catalog_pageAAAAAAAABEHBAAAA	308862.4099999998	5443.44	-29734.16
+catalog channel	catalog_pageAAAAAAAABEJBAAAA	0	562	-732.8200000000001
+catalog channel	catalog_pageAAAAAAAABFHBAAAA	339463.04	46.45	-30036.68999999999
+catalog channel	catalog_pageAAAAAAAABFJBAAAA	0	21.48	-80.06
+catalog channel	catalog_pageAAAAAAAABGHBAAAA	356365.6699999999	1794.02	-25541.21
+catalog channel	catalog_pageAAAAAAAABGIBAAAA	0	346.06	-119.06
+catalog channel	catalog_pageAAAAAAAABHHBAAAA	328940.59	0	-34119.05999999998
+catalog channel	catalog_pageAAAAAAAABHIBAAAA	0	738.1800000000001	-384.43
+catalog channel	catalog_pageAAAAAAAABIHBAAAA	401265.3999999999	12771.57	-42392.51999999998
+catalog channel	catalog_pageAAAAAAAABJABAAAA	0	581.02	-129.12
+catalog channel	catalog_pageAAAAAAAABJHBAAAA	356069.07	7619.4	-28740.57999999999
+catalog channel	catalog_pageAAAAAAAABKABAAAA	0	11071.79	-2454.84
+catalog channel	catalog_pageAAAAAAAABKHBAAAA	135914.07	9.949999999999999	-6183.629999999998
+catalog channel	catalog_pageAAAAAAAABKIBAAAA	0	994.84	-378.31
+catalog channel	catalog_pageAAAAAAAABLHBAAAA	171024.43	0	-14144.5
+catalog channel	catalog_pageAAAAAAAABLJBAAAA	0	381.72	-212.27
+catalog channel	catalog_pageAAAAAAAABMABAAAA	0	508.2	-966.8
+catalog channel	catalog_pageAAAAAAAABMHBAAAA	159370.96	203.7	-32462.43
+catalog channel	catalog_pageAAAAAAAABMJBAAAA	212259.3	0	415.610000000006
+catalog channel	catalog_pageAAAAAAAABNABAAAA	0	NULL	NULL
+catalog channel	catalog_pageAAAAAAAABNGBAAAA	0	15486.99	-17575.69
+catalog channel	catalog_pageAAAAAAAABNHBAAAA	150571.99	0	-19196.33
+catalog channel	catalog_pageAAAAAAAABNJBAAAA	186414.14	0	7999.089999999997
+catalog channel	catalog_pageAAAAAAAABNPAAAAA	0	1423.86	-1097.53
+catalog channel	catalog_pageAAAAAAAABOGBAAAA	0	2370.97	-1485.37
+catalog channel	catalog_pageAAAAAAAABOHBAAAA	191313.38	0	-19224.75
+catalog channel	catalog_pageAAAAAAAABOJBAAAA	244161.85	0	18457.40000000001
+catalog channel	catalog_pageAAAAAAAABOPAAAAA	0	1452	-322.59
+catalog channel	catalog_pageAAAAAAAABPGBAAAA	0	1163.23	-789.71
+catalog channel	catalog_pageAAAAAAAABPHBAAAA	247436.05	0	-387.7600000000002
+catalog channel	catalog_pageAAAAAAAABPJBAAAA	201207.46	0	-35491.07
+catalog channel	catalog_pageAAAAAAAABPPAAAAA	0	778.4000000000001	-463.67
+catalog channel	catalog_pageAAAAAAAACAEBAAAA	0	860.4	-630.21
+catalog channel	catalog_pageAAAAAAAACAHBAAAA	0	8806.689999999999	-4697.98
+catalog channel	catalog_pageAAAAAAAACAIBAAAA	192162.73	0	-14610.57000000001
+catalog channel	catalog_pageAAAAAAAACAJBAAAA	0	2056.23	-667.37
+catalog channel	catalog_pageAAAAAAAACAKBAAAA	225131.14	0	-12081.22
+catalog channel	catalog_pageAAAAAAAACBEBAAAA	0	374.72	-345.35
+catalog channel	catalog_pageAAAAAAAACBHBAAAA	0	11616.71	-5427.39
+catalog channel	catalog_pageAAAAAAAACBIBAAAA	0	2094.56	-778.46
+catalog channel	catalog_pageAAAAAAAACBKBAAAA	179106.16	0	-26883.77000000001
+catalog channel	catalog_pageAAAAAAAACCEBAAAA	0	2783.33	-1288.1
+catalog channel	catalog_pageAAAAAAAACCHBAAAA	0	9938.559999999999	-6435.45
+catalog channel	catalog_pageAAAAAAAACCKBAAAA	202083.51	0	-6017.309999999999
+catalog channel	catalog_pageAAAAAAAACDEBAAAA	0	1728.62	-817.22
+catalog channel	catalog_pageAAAAAAAACDHBAAAA	0	5288.740000000001	-7078.499999999999
+catalog channel	catalog_pageAAAAAAAACDIBAAAA	0	403.33	-173.61
+catalog channel	catalog_pageAAAAAAAACEHBAAAA	418087.3700000001	5791.9	-3561.789999999989
+catalog channel	catalog_pageAAAAAAAACFHBAAAA	351378.5600000002	1365.69	-51110.08000000001
+catalog channel	catalog_pageAAAAAAAACGHBAAAA	317194.76	6855.690000000001	-30883.30000000002
+catalog channel	catalog_pageAAAAAAAACHHBAAAA	423792.5800000001	9529.6	-20508.86999999999
+catalog channel	catalog_pageAAAAAAAACIHBAAAA	298898.64	6652.940000000001	-41821.63999999999
+catalog channel	catalog_pageAAAAAAAACJABAAAA	0	1874.6	-891.21
+catalog channel	catalog_pageAAAAAAAACJDBAAAA	0	2.72	-17.3
+catalog channel	catalog_pageAAAAAAAACJHBAAAA	311327.2500000001	1972.21	-60230.34
+catalog channel	catalog_pageAAAAAAAACJJBAAAA	0	1544.4	-1641.25
+catalog channel	catalog_pageAAAAAAAACKHBAAAA	176171.8	0	-1213.309999999999
+catalog channel	catalog_pageAAAAAAAACLHBAAAA	203295.72	0	-3633.609999999999
+catalog channel	catalog_pageAAAAAAAACLIBAAAA	0	148.14	-147.17
+catalog channel	catalog_pageAAAAAAAACLPAAAAA	0	4634.66	-2598.6
+catalog channel	catalog_pageAAAAAAAACMHBAAAA	207836	777	-40105.55
+catalog channel	catalog_pageAAAAAAAACMJBAAAA	166783.03	0	12652.73
+catalog channel	catalog_pageAAAAAAAACMPAAAAA	0	975	-434.73
+catalog channel	catalog_pageAAAAAAAACNGBAAAA	0	12437.34	-7580.43
+catalog channel	catalog_pageAAAAAAAACNHBAAAA	192697.95	0	-6465.580000000003
+catalog channel	catalog_pageAAAAAAAACNIBAAAA	0	1.02	-52.77
+catalog channel	catalog_pageAAAAAAAACNJBAAAA	204626.24	2340.25	-17444.97
+catalog channel	catalog_pageAAAAAAAACOGBAAAA	0	12578.58	-15562.81
+catalog channel	catalog_pageAAAAAAAACOHBAAAA	194588.61	2432	4080.580000000009
+catalog channel	catalog_pageAAAAAAAACOJBAAAA	135932.2	0	-22453.06
+catalog channel	catalog_pageAAAAAAAACOPAAAAA	0	1296.68	-773.52
+catalog channel	catalog_pageAAAAAAAACPGBAAAA	0	9491.880000000001	-6897.33
+catalog channel	catalog_pageAAAAAAAACPHBAAAA	130916.84	0	-49301.90999999999
+catalog channel	catalog_pageAAAAAAAACPJBAAAA	169003.02	0	-10492.26
+catalog channel	catalog_pageAAAAAAAACPPAAAAA	0	432.9	-378.24
+catalog channel	catalog_pageAAAAAAAADAABAAAA	0	372.12	-389.56
+catalog channel	catalog_pageAAAAAAAADAHBAAAA	0	18100.56	-8363.460000000001
+catalog channel	catalog_pageAAAAAAAADAIBAAAA	180654.28	438.48	2845.18
+catalog channel	catalog_pageAAAAAAAADAKBAAAA	169422.46	0	-13636.7
+catalog channel	catalog_pageAAAAAAAADBHBAAAA	0	8406.750000000002	-2566.04
+catalog channel	catalog_pageAAAAAAAADBIBAAAA	0	305.64	-465.6
+catalog channel	catalog_pageAAAAAAAADBKBAAAA	147149.62	0	-18226.54
+catalog channel	catalog_pageAAAAAAAADCHBAAAA	0	17359.29	-12455.75
+catalog channel	catalog_pageAAAAAAAADCJBAAAA	0	3062.61	-1006.13
+catalog channel	catalog_pageAAAAAAAADCKBAAAA	159754.88	0	-17530.75
+catalog channel	catalog_pageAAAAAAAADDHBAAAA	0	8288.93	-6329.419999999999
+catalog channel	catalog_pageAAAAAAAADDIBAAAA	0	1564.75	-1356.8
+catalog channel	catalog_pageAAAAAAAADDJBAAAA	0	1570.56	-822.35
+catalog channel	catalog_pageAAAAAAAADEHBAAAA	314664.47	153.51	-58842.04
+catalog channel	catalog_pageAAAAAAAADFHBAAAA	327854.12	11.97	-66718.27
+catalog channel	catalog_pageAAAAAAAADFIBAAAA	0	633.27	-400.8
+catalog channel	catalog_pageAAAAAAAADGHBAAAA	409093.5100000001	4198.63	-36042.35
+catalog channel	catalog_pageAAAAAAAADGIBAAAA	0	31.65	-93.97
+catalog channel	catalog_pageAAAAAAAADHHBAAAA	333345.0699999999	1702.96	-37009.31
+catalog channel	catalog_pageAAAAAAAADHIBAAAA	0	131.82	-91.75
+catalog channel	catalog_pageAAAAAAAADIABAAAA	0	2774.4	-1333.24
+catalog channel	catalog_pageAAAAAAAADIHBAAAA	328275.78	447.58	-14800.85
+catalog channel	catalog_pageAAAAAAAADIIBAAAA	0	20.4	-86.20999999999999
+catalog channel	catalog_pageAAAAAAAADJDBAAAA	0	38.83	-109.15
+catalog channel	catalog_pageAAAAAAAADJHBAAAA	306762.16	313.04	-74237.08
+catalog channel	catalog_pageAAAAAAAADKABAAAA	0	1511.93	-1753.2
+catalog channel	catalog_pageAAAAAAAADKHBAAAA	209992.6200000001	0	6927.350000000002
+catalog channel	catalog_pageAAAAAAAADKPAAAAA	0	37.2	-241.52
+catalog channel	catalog_pageAAAAAAAADLABAAAA	0	562.78	-619.13
+catalog channel	catalog_pageAAAAAAAADLHBAAAA	295312.58	0	53714.59999999998
+catalog channel	catalog_pageAAAAAAAADLPAAAAA	0	314.49	-122.78
+catalog channel	catalog_pageAAAAAAAADMHBAAAA	146813.21	176.15	-36396.69000000001
+catalog channel	catalog_pageAAAAAAAADMIBAAAA	0	290.1	-1336.69
+catalog channel	catalog_pageAAAAAAAADMJBAAAA	191513.82	0	11327.46
+catalog channel	catalog_pageAAAAAAAADNABAAAA	0	1849.68	-644.15
+catalog channel	catalog_pageAAAAAAAADNGBAAAA	0	8255.42	-7568.21
+catalog channel	catalog_pageAAAAAAAADNHBAAAA	179175.3	43.8	-12937.37
+catalog channel	catalog_pageAAAAAAAADNJBAAAA	196930.22	0	-26046.86
+catalog channel	catalog_pageAAAAAAAADNPAAAAA	0	3353.92	-1452.27
+catalog channel	catalog_pageAAAAAAAADODBAAAA	0	6210.93	-2948.77
+catalog channel	catalog_pageAAAAAAAADOGBAAAA	0	9868.280000000001	-4316.37
+catalog channel	catalog_pageAAAAAAAADOHBAAAA	155861.55	0	4968.21
+catalog channel	catalog_pageAAAAAAAADOJBAAAA	217442.3699999999	0	-22384.42
+catalog channel	catalog_pageAAAAAAAADOPAAAAA	0	2215.02	-201.79
+catalog channel	catalog_pageAAAAAAAADPGBAAAA	0	3232.19	-1151.66
+catalog channel	catalog_pageAAAAAAAADPHBAAAA	216985.61	1823.89	-18826.48999999999
+catalog channel	catalog_pageAAAAAAAADPJBAAAA	201993.6200000001	0	-13415.07
+catalog channel	catalog_pageAAAAAAAADPPAAAAA	0	27	-102.89
+catalog channel	catalog_pageAAAAAAAAEAABAAAA	0	1742.66	-1436.29
+catalog channel	catalog_pageAAAAAAAAEAEBAAAA	0	717.03	-344.18
+catalog channel	catalog_pageAAAAAAAAEAHBAAAA	0	5078.1	-9340.559999999999
+catalog channel	catalog_pageAAAAAAAAEAIBAAAA	186022.01	551.24	16857.8
+catalog channel	catalog_pageAAAAAAAAEAKBAAAA	137651.25	0	-53896.69
+catalog channel	catalog_pageAAAAAAAAEBHBAAAA	0	4669.08	-2040.23
+catalog channel	catalog_pageAAAAAAAAEBIBAAAA	0	4710.12	-2310.74
+catalog channel	catalog_pageAAAAAAAAEBKBAAAA	156796.71	0	-4764.860000000004
+catalog channel	catalog_pageAAAAAAAAECHBAAAA	0	12255.35	-6486.82
+catalog channel	catalog_pageAAAAAAAAECJBAAAA	0	38.55	-313.12
+catalog channel	catalog_pageAAAAAAAAECKBAAAA	190954.52	0	10769.89
+catalog channel	catalog_pageAAAAAAAAEDEBAAAA	0	6570.28	-2848.02
+catalog channel	catalog_pageAAAAAAAAEDHBAAAA	0	11853.53	-7676.290000000001
+catalog channel	catalog_pageAAAAAAAAEDJBAAAA	0	1064.25	-1059.06
+catalog channel	catalog_pageAAAAAAAAEEHBAAAA	326502.9800000001	7164.73	-44819.23999999999
+catalog channel	catalog_pageAAAAAAAAEEIBAAAA	0	801.5700000000001	-205.73
+catalog channel	catalog_pageAAAAAAAAEFHBAAAA	321198.21	5687.99	-41116.54
+catalog channel	catalog_pageAAAAAAAAEGHBAAAA	308648.76	3888.97	-32535.96000000001
+catalog channel	catalog_pageAAAAAAAAEGIBAAAA	0	7.67	-68.23999999999999
+catalog channel	catalog_pageAAAAAAAAEHHBAAAA	363239.62	542.39	-24130.04
+catalog channel	catalog_pageAAAAAAAAEIHBAAAA	339731.9700000001	0	-34150.45
+catalog channel	catalog_pageAAAAAAAAEIIBAAAA	0	15.68	-90.81999999999999
+catalog channel	catalog_pageAAAAAAAAEJHBAAAA	515273.3899999999	8694.689999999999	-10389.27000000001
+catalog channel	catalog_pageAAAAAAAAEJIBAAAA	0	6239.04	-1972.98
+catalog channel	catalog_pageAAAAAAAAEKHBAAAA	133720.06	5317.52	-71193.10000000001
+catalog channel	catalog_pageAAAAAAAAEKPAAAAA	0	9286.92	-6392.17
+catalog channel	catalog_pageAAAAAAAAELHBAAAA	237974.91	4762.8	-20947.32
+catalog channel	catalog_pageAAAAAAAAEMABAAAA	0	175.92	-176.35
+catalog channel	catalog_pageAAAAAAAAEMHBAAAA	147601.34	0	-21329.72
+catalog channel	catalog_pageAAAAAAAAEMJBAAAA	202704.15	0	-9787.579999999998
+catalog channel	catalog_pageAAAAAAAAEMPAAAAA	0	4330.1	-4096.26
+catalog channel	catalog_pageAAAAAAAAENGBAAAA	0	26448.46	-9223.480000000001
+catalog channel	catalog_pageAAAAAAAAENHBAAAA	216314.6	0	4802.689999999996
+catalog channel	catalog_pageAAAAAAAAENIBAAAA	0	96.34	-129.76
+catalog channel	catalog_pageAAAAAAAAENJBAAAA	256333.71	0	-13962.25
+catalog channel	catalog_pageAAAAAAAAENPAAAAA	0	1576.04	-284.49
+catalog channel	catalog_pageAAAAAAAAEOGBAAAA	0	16910.65	-10407.56
+catalog channel	catalog_pageAAAAAAAAEOHBAAAA	216409.85	9166.08	-49359.02
+catalog channel	catalog_pageAAAAAAAAEOJBAAAA	243983.02	0	2328.189999999997
+catalog channel	catalog_pageAAAAAAAAEOPAAAAA	0	3137.03	-2097.72
+catalog channel	catalog_pageAAAAAAAAEPDBAAAA	0	915.84	-1145.28
+catalog channel	catalog_pageAAAAAAAAEPGBAAAA	0	6483.589999999999	-3193.14
+catalog channel	catalog_pageAAAAAAAAEPHBAAAA	215553.99	0	3432.400000000001
+catalog channel	catalog_pageAAAAAAAAEPJBAAAA	172351.09	0	8850.189999999999
+catalog channel	catalog_pageAAAAAAAAEPPAAAAA	0	1627.11	-790.66
+catalog channel	catalog_pageAAAAAAAAFAABAAAA	0	1478.61	-573.95
+catalog channel	catalog_pageAAAAAAAAFAHBAAAA	0	17771.83	-1853.98
+catalog channel	catalog_pageAAAAAAAAFAIBAAAA	216302.81	1730.91	14204.43
+catalog channel	catalog_pageAAAAAAAAFAKBAAAA	215309.44	0	-23433.46000000001
+catalog channel	catalog_pageAAAAAAAAFBHBAAAA	0	2595.53	-1687.17
+catalog channel	catalog_pageAAAAAAAAFBIBAAAA	0	1810.82	-3412.52
+catalog channel	catalog_pageAAAAAAAAFBKBAAAA	170154.65	0	-49376.20000000001
+catalog channel	catalog_pageAAAAAAAAFCHBAAAA	0	6548.11	-1996.73
+catalog channel	catalog_pageAAAAAAAAFCIBAAAA	0	1104.19	-1202.59
+catalog channel	catalog_pageAAAAAAAAFCKBAAAA	217173.05	0	6362.500000000003
+catalog channel	catalog_pageAAAAAAAAFDHBAAAA	381732.1800000001	2156.64	-37824.24000000002
+catalog channel	catalog_pageAAAAAAAAFEHBAAAA	324615.01	16	-47738.30000000001
+catalog channel	catalog_pageAAAAAAAAFFHBAAAA	442262.5700000001	4933.5	-40659.9
+catalog channel	catalog_pageAAAAAAAAFGHBAAAA	425979.4200000002	2063.33	-23243.2
+catalog channel	catalog_pageAAAAAAAAFGIBAAAA	0	145.86	-809.08
+catalog channel	catalog_pageAAAAAAAAFHHBAAAA	334163.0699999999	4999.42	-66001.63
+catalog channel	catalog_pageAAAAAAAAFHIBAAAA	0	198.32	-150.11
+catalog channel	catalog_pageAAAAAAAAFIABAAAA	0	6199.5	-3572.21
+catalog channel	catalog_pageAAAAAAAAFIHBAAAA	295067.28	3654.4	-39747.86000000001
+catalog channel	catalog_pageAAAAAAAAFIIBAAAA	0	421.8	-467.02
+catalog channel	catalog_pageAAAAAAAAFJABAAAA	0	3754.12	-809.77
+catalog channel	catalog_pageAAAAAAAAFJHBAAAA	406071.08	2115.96	-12759.8
+catalog channel	catalog_pageAAAAAAAAFKHBAAAA	179719.52	1444.2	-57534.50000000001
+catalog channel	catalog_pageAAAAAAAAFKIBAAAA	0	8534.25	-2192.99
+catalog channel	catalog_pageAAAAAAAAFKPAAAAA	0	217.28	-273.62
+catalog channel	catalog_pageAAAAAAAAFLHBAAAA	264332.77	2821.09	-17112.42
+catalog channel	catalog_pageAAAAAAAAFLPAAAAA	0	7655.22	-3886.01
+catalog channel	catalog_pageAAAAAAAAFMABAAAA	0	938.96	-503.32
+catalog channel	catalog_pageAAAAAAAAFMHBAAAA	166245.99	0	-12233.7
+catalog channel	catalog_pageAAAAAAAAFMIBAAAA	0	51.2	-54.45
+catalog channel	catalog_pageAAAAAAAAFMJBAAAA	170994.3	0	-25304.61
+catalog channel	catalog_pageAAAAAAAAFMPAAAAA	0	3574.3	-3447.98
+catalog channel	catalog_pageAAAAAAAAFNGBAAAA	0	11175.02	-7730.809999999999
+catalog channel	catalog_pageAAAAAAAAFNHBAAAA	135218.7	0	-54166.8
+catalog channel	catalog_pageAAAAAAAAFNJBAAAA	230112.08	0	14469.69999999999
+catalog channel	catalog_pageAAAAAAAAFODBAAAA	0	605.11	-1085.6
+catalog channel	catalog_pageAAAAAAAAFOGBAAAA	0	23510.66	-16780.85
+catalog channel	catalog_pageAAAAAAAAFOHBAAAA	175739.98	0	7752.129999999997
+catalog channel	catalog_pageAAAAAAAAFOJBAAAA	173445.93	0	-3596.23
+catalog channel	catalog_pageAAAAAAAAFPGBAAAA	0	14687.38	-8482.24
+catalog channel	catalog_pageAAAAAAAAFPHBAAAA	181155.75	294.46	2978.700000000001
+catalog channel	catalog_pageAAAAAAAAFPIBAAAA	0	728.64	-921.3
+catalog channel	catalog_pageAAAAAAAAFPJBAAAA	212011.77	0	19169.64
+catalog channel	catalog_pageAAAAAAAAGAABAAAA	0	3694	-598.38
+catalog channel	catalog_pageAAAAAAAAGAEBAAAA	0	985.02	-682.63
+catalog channel	catalog_pageAAAAAAAAGAHBAAAA	0	13203.11	-6566.809999999999
+catalog channel	catalog_pageAAAAAAAAGAIBAAAA	139669.63	0	-47908.19
+catalog channel	catalog_pageAAAAAAAAGAKBAAAA	204889.66	0	-12085.53
+catalog channel	catalog_pageAAAAAAAAGBHBAAAA	0	10875.8	-6341.459999999999
+catalog channel	catalog_pageAAAAAAAAGBIBAAAA	0	195.6	-287.01
+catalog channel	catalog_pageAAAAAAAAGBKBAAAA	186787.22	0	9910.439999999999
+catalog channel	catalog_pageAAAAAAAAGCBBAAAA	0	499	-1080.27
+catalog channel	catalog_pageAAAAAAAAGCHBAAAA	0	14568.9	-10873.19
+catalog channel	catalog_pageAAAAAAAAGCKBAAAA	187525.52	0	-9396.360000000001
+catalog channel	catalog_pageAAAAAAAAGDHBAAAA	398460.2200000001	264.2	2315.539999999998
+catalog channel	catalog_pageAAAAAAAAGDIBAAAA	0	19.5	-41.41
+catalog channel	catalog_pageAAAAAAAAGEHBAAAA	408963.8099999999	0	-3761.7
+catalog channel	catalog_pageAAAAAAAAGEJBAAAA	0	64.8	-85.81999999999999
+catalog channel	catalog_pageAAAAAAAAGFHBAAAA	426317.35	0	-23191.18999999999
+catalog channel	catalog_pageAAAAAAAAGFIBAAAA	0	607.62	-1112.51
+catalog channel	catalog_pageAAAAAAAAGGHBAAAA	332112.48	5184.74	1237.059999999994
+catalog channel	catalog_pageAAAAAAAAGGIBAAAA	0	311.86	-578.53
+catalog channel	catalog_pageAAAAAAAAGHABAAAA	0	3492.34	-2946.31
+catalog channel	catalog_pageAAAAAAAAGHHBAAAA	345492.85	1615.61	-71394.14000000001
+catalog channel	catalog_pageAAAAAAAAGHIBAAAA	0	165	-178.48
+catalog channel	catalog_pageAAAAAAAAGHJBAAAA	0	2949.52	-1155.08
+catalog channel	catalog_pageAAAAAAAAGIHBAAAA	343724.6899999999	158.16	-70673.37000000001
+catalog channel	catalog_pageAAAAAAAAGIJBAAAA	0	55.66	-609.54
+catalog channel	catalog_pageAAAAAAAAGJDBAAAA	0	534.24	-293.14
+catalog channel	catalog_pageAAAAAAAAGJHBAAAA	291380.79	1809	-59276.59999999998
+catalog channel	catalog_pageAAAAAAAAGKHBAAAA	163798.36	1405.67	-18441.77
+catalog channel	catalog_pageAAAAAAAAGKIBAAAA	0	80.52	-334.26
+catalog channel	catalog_pageAAAAAAAAGLDBAAAA	0	1795.02	-1190.42
+catalog channel	catalog_pageAAAAAAAAGLHBAAAA	208617.47	31.1	-17766.23
+catalog channel	catalog_pageAAAAAAAAGLPAAAAA	0	5979.64	-2105.7
+catalog channel	catalog_pageAAAAAAAAGMHBAAAA	167873.84	0	-33725.06
+catalog channel	catalog_pageAAAAAAAAGMIBAAAA	0	2375.19	-2702.11
+catalog channel	catalog_pageAAAAAAAAGMJBAAAA	200373.06	0	-44201.34
+catalog channel	catalog_pageAAAAAAAAGMPAAAAA	0	2657.88	-190.33
+catalog channel	catalog_pageAAAAAAAAGNABAAAA	0	101.04	-138.05
+catalog channel	catalog_pageAAAAAAAAGNDBAAAA	0	391.56	-224.95
+catalog channel	catalog_pageAAAAAAAAGNGBAAAA	0	6464.24	-2446.91
+catalog channel	catalog_pageAAAAAAAAGNHBAAAA	121748.01	504.82	-19664.6
+catalog channel	catalog_pageAAAAAAAAGNIBAAAA	0	1223.44	-808.35
+catalog channel	catalog_pageAAAAAAAAGNJBAAAA	172183.56	0	-21458.26
+catalog channel	catalog_pageAAAAAAAAGNPAAAAA	0	0.25	-58.67
+catalog channel	catalog_pageAAAAAAAAGODBAAAA	0	440.04	-242.14
+catalog channel	catalog_pageAAAAAAAAGOGBAAAA	0	23174.96	-10922.5
+catalog channel	catalog_pageAAAAAAAAGOHBAAAA	134981.02	2368.33	-16789.47
+catalog channel	catalog_pageAAAAAAAAGOJBAAAA	95704.49999999999	0	-26909.77000000001
+catalog channel	catalog_pageAAAAAAAAGOPAAAAA	0	1813.24	-2551.4
+catalog channel	catalog_pageAAAAAAAAGPGBAAAA	0	16707.62	-10521.29
+catalog channel	catalog_pageAAAAAAAAGPHBAAAA	140819.12	0	-21093.89
+catalog channel	catalog_pageAAAAAAAAGPJBAAAA	167312.83	0	7274.420000000004
+catalog channel	catalog_pageAAAAAAAAHAHBAAAA	0	24579.82999999999	-6953.09
+catalog channel	catalog_pageAAAAAAAAHAIBAAAA	162752.97	0	-37998.64000000001
+catalog channel	catalog_pageAAAAAAAAHAKBAAAA	171756.7	0	-11858.89
+catalog channel	catalog_pageAAAAAAAAHBEBAAAA	0	856.17	-625.5700000000001
+catalog channel	catalog_pageAAAAAAAAHBHBAAAA	0	6199.740000000001	-3678.410000000001
+catalog channel	catalog_pageAAAAAAAAHBIBAAAA	0	36.48	-876.5599999999999
+catalog channel	catalog_pageAAAAAAAAHBKBAAAA	158057.91	0	-19236.36
+catalog channel	catalog_pageAAAAAAAAHCHBAAAA	0	5789.03	-982.4300000000001
+catalog channel	catalog_pageAAAAAAAAHCIBAAAA	0	287.56	-353.31
+catalog channel	catalog_pageAAAAAAAAHCKBAAAA	140349.89	0	-43992.28999999999
+catalog channel	catalog_pageAAAAAAAAHDHBAAAA	361190.61	2765.1	-36700.24999999999
+catalog channel	catalog_pageAAAAAAAAHDJBAAAA	0	941.22	-104.15
+catalog channel	catalog_pageAAAAAAAAHEHBAAAA	450557.72	2581.47	10270.49999999999
+catalog channel	catalog_pageAAAAAAAAHFHBAAAA	344831.25	1155	-54992.22
+catalog channel	catalog_pageAAAAAAAAHGHBAAAA	324723.78	2038.47	-46751.64000000001
+catalog channel	catalog_pageAAAAAAAAHGIBAAAA	0	261.24	-228.71
+catalog channel	catalog_pageAAAAAAAAHGJBAAAA	0	79.52	-86.95
+catalog channel	catalog_pageAAAAAAAAHHABAAAA	0	7082.04	-2058.25
+catalog channel	catalog_pageAAAAAAAAHHDBAAAA	0	230.4	-140.27
+catalog channel	catalog_pageAAAAAAAAHHHBAAAA	296277.9399999999	4663.17	-43160.15
+catalog channel	catalog_pageAAAAAAAAHIABAAAA	0	28.34	-72.66
+catalog channel	catalog_pageAAAAAAAAHIHBAAAA	350966.8	0	-56928.28999999999
+catalog channel	catalog_pageAAAAAAAAHIIBAAAA	0	1817.95	-1293.63
+catalog channel	catalog_pageAAAAAAAAHJHBAAAA	448399.98	6466.179999999999	-81938.49000000001
+catalog channel	catalog_pageAAAAAAAAHKABAAAA	0	322.15	-315.88
+catalog channel	catalog_pageAAAAAAAAHKDBAAAA	0	111.98	-156
+catalog channel	catalog_pageAAAAAAAAHKHBAAAA	191056.2	1104.2	-615.0999999999966
+catalog channel	catalog_pageAAAAAAAAHLHBAAAA	161779.32	0	-48662.92
+catalog channel	catalog_pageAAAAAAAAHLPAAAAA	0	1023.77	-348.21
+catalog channel	catalog_pageAAAAAAAAHMABAAAA	0	54.12	-434.38
+catalog channel	catalog_pageAAAAAAAAHMHBAAAA	193236.71	357.58	7478.690000000001
+catalog channel	catalog_pageAAAAAAAAHMIBAAAA	0	369.55	-406.25
+catalog channel	catalog_pageAAAAAAAAHMJBAAAA	196792.99	0	28542.17
+catalog channel	catalog_pageAAAAAAAAHMPAAAAA	0	2267.34	-1425.91
+catalog channel	catalog_pageAAAAAAAAHNGBAAAA	0	8339.790000000001	-4161.91
+catalog channel	catalog_pageAAAAAAAAHNHBAAAA	164072.66	0	1891.120000000001
+catalog channel	catalog_pageAAAAAAAAHNJBAAAA	237333.22	0	14928.71
+catalog channel	catalog_pageAAAAAAAAHNPAAAAA	0	3118.93	-777.63
+catalog channel	catalog_pageAAAAAAAAHODBAAAA	0	1611.84	-1054.55
+catalog channel	catalog_pageAAAAAAAAHOGBAAAA	0	4379.46	-4960.94
+catalog channel	catalog_pageAAAAAAAAHOHBAAAA	171524.4	484.14	-11758.49
+catalog channel	catalog_pageAAAAAAAAHOJBAAAA	205013	0	-26969.7
+catalog channel	catalog_pageAAAAAAAAHPGBAAAA	0	11065.75	-9875.119999999999
+catalog channel	catalog_pageAAAAAAAAHPHBAAAA	211212.72	59.72	7070.440000000002
+catalog channel	catalog_pageAAAAAAAAHPJBAAAA	200892.4	0	1267.679999999997
+catalog channel	catalog_pageAAAAAAAAHPPAAAAA	0	2023.96	-1451.24
+catalog channel	catalog_pageAAAAAAAAIAABAAAA	0	9.380000000000001	-93.09
+catalog channel	catalog_pageAAAAAAAAIAHBAAAA	0	1971.35	-1555.31
+catalog channel	catalog_pageAAAAAAAAIAIBAAAA	182855.33	541.8	-36776.76
+catalog channel	catalog_pageAAAAAAAAIAKBAAAA	136123.39	0	-26807.34
+catalog channel	catalog_pageAAAAAAAAIBHBAAAA	0	1852.9	-1838.45
+catalog channel	catalog_pageAAAAAAAAIBIBAAAA	0	956.08	-215.59
+catalog channel	catalog_pageAAAAAAAAIBKBAAAA	190490.63	0	-23702.29
+catalog channel	catalog_pageAAAAAAAAICEBAAAA	0	164.67	-307.53
+catalog channel	catalog_pageAAAAAAAAICHBAAAA	0	5429.28	-3097.35
+catalog channel	catalog_pageAAAAAAAAICKBAAAA	215457.36	0	-10557.19
+catalog channel	catalog_pageAAAAAAAAIDHBAAAA	413157.29	1901.7	-28698.25
+catalog channel	catalog_pageAAAAAAAAIEHBAAAA	440789.98	6034.77	-28423.09
+catalog channel	catalog_pageAAAAAAAAIEIBAAAA	0	262.97	-275.61
+catalog channel	catalog_pageAAAAAAAAIEJBAAAA	0	51.79	-25.82
+catalog channel	catalog_pageAAAAAAAAIFHBAAAA	324314.9500000001	607.0799999999999	-24246.72
+catalog channel	catalog_pageAAAAAAAAIGHBAAAA	266675.46	0	-60025.26000000001
+catalog channel	catalog_pageAAAAAAAAIHABAAAA	0	630.42	-1444.59
+catalog channel	catalog_pageAAAAAAAAIHHBAAAA	288678.39	541.28	-13602.39
+catalog channel	catalog_pageAAAAAAAAIIABAAAA	0	350.48	-270.83
+catalog channel	catalog_pageAAAAAAAAIIHBAAAA	473602.2299999999	538.09	-10509.97999999999
+catalog channel	catalog_pageAAAAAAAAIIIBAAAA	0	11.56	-257.6
+catalog channel	catalog_pageAAAAAAAAIJABAAAA	0	2255.62	-6012.74
+catalog channel	catalog_pageAAAAAAAAIJHBAAAA	316197.65	493.58	-17164.83
+catalog channel	catalog_pageAAAAAAAAIKABAAAA	0	44.88	-99.27
+catalog channel	catalog_pageAAAAAAAAIKHBAAAA	228571	487.57	14476.09999999999
+catalog channel	catalog_pageAAAAAAAAIKIBAAAA	0	10902.01	-3153.88
+catalog channel	catalog_pageAAAAAAAAIKPAAAAA	0	375.15	-2365.33
+catalog channel	catalog_pageAAAAAAAAILHBAAAA	175584.22	707.4400000000001	17889.98999999999
+catalog channel	catalog_pageAAAAAAAAILIBAAAA	0	542.7	-2783.2
+catalog channel	catalog_pageAAAAAAAAILPAAAAA	0	489.9	-126.15
+catalog channel	catalog_pageAAAAAAAAIMHBAAAA	169072.89	1814.23	-43282.38
+catalog channel	catalog_pageAAAAAAAAIMIBAAAA	0	1146.48	-773.96
+catalog channel	catalog_pageAAAAAAAAIMJBAAAA	159721.07	0	-30119.54
+catalog channel	catalog_pageAAAAAAAAIMPAAAAA	0	11300.04	-10058.87
+catalog channel	catalog_pageAAAAAAAAINGBAAAA	0	7725.940000000001	-5627.66
+catalog channel	catalog_pageAAAAAAAAINHBAAAA	149898.84	1.75	-17916.56
+catalog channel	catalog_pageAAAAAAAAINJBAAAA	199179.07	0	-27398.62000000001
+catalog channel	catalog_pageAAAAAAAAINPAAAAA	0	559.35	-1448.41
+catalog channel	catalog_pageAAAAAAAAIOGBAAAA	0	8387.629999999999	-4489.54
+catalog channel	catalog_pageAAAAAAAAIOHBAAAA	143361.22	488.25	-25924.53
+catalog channel	catalog_pageAAAAAAAAIOJBAAAA	266489.51	0	-20649.54999999998
+catalog channel	catalog_pageAAAAAAAAIPDBAAAA	0	695.66	-399.82
+catalog channel	catalog_pageAAAAAAAAIPGBAAAA	0	2607.570000000001	-1017.67
+catalog channel	catalog_pageAAAAAAAAIPHBAAAA	125012.31	105.3	-6.920000000000499
+catalog channel	catalog_pageAAAAAAAAIPJBAAAA	179408.57	0	-12435.33
+catalog channel	catalog_pageAAAAAAAAJAHBAAAA	0	18088.79	-10461.2
+catalog channel	catalog_pageAAAAAAAAJAIBAAAA	128672.27	0	-22995.2
+catalog channel	catalog_pageAAAAAAAAJAKBAAAA	162792.46	0	-8797.290000000001
+catalog channel	catalog_pageAAAAAAAAJBHBAAAA	0	7933.15	-2363.33
+catalog channel	catalog_pageAAAAAAAAJBJBAAAA	0	155.76	-82.68000000000001
+catalog channel	catalog_pageAAAAAAAAJBKBAAAA	171756.16	0	-49119.85
+catalog channel	catalog_pageAAAAAAAAJCEBAAAA	0	4390.5	-635.96
+catalog channel	catalog_pageAAAAAAAAJCHBAAAA	0	4445.17	-3883.5
+catalog channel	catalog_pageAAAAAAAAJCIBAAAA	0	304.18	-290.19
+catalog channel	catalog_pageAAAAAAAAJDEBAAAA	0	36.21	-86.23
+catalog channel	catalog_pageAAAAAAAAJDHBAAAA	399605.57	1766.69	-57725.04000000001
+catalog channel	catalog_pageAAAAAAAAJDIBAAAA	0	579.83	-619.58
+catalog channel	catalog_pageAAAAAAAAJEHBAAAA	358844.0299999999	180.04	-19715.86
+catalog channel	catalog_pageAAAAAAAAJEIBAAAA	0	1263.37	-686.0799999999999
+catalog channel	catalog_pageAAAAAAAAJFHBAAAA	303176.92	4330.25	-61260.14999999999
+catalog channel	catalog_pageAAAAAAAAJFIBAAAA	0	1574.91	-943.85
+catalog channel	catalog_pageAAAAAAAAJGHBAAAA	352382.88	301.56	-42824.94999999998
+catalog channel	catalog_pageAAAAAAAAJHABAAAA	0	43.11	-46.41
+catalog channel	catalog_pageAAAAAAAAJHHBAAAA	359682.16	6487.08	-46407.77
+catalog channel	catalog_pageAAAAAAAAJHIBAAAA	0	300.45	-895.1900000000001
+catalog channel	catalog_pageAAAAAAAAJIABAAAA	0	894.98	-322.21
+catalog channel	catalog_pageAAAAAAAAJIHBAAAA	408246.95	2803.94	-12875.42000000001
+catalog channel	catalog_pageAAAAAAAAJJHBAAAA	364553.66	0	-50070.34999999999
+catalog channel	catalog_pageAAAAAAAAJKHBAAAA	147613.81	829.6	-16739.7
+catalog channel	catalog_pageAAAAAAAAJKJBAAAA	0	512.9	-157.48
+catalog channel	catalog_pageAAAAAAAAJLHBAAAA	239697.99	0	-17843.29
+catalog channel	catalog_pageAAAAAAAAJLPAAAAA	0	539.4400000000001	-415.03
+catalog channel	catalog_pageAAAAAAAAJMGBAAAA	0	2585.98	-849.3000000000001
+catalog channel	catalog_pageAAAAAAAAJMHBAAAA	111262.62	0	-48875.49000000001
+catalog channel	catalog_pageAAAAAAAAJMJBAAAA	169131.55	0	-31612.8
+catalog channel	catalog_pageAAAAAAAAJMPAAAAA	0	4883.49	-965.8200000000001
+catalog channel	catalog_pageAAAAAAAAJNGBAAAA	0	4624	-4630.39
+catalog channel	catalog_pageAAAAAAAAJNHBAAAA	214700.69	0	-15392.13
+catalog channel	catalog_pageAAAAAAAAJNIBAAAA	0	1022.9	-427.95
+catalog channel	catalog_pageAAAAAAAAJNJBAAAA	194193.84	0	-38658.43000000001
+catalog channel	catalog_pageAAAAAAAAJNPAAAAA	0	1116.3	-197.96
+catalog channel	catalog_pageAAAAAAAAJODBAAAA	0	1798	-530.98
+catalog channel	catalog_pageAAAAAAAAJOGBAAAA	0	2484.14	-1278.64
+catalog channel	catalog_pageAAAAAAAAJOHBAAAA	145566.17	1942.38	-13439.66000000001
+catalog channel	catalog_pageAAAAAAAAJOIBAAAA	0	207.48	-57.11
+catalog channel	catalog_pageAAAAAAAAJOJBAAAA	226867.91	0	7038.91
+catalog channel	catalog_pageAAAAAAAAJOPAAAAA	0	29.84	-95.31999999999999
+catalog channel	catalog_pageAAAAAAAAJPGBAAAA	0	4820.39	-2221.66
+catalog channel	catalog_pageAAAAAAAAJPHBAAAA	156464.1	0	-43552.18
+catalog channel	catalog_pageAAAAAAAAJPJBAAAA	198903	0	-1336.030000000015
+catalog channel	catalog_pageAAAAAAAAKAHBAAAA	0	5454.76	-1414.97
+catalog channel	catalog_pageAAAAAAAAKAIBAAAA	167721.33	0	334.0799999999999
+catalog channel	catalog_pageAAAAAAAAKAJBAAAA	0	9121.84	-1162.55
+catalog channel	catalog_pageAAAAAAAAKAKBAAAA	202070.1	0	-16880.56
+catalog channel	catalog_pageAAAAAAAAKBEBAAAA	0	4721.84	-4332.92
+catalog channel	catalog_pageAAAAAAAAKBHBAAAA	0	16686.94	-15648.63
+catalog channel	catalog_pageAAAAAAAAKBJBAAAA	0	469.6	-168.41
+catalog channel	catalog_pageAAAAAAAAKBKBAAAA	144375.34	0	483.0699999999997
+catalog channel	catalog_pageAAAAAAAAKCHBAAAA	0	12718.65	-7743.120000000001
+catalog channel	catalog_pageAAAAAAAAKCIBAAAA	0	2646	-409.87
+catalog channel	catalog_pageAAAAAAAAKDEBAAAA	0	187.72	-200.18
+catalog channel	catalog_pageAAAAAAAAKDHBAAAA	363891.95	1197.84	-61964.56
+catalog channel	catalog_pageAAAAAAAAKDIBAAAA	0	4458.28	-490.82
+catalog channel	catalog_pageAAAAAAAAKEHBAAAA	295955.89	147.2	-28052.57
+catalog channel	catalog_pageAAAAAAAAKFHBAAAA	374790.3700000001	2972.26	-55766.30000000001
+catalog channel	catalog_pageAAAAAAAAKFIBAAAA	0	4771.2	-916.46
+catalog channel	catalog_pageAAAAAAAAKGHBAAAA	383382.25	4167.11	-51291.00999999999
+catalog channel	catalog_pageAAAAAAAAKGIBAAAA	0	5886.92	-1969.87
+catalog channel	catalog_pageAAAAAAAAKGJBAAAA	0	603.33	-435.95
+catalog channel	catalog_pageAAAAAAAAKHABAAAA	0	152.88	-325.14
+catalog channel	catalog_pageAAAAAAAAKHHBAAAA	425414.6699999999	334.71	-68581.73000000001
+catalog channel	catalog_pageAAAAAAAAKIABAAAA	0	1445.01	-447.06
+catalog channel	catalog_pageAAAAAAAAKIHBAAAA	266149.92	7704.379999999999	-65643.80999999997
+catalog channel	catalog_pageAAAAAAAAKIIBAAAA	0	9183.879999999999	-5417.06
+catalog channel	catalog_pageAAAAAAAAKJABAAAA	0	340.3	-246.48
+catalog channel	catalog_pageAAAAAAAAKJHBAAAA	300502.34	98.34	-30322.13
+catalog channel	catalog_pageAAAAAAAAKKHBAAAA	178629.61	1307.68	-26582.98
+catalog channel	catalog_pageAAAAAAAAKKPAAAAA	0	437.75	-250
+catalog channel	catalog_pageAAAAAAAAKLABAAAA	0	1391.98	-734.92
+catalog channel	catalog_pageAAAAAAAAKLHBAAAA	177339.58	0	-17628.42
+catalog channel	catalog_pageAAAAAAAAKLIBAAAA	0	1583.55	-785.47
+catalog channel	catalog_pageAAAAAAAAKLPAAAAA	0	1654.81	-501.68
+catalog channel	catalog_pageAAAAAAAAKMABAAAA	0	1111.51	-209.13
+catalog channel	catalog_pageAAAAAAAAKMGBAAAA	0	8567.550000000001	-2263.690000000001
+catalog channel	catalog_pageAAAAAAAAKMHBAAAA	156704.95	588.4	-5044.180000000002
+catalog channel	catalog_pageAAAAAAAAKMJBAAAA	142594.44	0	-42286.54
+catalog channel	catalog_pageAAAAAAAAKMPAAAAA	0	10.94	-115.14
+catalog channel	catalog_pageAAAAAAAAKNDBAAAA	0	812.97	-1116.25
+catalog channel	catalog_pageAAAAAAAAKNGBAAAA	0	3436.66	-5971.089999999999
+catalog channel	catalog_pageAAAAAAAAKNHBAAAA	122852.82	0	-37023.72
+catalog channel	catalog_pageAAAAAAAAKNIBAAAA	0	237.15	-1406.06
+catalog channel	catalog_pageAAAAAAAAKNJBAAAA	142198.91	0	-35436.66999999999
+catalog channel	catalog_pageAAAAAAAAKNPAAAAA	0	754.7800000000001	-232.36
+catalog channel	catalog_pageAAAAAAAAKODBAAAA	0	199.56	-166.13
+catalog channel	catalog_pageAAAAAAAAKOGBAAAA	0	11184.01	-1977.44
+catalog channel	catalog_pageAAAAAAAAKOHBAAAA	239032.79	0	30010.37000000001
+catalog channel	catalog_pageAAAAAAAAKOJBAAAA	129878.81	0	-47072.32000000001
+catalog channel	catalog_pageAAAAAAAAKOPAAAAA	0	3999.81	-1855.33
+catalog channel	catalog_pageAAAAAAAAKPGBAAAA	0	292.56	-232.07
+catalog channel	catalog_pageAAAAAAAAKPHBAAAA	253152	0	-13525.72
+catalog channel	catalog_pageAAAAAAAAKPJBAAAA	178448.99	0	-43326.46999999999
+catalog channel	catalog_pageAAAAAAAAKPPAAAAA	0	1280.27	-847.74
+catalog channel	catalog_pageAAAAAAAALAHBAAAA	0	4850.55	-3399.79
+catalog channel	catalog_pageAAAAAAAALAIBAAAA	155072.87	0	-2390.530000000004
+catalog channel	catalog_pageAAAAAAAALAKBAAAA	161022.17	0	-24516.94
+catalog channel	catalog_pageAAAAAAAALBHBAAAA	0	27646.53	-15799.83
+catalog channel	catalog_pageAAAAAAAALBKBAAAA	186428.82	0	-35910.69
+catalog channel	catalog_pageAAAAAAAALCHBAAAA	0	2392.03	-1003.22
+catalog channel	catalog_pageAAAAAAAALCIBAAAA	0	112.32	-209.72
+catalog channel	catalog_pageAAAAAAAALDEBAAAA	0	19.04	-79.76000000000001
+catalog channel	catalog_pageAAAAAAAALDHBAAAA	445338.4399999999	3451.58	-12497.28
+catalog channel	catalog_pageAAAAAAAALDIBAAAA	0	59.6	-591.3099999999999
+catalog channel	catalog_pageAAAAAAAALDJBAAAA	0	1335.9	-174.22
+catalog channel	catalog_pageAAAAAAAALEHBAAAA	379614.3099999999	253.39	-14873.17000000001
+catalog channel	catalog_pageAAAAAAAALEJBAAAA	0	437.85	-211.05
+catalog channel	catalog_pageAAAAAAAALFHBAAAA	515868.79	11.04	2345.470000000011
+catalog channel	catalog_pageAAAAAAAALGDBAAAA	0	119.14	-122.23
+catalog channel	catalog_pageAAAAAAAALGHBAAAA	342225.8200000001	11237.89	-32418.69
+catalog channel	catalog_pageAAAAAAAALHHBAAAA	400632.03	538.96	-3900.279999999998
+catalog channel	catalog_pageAAAAAAAALHIBAAAA	0	73.38	-146.27
+catalog channel	catalog_pageAAAAAAAALHJBAAAA	0	6991.74	-159.16
+catalog channel	catalog_pageAAAAAAAALIABAAAA	0	1764.72	-798.02
+catalog channel	catalog_pageAAAAAAAALIHBAAAA	274820.23	2574.1	-23060.93999999999
+catalog channel	catalog_pageAAAAAAAALJHBAAAA	375695.9400000001	0	-54849.91000000002
+catalog channel	catalog_pageAAAAAAAALJIBAAAA	0	2698.6	-918.5
+catalog channel	catalog_pageAAAAAAAALKHBAAAA	183986.46	0	-20469.2
+catalog channel	catalog_pageAAAAAAAALKIBAAAA	0	213.84	-235.25
+catalog channel	catalog_pageAAAAAAAALKPAAAAA	0	8884.82	-5324.07
+catalog channel	catalog_pageAAAAAAAALLHBAAAA	152443.3200000001	574.15	-88531.31
+catalog channel	catalog_pageAAAAAAAALMGBAAAA	0	2937.96	-1039.18
+catalog channel	catalog_pageAAAAAAAALMHBAAAA	181157.84	0	-27133.01999999999
+catalog channel	catalog_pageAAAAAAAALMIBAAAA	0	86.76000000000001	-198.58
+catalog channel	catalog_pageAAAAAAAALMJBAAAA	135104.37	0	-35804.53999999999
+catalog channel	catalog_pageAAAAAAAALMPAAAAA	0	323.01	-499.01
+catalog channel	catalog_pageAAAAAAAALNABAAAA	0	725.5599999999999	-619.72
+catalog channel	catalog_pageAAAAAAAALNDBAAAA	0	535.52	-487.91
+catalog channel	catalog_pageAAAAAAAALNGBAAAA	0	12167.55	-11070.28
+catalog channel	catalog_pageAAAAAAAALNHBAAAA	189048.83	0	-15743.66000000001
+catalog channel	catalog_pageAAAAAAAALNJBAAAA	222719.56	1579.28	-38890.66000000001
+catalog channel	catalog_pageAAAAAAAALNPAAAAA	0	133.56	-245.44
+catalog channel	catalog_pageAAAAAAAALODBAAAA	0	188.82	-96.87
+catalog channel	catalog_pageAAAAAAAALOGBAAAA	0	7619.74	-2429.07
+catalog channel	catalog_pageAAAAAAAALOHBAAAA	177702.78	7754.96	-23863.75999999999
+catalog channel	catalog_pageAAAAAAAALOJBAAAA	216475	0	-9742.019999999999
+catalog channel	catalog_pageAAAAAAAALOPAAAAA	0	1253.4	-840.91
+catalog channel	catalog_pageAAAAAAAALPGBAAAA	0	19386.85	-10806.29
+catalog channel	catalog_pageAAAAAAAALPHBAAAA	139445.44	3209.6	-35319.2
+catalog channel	catalog_pageAAAAAAAALPIBAAAA	0	652.5	-228.83
+catalog channel	catalog_pageAAAAAAAALPJBAAAA	178578.4	0	-35038.66
+catalog channel	catalog_pageAAAAAAAAMAEBAAAA	0	921.4400000000001	-1256.85
+catalog channel	catalog_pageAAAAAAAAMAHBAAAA	0	5503.809999999999	-3768.22
+catalog channel	catalog_pageAAAAAAAAMAIBAAAA	242577.33	0	-21735.62999999999
+catalog channel	catalog_pageAAAAAAAAMAKBAAAA	141540.33	0	-38047.68000000001
+catalog channel	catalog_pageAAAAAAAAMBEBAAAA	0	8.220000000000001	-81.17
+catalog channel	catalog_pageAAAAAAAAMBHBAAAA	0	2397.91	-2010.35
+catalog channel	catalog_pageAAAAAAAAMBIBAAAA	0	8099.52	-3383.25
+catalog channel	catalog_pageAAAAAAAAMBJBAAAA	0	887.6799999999999	-1107.66
+catalog channel	catalog_pageAAAAAAAAMBKBAAAA	211239.55	324.8	-27747.07
+catalog channel	catalog_pageAAAAAAAAMCEBAAAA	0	593.3200000000001	-244.03
+catalog channel	catalog_pageAAAAAAAAMCHBAAAA	0	1567.65	-939.27
+catalog channel	catalog_pageAAAAAAAAMCIBAAAA	0	218.9	-98.76000000000001
+catalog channel	catalog_pageAAAAAAAAMCJBAAAA	0	980.84	-527.72
+catalog channel	catalog_pageAAAAAAAAMDHBAAAA	373424.4300000001	1745.52	-24061.87
+catalog channel	catalog_pageAAAAAAAAMDIBAAAA	0	1106.7	-1408.72
+catalog channel	catalog_pageAAAAAAAAMEHBAAAA	397897.6	9935.5	-75311.58
+catalog channel	catalog_pageAAAAAAAAMEIBAAAA	0	2387.39	-1074.28
+catalog channel	catalog_pageAAAAAAAAMFHBAAAA	391372.61	461.26	-64029.04
+catalog channel	catalog_pageAAAAAAAAMGHBAAAA	342130.9300000001	10027.8	-33337.88000000001
+catalog channel	catalog_pageAAAAAAAAMHHBAAAA	263894.38	3985.85	-87015.98999999999
+catalog channel	catalog_pageAAAAAAAAMHIBAAAA	0	166	-157.06
+catalog channel	catalog_pageAAAAAAAAMIABAAAA	0	171.55	-179.05
+catalog channel	catalog_pageAAAAAAAAMIHBAAAA	336688.28	3517.06	-54383.51999999998
+catalog channel	catalog_pageAAAAAAAAMIIBAAAA	0	416.2	-488.49
+catalog channel	catalog_pageAAAAAAAAMJHBAAAA	398810.5599999999	2926.71	-32664.76
+catalog channel	catalog_pageAAAAAAAAMJIBAAAA	0	2358.53	-1279.49
+catalog channel	catalog_pageAAAAAAAAMKHBAAAA	180706.98	898.2	-22765.16
+catalog channel	catalog_pageAAAAAAAAMKPAAAAA	0	1168.32	-591.03
+catalog channel	catalog_pageAAAAAAAAMLHBAAAA	217474.07	31.96	11121.99
+catalog channel	catalog_pageAAAAAAAAMLIBAAAA	0	36.12	-7.59
+catalog channel	catalog_pageAAAAAAAAMMGBAAAA	0	10531.03	-8516.9
+catalog channel	catalog_pageAAAAAAAAMMHBAAAA	160220.49	0	-11824.11
+catalog channel	catalog_pageAAAAAAAAMMJBAAAA	143297.62	0	-34367.03999999999
+catalog channel	catalog_pageAAAAAAAAMMPAAAAA	0	383.47	-210.83
+catalog channel	catalog_pageAAAAAAAAMNABAAAA	0	438.36	-795.53
+catalog channel	catalog_pageAAAAAAAAMNGBAAAA	0	5968.250000000001	-3043.93
+catalog channel	catalog_pageAAAAAAAAMNHBAAAA	149934.17	386.1	-50976.96999999999
+catalog channel	catalog_pageAAAAAAAAMNJBAAAA	159917.98	0	-14879.38
+catalog channel	catalog_pageAAAAAAAAMOGBAAAA	0	5510.62	-5638.110000000001
+catalog channel	catalog_pageAAAAAAAAMOHBAAAA	158497.55	494	-42445.27
+catalog channel	catalog_pageAAAAAAAAMOJBAAAA	178920.89	0	-16032.73
+catalog channel	catalog_pageAAAAAAAAMOPAAAAA	0	967.85	-619.0700000000001
+catalog channel	catalog_pageAAAAAAAAMPGBAAAA	0	9234.41	-5214.690000000001
+catalog channel	catalog_pageAAAAAAAAMPHBAAAA	174030.28	0	-28975.72
+catalog channel	catalog_pageAAAAAAAAMPIBAAAA	0	1225.76	-1902.63
+catalog channel	catalog_pageAAAAAAAAMPJBAAAA	186696.18	0	-49541.39999999999
+catalog channel	catalog_pageAAAAAAAAMPPAAAAA	0	719.6	-497.64
+catalog channel	catalog_pageAAAAAAAANAEBAAAA	0	79.05	-31.82
+catalog channel	catalog_pageAAAAAAAANAHBAAAA	0	419.53	-1683.25
+catalog channel	catalog_pageAAAAAAAANAJBAAAA	0	284.05	-772.53
+catalog channel	catalog_pageAAAAAAAANAKBAAAA	199771.05	0	-37019.67
+catalog channel	catalog_pageAAAAAAAANBEBAAAA	0	2.64	-105.8
+catalog channel	catalog_pageAAAAAAAANBHBAAAA	0	11725.46	-5976.66
+catalog channel	catalog_pageAAAAAAAANBJBAAAA	0	2780.85	-1367.12
+catalog channel	catalog_pageAAAAAAAANBKBAAAA	196430.96	0	16258.49
+catalog channel	catalog_pageAAAAAAAANCHBAAAA	0	8812.030000000001	-6426.880000000001
+catalog channel	catalog_pageAAAAAAAANCJBAAAA	0	520.41	-262.49
+catalog channel	catalog_pageAAAAAAAANDEBAAAA	0	563.2	-274.51
+catalog channel	catalog_pageAAAAAAAANDHBAAAA	308256.0699999999	878.3399999999999	-62334.62000000001
+catalog channel	catalog_pageAAAAAAAANDJBAAAA	0	1707.18	-2075.21
+catalog channel	catalog_pageAAAAAAAANEHBAAAA	340725.62	3088.46	-55022.57000000001
+catalog channel	catalog_pageAAAAAAAANEIBAAAA	0	956.08	-448.12
+catalog channel	catalog_pageAAAAAAAANFHBAAAA	365935.4199999999	1175.76	-44583.73
+catalog channel	catalog_pageAAAAAAAANFIBAAAA	0	2242.14	-3223.95
+catalog channel	catalog_pageAAAAAAAANGHBAAAA	383262.99	0	-56720.99000000001
+catalog channel	catalog_pageAAAAAAAANHABAAAA	0	NULL	NULL
+catalog channel	catalog_pageAAAAAAAANHHBAAAA	301759.36	0	-41145.85
+catalog channel	catalog_pageAAAAAAAANHIBAAAA	0	1.28	-67.23
+catalog channel	catalog_pageAAAAAAAANIHBAAAA	378514.4200000002	1858.85	-38274.45
+catalog channel	catalog_pageAAAAAAAANJHBAAAA	353469.7499999998	0	-35301.93
+catalog channel	catalog_pageAAAAAAAANJIBAAAA	0	154.88	-892.42
+catalog channel	catalog_pageAAAAAAAANJPAAAAA	0	3271.14	-971.14
+catalog channel	catalog_pageAAAAAAAANKABAAAA	0	3024.81	-315.65
+catalog channel	catalog_pageAAAAAAAANKHBAAAA	139468.45	0	-28860.96
+catalog channel	catalog_pageAAAAAAAANLABAAAA	0	222.06	-649.08
+catalog channel	catalog_pageAAAAAAAANLHBAAAA	174956.47	0	1555.950000000004
+catalog channel	catalog_pageAAAAAAAANLJBAAAA	183184.9	0	-22999.64999999999
+catalog channel	catalog_pageAAAAAAAANMABAAAA	0	757.15	-498.5
+catalog channel	catalog_pageAAAAAAAANMGBAAAA	0	8934.950000000001	-4713.43
+catalog channel	catalog_pageAAAAAAAANMHBAAAA	221458.26	0	2266.050000000007
+catalog channel	catalog_pageAAAAAAAANMIBAAAA	0	6985.44	-4013.88
+catalog channel	catalog_pageAAAAAAAANMJBAAAA	141399.56	0	-26015.39000000001
+catalog channel	catalog_pageAAAAAAAANMPAAAAA	0	229.9	-884.99
+catalog channel	catalog_pageAAAAAAAANNGBAAAA	0	18061.11	-9334.949999999999
+catalog channel	catalog_pageAAAAAAAANNHBAAAA	161692.87	384.9	-30476.69
+catalog channel	catalog_pageAAAAAAAANNJBAAAA	179747.78	0	-20687.82
+catalog channel	catalog_pageAAAAAAAANODBAAAA	0	118.4	-921.12
+catalog channel	catalog_pageAAAAAAAANOGBAAAA	0	8693.629999999999	-2428.9
+catalog channel	catalog_pageAAAAAAAANOHBAAAA	194561.74	53.05	-14982.85
+catalog channel	catalog_pageAAAAAAAANOJBAAAA	177385.33	0	-32323.45
+catalog channel	catalog_pageAAAAAAAANPGBAAAA	0	5596.059999999999	-3600.8
+catalog channel	catalog_pageAAAAAAAANPHBAAAA	165608	0	-63094.25000000001
+catalog channel	catalog_pageAAAAAAAANPIBAAAA	0	5759.4	-4750.18
+catalog channel	catalog_pageAAAAAAAANPJBAAAA	167267.28	0	-34842.34999999999
+catalog channel	catalog_pageAAAAAAAANPPAAAAA	0	477.28	-290.96
+catalog channel	catalog_pageAAAAAAAAOAEBAAAA	0	4673.24	-3953.84
+catalog channel	catalog_pageAAAAAAAAOAHBAAAA	0	6323.659999999999	-4988.12
+catalog channel	catalog_pageAAAAAAAAOAIBAAAA	0	NULL	NULL
+catalog channel	catalog_pageAAAAAAAAOAKBAAAA	162627.24	0	-2494.499999999996
+catalog channel	catalog_pageAAAAAAAAOBEBAAAA	0	626.3	-488.63
+catalog channel	catalog_pageAAAAAAAAOBHBAAAA	0	9589.68	-3334.31
+catalog channel	catalog_pageAAAAAAAAOBIBAAAA	0	31.7	-310.74
+catalog channel	catalog_pageAAAAAAAAOBKBAAAA	158104.91	0	-38675.09
+catalog channel	catalog_pageAAAAAAAAOCHBAAAA	0	9163.879999999999	-1730.68
+catalog channel	catalog_pageAAAAAAAAOCIBAAAA	0	1616.1	-2140.58
+catalog channel	catalog_pageAAAAAAAAOCJBAAAA	0	165.85	-342.56
+catalog channel	catalog_pageAAAAAAAAODEBAAAA	0	926.72	-543.99
+catalog channel	catalog_pageAAAAAAAAODHBAAAA	395658.9399999999	1202.17	-5414.820000000003
+catalog channel	catalog_pageAAAAAAAAOEHBAAAA	292076.41	1429.73	-44519.73
+catalog channel	catalog_pageAAAAAAAAOFHBAAAA	398461.14	1833.91	-52918.25000000001
+catalog channel	catalog_pageAAAAAAAAOFIBAAAA	0	5013.940000000001	-11533.07
+catalog channel	catalog_pageAAAAAAAAOGHBAAAA	354770.8700000001	9583.08	-80882.11000000002
+catalog channel	catalog_pageAAAAAAAAOGIBAAAA	0	4315.96	-4132.08
+catalog channel	catalog_pageAAAAAAAAOGJBAAAA	0	1005.12	-864.2
+catalog channel	catalog_pageAAAAAAAAOHHBAAAA	310025.3599999999	2839.48	-46517.40000000001
+catalog channel	catalog_pageAAAAAAAAOIABAAAA	0	106.92	-88.33
+catalog channel	catalog_pageAAAAAAAAOIHBAAAA	306577.74	1477.3	-31281.61999999999
+catalog channel	catalog_pageAAAAAAAAOJABAAAA	0	4615.2	-553.26
+catalog channel	catalog_pageAAAAAAAAOJHBAAAA	373015.67	0	-25111.47
+catalog channel	catalog_pageAAAAAAAAOJPAAAAA	0	3175.5	-386.02
+catalog channel	catalog_pageAAAAAAAAOKHBAAAA	186314.41	3139.43	-6404.400000000001
+catalog channel	catalog_pageAAAAAAAAOKPAAAAA	0	1981.26	-1159.26
+catalog channel	catalog_pageAAAAAAAAOLABAAAA	0	2043.32	-2649.43
+catalog channel	catalog_pageAAAAAAAAOLHBAAAA	224775.4299999999	2.05	-10583.88
+catalog channel	catalog_pageAAAAAAAAOLJBAAAA	129949.47	0	-48128.45000000001
+catalog channel	catalog_pageAAAAAAAAOLPAAAAA	0	1584	-651.1
+catalog channel	catalog_pageAAAAAAAAOMGBAAAA	0	4605.93	-3220.7
+catalog channel	catalog_pageAAAAAAAAOMHBAAAA	153522.14	0	-5399.900000000005
+catalog channel	catalog_pageAAAAAAAAOMJBAAAA	203924.15	0	-11183
+catalog channel	catalog_pageAAAAAAAAOMPAAAAA	0	4403.88	-2569.43
+catalog channel	catalog_pageAAAAAAAAONDBAAAA	0	3650.11	-839.0599999999999
+catalog channel	catalog_pageAAAAAAAAONGBAAAA	0	1410.63	-1060.77
+catalog channel	catalog_pageAAAAAAAAONHBAAAA	161440.36	7204.93	-40360.81
+catalog channel	catalog_pageAAAAAAAAONJBAAAA	165750.86	0	-49262.39000000001
+catalog channel	catalog_pageAAAAAAAAOOGBAAAA	0	3737.98	-2148.07
+catalog channel	catalog_pageAAAAAAAAOOHBAAAA	148434.24	3363.85	-9152.849999999999
+catalog channel	catalog_pageAAAAAAAAOOJBAAAA	165974.29	0	-14509.42
+catalog channel	catalog_pageAAAAAAAAOPGBAAAA	0	6553.400000000001	-3562.83
+catalog channel	catalog_pageAAAAAAAAOPHBAAAA	231845.2099999999	0	3062.889999999989
+catalog channel	catalog_pageAAAAAAAAOPJBAAAA	191598.47	0	-31108.92999999999
+catalog channel	catalog_pageAAAAAAAAPAHBAAAA	0	8991.459999999999	-4954.129999999999
+catalog channel	catalog_pageAAAAAAAAPAKBAAAA	144070.53	0	-5286.269999999999
+catalog channel	catalog_pageAAAAAAAAPBEBAAAA	0	1364.88	-288.09
+catalog channel	catalog_pageAAAAAAAAPBHBAAAA	0	13174.27	-6745.54
+catalog channel	catalog_pageAAAAAAAAPBKBAAAA	216549.15	0	-13772.68
+catalog channel	catalog_pageAAAAAAAAPCHBAAAA	0	11653.99	-9264.5
+catalog channel	catalog_pageAAAAAAAAPCIBAAAA	0	130.26	-670.2
+catalog channel	catalog_pageAAAAAAAAPCJBAAAA	0	305.21	-197.8
+catalog channel	catalog_pageAAAAAAAAPDHBAAAA	460442.97	1699.72	8794.310000000001
+catalog channel	catalog_pageAAAAAAAAPEHBAAAA	303459.5199999999	8170.400000000001	-104868.33
+catalog channel	catalog_pageAAAAAAAAPFHBAAAA	326145.91	0	-42852.74000000001
+catalog channel	catalog_pageAAAAAAAAPGHBAAAA	373431.92	1628.19	-49034.20999999998
+catalog channel	catalog_pageAAAAAAAAPGIBAAAA	0	2075.44	-585.36
+catalog channel	catalog_pageAAAAAAAAPHHBAAAA	344597.23	144.54	-78010.91000000002
+catalog channel	catalog_pageAAAAAAAAPHJBAAAA	0	6642.22	-3423.21
+catalog channel	catalog_pageAAAAAAAAPIABAAAA	0	145.25	-348
+catalog channel	catalog_pageAAAAAAAAPIHBAAAA	395259.7700000001	10613.28	-29033.08999999999
+catalog channel	catalog_pageAAAAAAAAPJHBAAAA	305580.79	0	-62981.61999999997
+catalog channel	catalog_pageAAAAAAAAPJIBAAAA	0	540.8	-1735.55
+catalog channel	catalog_pageAAAAAAAAPJPAAAAA	0	414.54	-381.45
+catalog channel	catalog_pageAAAAAAAAPKHBAAAA	215179.7	0	-13.17000000000007
+catalog channel	catalog_pageAAAAAAAAPKPAAAAA	0	0	-111.36
+catalog channel	catalog_pageAAAAAAAAPLHBAAAA	222947.23	1243.61	-20652.73
+catalog channel	catalog_pageAAAAAAAAPLIBAAAA	0	1158.38	-354.14
+catalog channel	catalog_pageAAAAAAAAPLJBAAAA	187146.01	0	-9729.330000000005
+catalog channel	catalog_pageAAAAAAAAPLPAAAAA	0	26.73	-86.34
+catalog channel	catalog_pageAAAAAAAAPMGBAAAA	0	1024.7	-1142.22
+catalog channel	catalog_pageAAAAAAAAPMHBAAAA	305625.8	1192.75	10424.86
+catalog channel	catalog_pageAAAAAAAAPMIBAAAA	0	88.40000000000001	-172.4
+catalog channel	catalog_pageAAAAAAAAPMJBAAAA	161569.51	0	-15550.93
+catalog channel	catalog_pageAAAAAAAAPNGBAAAA	0	9279.300000000001	-4781.190000000001
+catalog channel	catalog_pageAAAAAAAAPNHBAAAA	177170.15	0	-49779.66
+catalog channel	catalog_pageAAAAAAAAPNIBAAAA	0	44.38	-74.55
+catalog channel	catalog_pageAAAAAAAAPNJBAAAA	152918.91	0	-27472.69
+catalog channel	catalog_pageAAAAAAAAPNPAAAAA	0	146.64	-133.39
+catalog channel	catalog_pageAAAAAAAAPOGBAAAA	0	12781.33	-11010.29
+catalog channel	catalog_pageAAAAAAAAPOHBAAAA	203360.83	0	-71353.29000000001
+catalog channel	catalog_pageAAAAAAAAPOIBAAAA	0	9459.940000000001	-3839.9
+catalog channel	catalog_pageAAAAAAAAPOJBAAAA	222949.4	0	-12661.08
+catalog channel	catalog_pageAAAAAAAAPPGBAAAA	0	14693.49	-3490.56
+catalog channel	catalog_pageAAAAAAAAPPHBAAAA	147486.42	121.68	-19433.1
+catalog channel	catalog_pageAAAAAAAAPPJBAAAA	158842.29	0	-14003.50000000001
+catalog channel	catalog_pageAAAAAAAAPPPAAAAA	0	771.84	-534.48
+catalog channel	NULL	78007694.55999999	1913387.22	-9067923.409999996
+store channel	storeAAAAAAAAABAAAAAA	9166330.619999994	245170.58	-4105005.43
+store channel	storeAAAAAAAABAAAAAAA	8546980.090000004	266045.32	-3920857.649999999
+store channel	storeAAAAAAAACAAAAAAA	9843132.400000006	215688.01	-4320155.329999998
+store channel	storeAAAAAAAADBAAAAAA	9139886.700000001	187437.42	-4134662.509999997
+store channel	storeAAAAAAAAEAAAAAAA	9144525.76	208432.11	-4158568.28
+store channel	storeAAAAAAAAEBAAAAAA	9259828.639999997	213078.2800000001	-3938938.990000003
+store channel	storeAAAAAAAAGBAAAAAA	9284680.960000006	247929.3700000001	-4118208.949999998
+store channel	storeAAAAAAAAHAAAAAAA	8886737.760000002	228748.1900000002	-3903526.23
+store channel	storeAAAAAAAAIAAAAAAA	9147134.440000016	238000.7799999998	-4172297.049999999
+store channel	storeAAAAAAAAKAAAAAAA	9118286.799999997	207536.58	-4137670.689999999
+store channel	storeAAAAAAAANAAAAAAA	9552547.529999996	229846.55	-4313051.699999999
+store channel	storeAAAAAAAAOAAAAAAA	9255908.450000003	220774.75	-4309888.700000001
+store channel	NULL	110345980.15	2708687.94	-49532831.50999999
+web channel	web_siteAAAAAAAAABAAAAAA	2822051.540000001	146172.87	-330777.1
+web channel	web_siteAAAAAAAABAAAAAAA	2622897.68	113945.96	-197207.3599999999
+web channel	web_siteAAAAAAAACAAAAAAA	2805478.72	78688.08000000002	-496066.16
+web channel	web_siteAAAAAAAADBAAAAAA	2848380.240000001	81838.70999999999	-341365.3500000002
+web channel	web_siteAAAAAAAAEAAAAAAA	2865296.200000001	94087.72	-219193.0599999999
+web channel	web_siteAAAAAAAAEBAAAAAA	2736800.459999999	78204.16	-294134.9100000003
+web channel	web_siteAAAAAAAAGBAAAAAA	2658090.249999999	65367.55	-416981.3700000001
+web channel	web_siteAAAAAAAAHAAAAAAA	2623113.530000001	95283.41	-366884.75
+web channel	web_siteAAAAAAAAIAAAAAAA	2840366.560000002	72786.79000000001	-321280.9899999998
+web channel	web_siteAAAAAAAAJBAAAAAA	2716564.3	96022.28999999999	-419926.8000000001
+web channel	web_siteAAAAAAAAKAAAAAAA	2862074.179999998	105498.81	-260321.92
+web channel	web_siteAAAAAAAAKBAAAAAA	2746821.280000001	108039.59	-291006.1799999999
+web channel	web_siteAAAAAAAAMBAAAAAA	2746961.88	120810.31	-339917.7500000001
+web channel	web_siteAAAAAAAANAAAAAAA	2619988.559999998	87579.24000000001	-282246.9299999999
+web channel	web_siteAAAAAAAAOAAAAAAA	2598220.89	82367.73	-311373.5299999999
+web channel	NULL	41113106.27	1426693.22	-4888684.16
+NULL	NULL	229466780.98	6048768.380000003	-63489439.07999997
+Fetched 769 row(s) in 6.65s

@@ -1,0 +1,218 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with ssr as
+ (select  s_store_id as store_id,
+          sum(ss_ext_sales_price) as sales,
+          sum(coalesce(sr_return_amt, 0)) as sreturns,
+          sum(ss_net_profit - coalesce(sr_net_loss, 0)) as profit
+  from store_sales left outer join store_returns on
+         (ss_item_sk = sr_item_sk and ss_ticket_number = sr_ticket_number),
+     date_dim,
+     store,
+     item,
+     promotion
+ where ss_sold_date_sk = d_date_sk
+       and ss_sold_date_sk between 2451767 and 2451797
+       and d_date between cast('2000-08-10' as timestamp)
+                  and (cast('2000-08-10' as timestamp) +  interval 30 days)
+       and ss_store_sk = s_store_sk
+       and ss_item_sk = i_item_sk
+       and i_current_price > 50
+       and ss_promo_sk = p_promo_sk
+       and p_channel_tv = 'N'
+ group by s_store_id)
+ ,
+ csr as
+ (select  cp_catalog_page_id as catalog_page_id,
+          sum(cs_ext_sales_price) as sales,
+          sum(coalesce(cr_return_amount, 0)) as sreturns,
+          sum(cs_net_profit - coalesce(cr_net_loss, 0)) as profit
+  from catalog_sales left outer join catalog_returns on
+         (cs_item_sk = cr_item_sk and cs_order_number = cr_order_number),
+     date_dim,
+     catalog_page,
+     item,
+     promotion
+ where cs_sold_date_sk = d_date_sk
+       and cs_sold_date_sk between 2451767 and 2451797
+       and d_date between cast('2000-08-10' as timestamp)
+                  and (cast('2000-08-10' as timestamp) + interval  30 days)
+        and cs_catalog_page_sk = cp_catalog_page_sk
+       and cs_item_sk = i_item_sk
+       and i_current_price > 50
+       and cs_promo_sk = p_promo_sk
+       and p_channel_tv = 'N'
+group by cp_catalog_page_id)
+ ,
+ wsr as
+ (select  web_site_id,
+          sum(ws_ext_sales_price) as sales,
+          sum(coalesce(wr_return_amt, 0)) as sreturns,
+          sum(ws_net_profit - coalesce(wr_net_loss, 0)) as profit
+  from web_sales left outer join web_returns on
+         (ws_item_sk = wr_item_sk and ws_order_number = wr_order_number),
+     date_dim,
+     web_site,
+     item,
+     promotion
+ where ws_sold_date_sk = d_date_sk
+       and ws_sold_date_sk between 2451767 and 2451797
+       and d_date between cast('2000-08-10' as timestamp)
+                  and (cast('2000-08-10' as timestamp) +  interval 30 days)
+        and ws_web_site_sk = web_site_sk
+       and ws_item_sk = i_item_sk
+       and i_current_price > 50
+       and ws_promo_sk = p_promo_sk
+       and p_channel_tv = 'N'
+group by web_site_id)
+,
+results as
+ (select channel
+        , id
+        , sum(sales) as sales
+        , sum(sreturns) as sreturns
+        , sum(profit) as profit
+ from 
+ (select 'store channel' as channel
+        , concat('store' , store_id) as id
+        , sales
+        , sreturns
+        , profit
+ from   ssr
+ union all
+ select 'catalog channel' as channel
+        , concat('catalog_page' , catalog_page_id) as id
+        , sales
+        , sreturns
+        , profit
+ from  csr
+ union all
+ select 'web channel' as channel
+        , concat('web_site' , web_site_id) as id
+        , sales
+        , sreturns
+        , profit
+ from   wsr
+ ) x
+ group by channel, id)
+ 
+ select channel
+        , id
+        , sales
+        , sreturns
+        , profit
+ from (
+   select channel, id, sales, sreturns, profit from  results
+   union
+   select channel, NULL AS id, sum(sales) as sales, sum(sreturns) as sreturns, sum(profit) as profit from  results group by channel
+   union
+   select NULL AS channel, NULL AS id, sum(sales) as sales, sum(sreturns) as sreturns, sum(profit) as profit from  results
+ ) foo
+ order by channel, id
+ limit 100
+catalog channel	catalog_pageAAAAAAAAAAABAAAA	35007.96	4594.88	-19258.26
+catalog channel	catalog_pageAAAAAAAAABABAAAA	7745.539999999999	0	-5726.11
+catalog channel	catalog_pageAAAAAAAAACABAAAA	29651.35999999999	4390.18	-3890.940000000001
+catalog channel	catalog_pageAAAAAAAAADABAAAA	17690.78	0	252.0500000000002
+catalog channel	catalog_pageAAAAAAAAADCBAAAA	16025.89	0	-216.5500000000002
+catalog channel	catalog_pageAAAAAAAAAEABAAAA	29215.14	3247.08	-9925.549999999999
+catalog channel	catalog_pageAAAAAAAAAECBAAAA	30009.40000000001	0	7424.73
+catalog channel	catalog_pageAAAAAAAAAFABAAAA	14172.31	0	-5445.64
+catalog channel	catalog_pageAAAAAAAAAFCBAAAA	46136.72	0	16092.34
+catalog channel	catalog_pageAAAAAAAAAGABAAAA	28816.94	0	960.1400000000003
+catalog channel	catalog_pageAAAAAAAAAGCBAAAA	3897.99	37.13	-4729.19
+catalog channel	catalog_pageAAAAAAAAAHABAAAA	5105.67	230.61	-3308.64
+catalog channel	catalog_pageAAAAAAAAAHCBAAAA	24057.59	0	-6719.089999999999
+catalog channel	catalog_pageAAAAAAAAAICBAAAA	24044.95	0	156.6300000000001
+catalog channel	catalog_pageAAAAAAAAAJCBAAAA	9615.939999999999	0	1461.56
+catalog channel	catalog_pageAAAAAAAAAKCBAAAA	523.03	0	-274.46
+catalog channel	catalog_pageAAAAAAAAAKPAAAAA	65385.92	334.44	2924.749999999999
+catalog channel	catalog_pageAAAAAAAAALPAAAAA	32460.53	1443.04	-7559.43
+catalog channel	catalog_pageAAAAAAAAAMCBAAAA	910.8	0	203.32
+catalog channel	catalog_pageAAAAAAAAAMPAAAAA	74262.85999999999	544.2	-15901.83
+catalog channel	catalog_pageAAAAAAAAANCBAAAA	1235.43	0	-2868.34
+catalog channel	catalog_pageAAAAAAAAANPAAAAA	26154.05	0	-5232.960000000001
+catalog channel	catalog_pageAAAAAAAAAOCBAAAA	734.08	0	-1148.51
+catalog channel	catalog_pageAAAAAAAAAOPAAAAA	62931.54000000001	12069.1	-26553.37
+catalog channel	catalog_pageAAAAAAAAAPCBAAAA	482.4	0	-140.32
+catalog channel	catalog_pageAAAAAAAAAPPAAAAA	55836.87999999999	7824.210000000001	3808.38
+catalog channel	catalog_pageAAAAAAAABAABAAAA	35587.63	4214.81	-19775.38
+catalog channel	catalog_pageAAAAAAAABBABAAAA	24060.34	117	5256.490000000001
+catalog channel	catalog_pageAAAAAAAABCABAAAA	24407.67	582.7	2914.33
+catalog channel	catalog_pageAAAAAAAABDABAAAA	7652.2	825.8	-9249.550000000001
+catalog channel	catalog_pageAAAAAAAABDCBAAAA	19813.75	33.65	-3981.52
+catalog channel	catalog_pageAAAAAAAABEABAAAA	9472.4	1800.63	-7135.58
+catalog channel	catalog_pageAAAAAAAABECBAAAA	10298.88	549.85	-13724.42
+catalog channel	catalog_pageAAAAAAAABFABAAAA	18673.93	0	2272.85
+catalog channel	catalog_pageAAAAAAAABFCBAAAA	4544.09	0	-957.53
+catalog channel	catalog_pageAAAAAAAABGABAAAA	16361.5	814.5899999999999	1779.79
+catalog channel	catalog_pageAAAAAAAABGCBAAAA	34694.66	1009.26	4632.630000000001
+catalog channel	catalog_pageAAAAAAAABHABAAAA	12921.08	0	1187.01
+catalog channel	catalog_pageAAAAAAAABHCBAAAA	17180.92	0	-5493.8
+catalog channel	catalog_pageAAAAAAAABICBAAAA	18261.73	0	-6163.219999999999
+catalog channel	catalog_pageAAAAAAAABKCBAAAA	9276.299999999999	0	5386.7
+catalog channel	catalog_pageAAAAAAAABKPAAAAA	39017.76	0	-19179.32999999999
+catalog channel	catalog_pageAAAAAAAABLCBAAAA	71.68000000000001	0	-271.61
+catalog channel	catalog_pageAAAAAAAABLPAAAAA	40419.03999999999	2962.33	-1347.87
+catalog channel	catalog_pageAAAAAAAABMCBAAAA	55	0	-68.86
+catalog channel	catalog_pageAAAAAAAABMPAAAAA	38326.77	0	-3811.48
+catalog channel	catalog_pageAAAAAAAABNCBAAAA	541.53	257.79	-3689.33
+catalog channel	catalog_pageAAAAAAAABNPAAAAA	43143.34	12.44	3581.070000000001
+catalog channel	catalog_pageAAAAAAAABOCBAAAA	699.2	0	203.28
+catalog channel	catalog_pageAAAAAAAABOPAAAAA	32861.77	1578.12	-6653.01
+catalog channel	catalog_pageAAAAAAAABPPAAAAA	23330.43	2828.83	-7670.709999999999
+catalog channel	catalog_pageAAAAAAAACAABAAAA	28937.33	587.01	-17415.98
+catalog channel	catalog_pageAAAAAAAACBABAAAA	26196.88	5799.23	3990.110000000001
+catalog channel	catalog_pageAAAAAAAACCABAAAA	52837.43	8368.190000000001	6604.310000000001
+catalog channel	catalog_pageAAAAAAAACDABAAAA	20372.55	5.4	-3375.58
+catalog channel	catalog_pageAAAAAAAACDCBAAAA	12711.68	2243.4	-1455.15
+catalog channel	catalog_pageAAAAAAAACEABAAAA	6953.959999999999	0	-5606.719999999999
+catalog channel	catalog_pageAAAAAAAACECBAAAA	13245.62	725.91	-5501.8
+catalog channel	catalog_pageAAAAAAAACFABAAAA	40682.07	1438.58	-818.2999999999986
+catalog channel	catalog_pageAAAAAAAACFCBAAAA	21633.08	365.47	-2348.95
+catalog channel	catalog_pageAAAAAAAACGABAAAA	7388.290000000001	0	-5419.23
+catalog channel	catalog_pageAAAAAAAACGCBAAAA	9456.4	374.72	-2826.47
+catalog channel	catalog_pageAAAAAAAACHABAAAA	16539.71	0	-258.2799999999997
+catalog channel	catalog_pageAAAAAAAACHCBAAAA	6570.679999999999	0	-5877.03
+catalog channel	catalog_pageAAAAAAAACICBAAAA	44289.11	0	4467.38
+catalog channel	catalog_pageAAAAAAAACJCBAAAA	9590.34	0	658.8099999999999
+catalog channel	catalog_pageAAAAAAAACKCBAAAA	1691.13	0	976.71
+catalog channel	catalog_pageAAAAAAAACKPAAAAA	52714.25	1020.18	-18352.11
+catalog channel	catalog_pageAAAAAAAACLCBAAAA	10391.25	0	-1395.6
+catalog channel	catalog_pageAAAAAAAACLPAAAAA	78280.67999999999	8020.65	-4002.29
+catalog channel	catalog_pageAAAAAAAACMPAAAAA	27646.59	1439.9	-17.54000000000042
+catalog channel	catalog_pageAAAAAAAACNCBAAAA	3482.82	0	185.82
+catalog channel	catalog_pageAAAAAAAACNPAAAAA	56894	575.52	5636.160000000002
+catalog channel	catalog_pageAAAAAAAACOCBAAAA	41.64	41.64	-99.04000000000001
+catalog channel	catalog_pageAAAAAAAACOPAAAAA	34074.55	0	263.1599999999999
+catalog channel	catalog_pageAAAAAAAACPCBAAAA	6176.88	0	-442.52
+catalog channel	catalog_pageAAAAAAAACPPAAAAA	26805.94	290.4	862.6200000000002
+catalog channel	catalog_pageAAAAAAAADAABAAAA	35602.25999999999	1460.59	-9348.490000000002
+catalog channel	catalog_pageAAAAAAAADBABAAAA	17240.62	0	-7134.120000000001
+catalog channel	catalog_pageAAAAAAAADCABAAAA	41885.5	3095.95	-8735.549999999999
+catalog channel	catalog_pageAAAAAAAADDABAAAA	20913.22	2246.85	2840.94
+catalog channel	catalog_pageAAAAAAAADDCBAAAA	19112.09	0	-3472.429999999999
+catalog channel	catalog_pageAAAAAAAADEABAAAA	26179.98	0	1002.260000000001
+catalog channel	catalog_pageAAAAAAAADECBAAAA	19049.2	8496.1	-3889.539999999999
+catalog channel	catalog_pageAAAAAAAADFABAAAA	32070.06	1079.28	-17637.77
+catalog channel	catalog_pageAAAAAAAADFCBAAAA	19799.6	3671.4	-13364.57
+catalog channel	catalog_pageAAAAAAAADGABAAAA	21298.11	0	-5210.809999999999
+catalog channel	catalog_pageAAAAAAAADGCBAAAA	18039.49	1219.36	5865.369999999999
+catalog channel	catalog_pageAAAAAAAADHABAAAA	17280.35	0	6196.81
+catalog channel	catalog_pageAAAAAAAADHCBAAAA	15057.07	266.55	-13474.2
+catalog channel	catalog_pageAAAAAAAADICBAAAA	16994.19	446.04	-7399.550000000001
+catalog channel	catalog_pageAAAAAAAADKCBAAAA	541.7	0	-661.8399999999999
+catalog channel	catalog_pageAAAAAAAADKPAAAAA	34410.60000000001	0	-3200.56
+catalog channel	catalog_pageAAAAAAAADLPAAAAA	42206.82	569.24	-13097.17
+catalog channel	catalog_pageAAAAAAAADMPAAAAA	42764.68000000001	12199.5	-22321.19
+catalog channel	catalog_pageAAAAAAAADNPAAAAA	47203.87	2933.68	-13180.35
+catalog channel	catalog_pageAAAAAAAADOCBAAAA	4720.02	0	-364.79
+catalog channel	catalog_pageAAAAAAAADOPAAAAA	31435.39	0	7177.25
+catalog channel	catalog_pageAAAAAAAADPPAAAAA	38992.25999999999	2187.68	-8443.049999999999
+catalog channel	catalog_pageAAAAAAAAEAABAAAA	34539.06	2193.49	-9826.610000000001
+Fetched 100 row(s) in 11.07s

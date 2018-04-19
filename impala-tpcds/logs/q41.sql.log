@@ -1,0 +1,67 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select distinct(i_product_name)
+ from item i1
+JOIN 
+-- where i_manufact_id between 835 and 835+40
+  -- and 
+(select i_manufact, count(*) as item_cnt
+        from item
+        where  (
+-- (i_manufact = i1.i_manufact and
+        ((i_category = 'Women' and
+        (i_color = 'navajo' or i_color = 'bisque') and
+        (i_units = 'Box' or i_units = 'Lb') and
+        (i_size = 'medium' or i_size = 'small')
+        ) or
+        (i_category = 'Women' and
+        (i_color = 'spring' or i_color = 'dim') and
+        (i_units = 'Dram' or i_units = 'Gross') and
+        (i_size = 'N/A' or i_size = 'petite')
+        ) or
+        (i_category = 'Men' and
+        (i_color = 'burlywood' or i_color = 'brown') and
+        (i_units = 'Tsp' or i_units = 'Gram') and
+        (i_size = 'extra large' or i_size = 'economy')
+        ) or
+        (i_category = 'Men' and
+        (i_color = 'forest' or i_color = 'lime') and
+        (i_units = 'Ounce' or i_units = 'Case') and
+        (i_size = 'medium' or i_size = 'small')
+        ))) or
+       (
+        ((i_category = 'Women' and
+        (i_color = 'honeydew' or i_color = 'cornflower') and
+        (i_units = 'Pallet' or i_units = 'Bunch') and
+        (i_size = 'medium' or i_size = 'small')
+        ) or
+        (i_category = 'Women' and
+        (i_color = 'deep' or i_color = 'peru') and
+        (i_units = 'Tbl' or i_units = 'Ton') and
+        (i_size = 'N/A' or i_size = 'petite')
+        ) or
+        (i_category = 'Men' and
+        (i_color = 'floral' or i_color = 'violet') and
+        (i_units = 'Cup' or i_units = 'Unknown') and
+        (i_size = 'extra large' or i_size = 'economy')
+        ) or
+        (i_category = 'Men' and
+        (i_color = 'plum' or i_color = 'green') and
+        (i_units = 'Each' or i_units = 'Carton') and
+        (i_size = 'medium' or i_size = 'small')
+        ))) 
+ group by i_manufact) i2
+ON i1.i_manufact = i2.i_manufact
+where i1.i_manufact_id between  835 and 835+40
+and i2.item_cnt > 0
+ order by i_product_name
+ limit 100
+Query submitted at: 2018-04-19 06:49:02 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=254aa0bf3125b4fa:5f2aa3db00000000
+oughtantipriantiought
+Fetched 1 row(s) in 0.14s

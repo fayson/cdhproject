@@ -1,0 +1,141 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: with results as
+( select sum(ws_net_paid) as total_sum, i_category, i_class, 0 as g_category, 0 as g_class 
+ from
+    web_sales
+   ,date_dim       d1
+   ,item
+ where
+ d1.d_month_seq between 1215 and 1215+11
+ and d1.d_date_sk = ws_sold_date_sk
+ and ws_sold_date_sk between 2452001 and 2452365
+ and i_item_sk  = ws_item_sk
+ group by i_category,i_class
+ ) ,
+
+ results_rollup as
+( select total_sum ,i_category ,i_class, g_category, g_class, 0 as lochierarchy from results
+  union
+  select sum(total_sum) as total_sum, i_category, NULL as i_class, 0 as g_category, 1 as g_class, 1 as lochierarchy from results group by i_category
+  union
+  select sum(total_sum) as total_sum, NULL as i_category, NULL as i_class, 1 as g_category, 1 as g_class, 2 as lochierarchy from results)
+select 
+ total_sum ,i_category ,i_class, lochierarchy 
+   ,rank() over (
+ 	partition by lochierarchy,
+ 	case when g_class = 0 then i_category end 
+ 	order by total_sum desc) as rank_within_parent
+ from
+ results_rollup
+ order by
+   lochierarchy desc,
+   case when lochierarchy = 0 then i_category end,
+   rank_within_parent 
+ limit 100
+666115534.9000001	NULL	NULL	2	1
+67674244.89000006	Women	NULL	1	1
+67612538.54999998	Shoes	NULL	1	2
+67239922.06	Music	NULL	1	3
+66825059.86000001	Home	NULL	1	4
+66560965.45000003	Children	NULL	1	5
+66550275.56000002	Men	NULL	1	6
+65969522.68000001	Books	NULL	1	7
+65839595.06000002	Jewelry	NULL	1	8
+65153997.19	Electronics	NULL	1	9
+65139900.40000001	Sports	NULL	1	10
+1549513.2		NULL	1	11
+673601.9899999999			0	1
+104082.73		pants	0	2
+94218.26999999999		archery	0	3
+91517.45000000001		guns	0	4
+71058.10000000001		semi-precious	0	5
+67494.29000000001		swimwear	0	6
+63216.71		newborn	0	7
+51571.33000000001		flatware	0	8
+45991.02		dresses	0	9
+45705.15		mens	0	10
+45059.66		fragrances	0	11
+43990.3		glassware	0	12
+43865.78		scanners	0	13
+37330.09		womens	0	14
+31209.02		sports-apparel	0	15
+21651.62		camcorders	0	16
+9371.630000000001		maternity	0	17
+5303.65		self-help	0	18
+3274.41		outdoor	0	19
+4617477.499999997	Books	computers	0	1
+4513188.330000001	Books	entertainments	0	2
+4461373.219999998	Books	history	0	3
+4382858.890000001	Books	romance	0	4
+4345356.160000006	Books	self-help	0	5
+4255642.149999999	Books	reference	0	6
+4170270.999999999	Books	fiction	0	7
+4126051.180000002	Books	mystery	0	8
+4120810.760000002	Books	travel	0	9
+4103123.829999998	Books	cooking	0	10
+4058162.51	Books	home repair	0	11
+4057246.740000002	Books	sports	0	12
+3867974.050000003	Books	arts	0	13
+3865475.53	Books	parenting	0	14
+3611804.120000003	Books	science	0	15
+3239877.709999999	Books	business	0	16
+172829	Books		0	17
+16990492.11000001	Children	infants	0	1
+16876105.49999999	Children	newborn	0	2
+16755774.86000001	Children	school-uniforms	0	3
+15823121.74000003	Children	toddlers	0	4
+115471.24	Children		0	5
+4960642.499999994	Electronics	monitors	0	1
+4683099.189999999	Electronics	memory	0	2
+4502513.23	Electronics	portable	0	3
+4379210.970000003	Electronics	disk drives	0	4
+4342731.189999997	Electronics	televisions	0	5
+4216644.249999997	Electronics	dvd/vcr players	0	6
+4165426.460000001	Electronics	personal	0	7
+4007324.410000001	Electronics	stereo	0	8
+3951833.580000001	Electronics	karoke	0	9
+3875587.990000001	Electronics	scanners	0	10
+3779636.76	Electronics	wireless	0	11
+3773083.12	Electronics	camcorders	0	12
+3745081.36	Electronics	cameras	0	13
+3689826.03	Electronics	audio	0	14
+3548378.06	Electronics	musical	0	15
+3504412.57	Electronics	automotive	0	16
+28565.52	Electronics		0	17
+4952052.42	Home	bedding	0	1
+4696265.729999999	Home	glassware	0	2
+4661543.6	Home	accent	0	3
+4553804.109999999	Home	tables	0	4
+4326765.91	Home	flatware	0	5
+4270959.310000003	Home	wallpaper	0	6
+4163162.020000002	Home	furniture	0	7
+4147315.51	Home	rugs	0	8
+4126179.680000002	Home	lighting	0	9
+4046596.01	Home	kids	0	10
+4031094.090000001	Home	curtains/drapes	0	11
+3997989.690000002	Home	blinds/shades	0	12
+3871613.12	Home	mattresses	0	13
+3646930.640000002	Home	paint	0	14
+3646010.560000001	Home	bathroom	0	15
+3546981.04	Home	decor	0	16
+139796.42	Home		0	17
+4771544.520000001	Jewelry	diamonds	0	1
+4646279.080000001	Jewelry	womens watch	0	2
+4627937.49	Jewelry	custom	0	3
+4618277.949999997	Jewelry	jewelry boxes	0	4
+4608690.540000003	Jewelry	pendants	0	5
+4453667.35	Jewelry	estate	0	6
+4198955.829999997	Jewelry	rings	0	7
+4058932.690000003	Jewelry	gold	0	8
+3992081.330000002	Jewelry	consignment	0	9
+3946039.409999997	Jewelry	birdal	0	10
+3940003.700000002	Jewelry	bracelets	0	11
+3839935.620000001	Jewelry	mens watch	0	12
+3767545.090000001	Jewelry	earings	0	13
+Fetched 100 row(s) in 2.82s

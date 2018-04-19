@@ -1,0 +1,145 @@
+/opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/impala-shell/ext-py/sasl-0.1.1-py2.7-linux-x86_64.egg/_saslwrapper.py:3: UserWarning: Module backports was already imported from None, but /usr/lib/python2.7/site-packages is being added to sys.path
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, TSocket read 0 bytes
+Kerberos ticket found in the credentials cache, retrying the connection with a secure transport.
+Connected to ip-172-31-30-69.ap-southeast-1.compute.internal:21000
+Server version: impalad version 2.10.0-cdh5.13.1 RELEASE (build 1e4b23c4eb52dac95c5be6316f49685c41783c51)
+Query: use `tpcds_parquet_2`
+Query: select i_brand_id brand_id,
+  i_brand brand,
+  i_manufact_id,
+  i_manufact,
+  sum(ss_ext_sales_price) ext_price
+from
+  date_dim,
+  store_sales,
+  item,
+  customer,
+  customer_address,
+  store
+where
+  d_date_sk = ss_sold_date_sk
+  and ss_item_sk = i_item_sk
+  and i_manager_id = 7
+  and d_moy = 11
+  and d_year = 1999
+  and ss_customer_sk = c_customer_sk
+  and c_current_addr_sk = ca_address_sk
+  and substr(ca_zip, 1, 5) <> substr(s_zip, 1, 5)
+  and ss_store_sk = s_store_sk
+  and ss_sold_date_sk between 2451484 and 2451513  -- partition key filter
+group by
+  i_brand,
+  i_brand_id,
+  i_manufact_id,
+  i_manufact
+order by
+  ext_price desc,
+  i_brand,
+  i_brand_id,
+  i_manufact_id,
+  i_manufact
+limit 100
+Query submitted at: 2018-04-19 06:46:53 (Coordinator: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000)
+Query progress can be monitored at: http://ip-172-31-30-69.ap-southeast-1.compute.internal:25000/query_plan?query_id=a743025b2f092d8a:5db2ca7200000000
+2002002	importoimporto #2	608	eingbarcally	60235.3
+2001001	amalgimporto #1	233	pripriable	54820.44
+4004001	edu packedu pack #1	32	ablepri	54052.67
+2004001	edu packimporto #1	222	ableableable	51347.49
+3004001	edu packexporti #1	357	ationantipri	48293.68000000001
+5001002	amalgscholar #2	52	ableanti	47687.58
+1001002	amalgamalg #2	21	oughtable	47437.25
+2002002	importoimporto #2	242	ableeseable	46243.81
+2001001	amalgimporto #1	279	n stationable	44692.44
+5002001	importoscholar #1	57	ationanti	44160.53
+1001001	amalgamalg #1	179	n stationought	43268.03000000001
+8004005	edu packnameless #5	172	ableationought	42505.24
+2002001	importoimporto #1	656	callyantically	42234.01
+8016005	corpmaxi #5	49	n stese	41168.35000000001
+7005009	scholarbrand #9	642	ableesecally	40776.59
+1004001	edu packamalg #1	569	n stcallyanti	40451.02
+8013005	exportimaxi #5	87	ationeing	39641.7
+8001001	amalgnameless #1	329	n stablepri	39573.75999999999
+8016004	corpmaxi #4	451	oughtantiese	39325.00999999999
+9004008	edu packmaxi #8	325	antiablepri	39039.16
+6005001	scholarcorp #1	251	oughtantiable	38809.82
+10010011	univamalgamalg #11	97	ationn st	38471.2
+1001001	amalgamalg #1	135	antipriought	38322.08
+6010005	univbrand #5	572	ableationanti	38024.6
+10007009	brandunivamalg #9	182	ableeingought	37834.82
+3004001	edu packexporti #1	45	antiese	37453
+9014008	edu packunivamalg #8	639	n stprically	37320.17
+1002001	importoamalg #1	876	callyationeing	36912.77
+10001009	amalgunivamalg #9	142	ableeseought	36818.24
+9015008	scholarunivamalg #8	474	eseationese	36362.26
+8005003	scholarnameless #3	159	n stantiought	35859.42
+2002002	importoimporto #2	312	ableoughtpri	35827.75
+4003001	exportiedu pack #1	144	eseeseought	35724.59
+1002001	importoamalg #1	256	callyantiable	35427.43
+4003002	exportiedu pack #2	825	antiableeing	35384.21
+4003001	exportiedu pack #1	505	antibaranti	35353.78
+5004001	edu packscholar #1	158	eingantiought	35181.34
+4001001	amalgedu pack #1	590	barn stanti	34317.50999999999
+6012003	importobrand #3	571	oughtationanti	34241.55
+6015006	scholarbrand #6	294	esen stable	34178.56
+3004001	edu packexporti #1	949	n stesen st	34144.22
+9006005	corpmaxi #5	839	n stprieing	33522.28
+6010006	univbrand #6	262	ablecallyable	33394.51
+1003001	exportiamalg #1	108	eingbarought	33383.28
+9013008	exportiunivamalg #8	677	ationationcally	33168.55
+6015002	scholarbrand #2	21	oughtable	32765.4
+4002001	importoedu pack #1	250	barantiable	32576.75
+5003001	exportischolar #1	954	eseantin st	32447.92
+8010003	univmaxi #3	314	eseoughtpri	32424.82999999999
+3001002	amalgexporti #2	347	ationesepri	32316.74
+2004001	edu packimporto #1	25	antiable	32304.05
+7010009	univnameless #9	9	n st	32101.52
+10003002	exportiunivamalg #2	127	ationableought	31809.62
+5003002	exportischolar #2	323	priablepri	31442.57
+8007010	brandnameless #10	774	eseationation	31358.27
+5002001	importoscholar #1	164	esecallyought	31255.38
+3003001	exportiexporti #1	220	barableable	31119.33
+6016001	corpbrand #1	641	oughtesecally	31085.96
+2004002	edu packimporto #2	481	oughteingese	30912.65
+4001002	amalgedu pack #2	5	anti	30893.72
+7016007	corpnameless #7	288	eingeingable	30752.16
+10011005	amalgamalgamalg #5	231	oughtpriable	30715.99
+6007007	brandcorp #7	416	callyoughtese	30701.46
+1002001	importoamalg #1	185	antieingought	30534.78
+5002001	importoscholar #1	97	ationn st	30397.2
+2001001	amalgimporto #1	986	callyeingn st	30225.31
+8007003	brandnameless #3	309	n stbarpri	30146.8
+8014008	edu packmaxi #8	96	callyn st	30057.83
+3003002	exportiexporti #2	120	barableought	29996.22
+4002001	importoedu pack #1	534	eseprianti	29800.24
+7010007	univnameless #7	402	ablebarese	29211.51
+10008016	namelessunivamalg #16	543	prieseanti	29151.25
+9008005	namelessmaxi #5	34	esepri	29137.84
+2002001	importoimporto #1	212	ableoughtable	28741.31
+8006009	corpnameless #9	83	prieing	28722.68
+7014005	edu packnameless #5	142	ableeseought	28617.79
+10008003	namelessunivamalg #3	453	priantiese	28603.74
+2001001	amalgimporto #1	129	n stableought	28359.76
+8002004	importonameless #4	309	n stbarpri	28259.35
+10007015	brandunivamalg #15	56	callyanti	28152.1
+6006003	corpcorp #3	548	eingeseanti	28056.25
+5003002	exportischolar #2	172	ableationought	27956.95
+3002001	importoexporti #1	649	n stesecally	27920.71
+9002008	importomaxi #8	202	ablebarable	27875.44
+6011007	amalgbrand #7	284	eseeingable	27840.72
+3003002	exportiexporti #2	490	barn stese	27751.48
+5001001	amalgscholar #1	125	antiableought	27676.8
+8016010	corpmaxi #10	345	antiesepri	27644.06
+3001001	amalgexporti #1	47	ationese	27538.89
+6005002	scholarcorp #2	164	esecallyought	27490.55
+10009015	maxiunivamalg #15	612	ableoughtcally	27233.57
+10013006	exportiamalgamalg #6	13	priought	27143.10000000001
+9011011	amalgunivamalg #11	751	oughtantiation	26695.67
+5002001	importoscholar #1	69	n stcally	26606.44
+3003001	exportiexporti #1	550	barantianti	26569.66
+10002008	importounivamalg #8	271	oughtationable	26447.69
+1003002	exportiamalg #2	19	n stought	26440.69
+6006001	corpcorp #1	268	eingcallyable	26164.25
+7012006	importonameless #6	268	eingcallyable	26040.67
+3003001	exportiexporti #1	757	ationantiation	25821.49
+Fetched 100 row(s) in 1.90s
