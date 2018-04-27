@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema name="example" version="1.5">
+<fields>
+  <field name="uuuid" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+ <field name="id" type="string" indexed="true" stored="true" />
+  <field name="created_at" type="string" indexed="true" stored="true" />
+  <field name="text" type="text_en" indexed="true" stored="true" />
+  <field name="text_cn" type="text_ch" indexed="true" stored="true" />
+  <field name="_version_" type="long" indexed="true" stored="true"/>
+
+
+
+</fields>
+<uniqueKey>uuuid</uniqueKey>
+<types>
+<!-- The StrField type is not analyzed, but indexed/stored verbatim.
+          It supports doc values but in that case the field needs to be
+     single-valued and either required or have a default value.
+     -->
+<fieldType name="string" class="solr.StrField" sortMissingLast="true"/>
+
+<!--
+          Default numeric field types. For faster range queries, consider the tint/tfloat/tlong/tdouble types.
+
+These fields support doc values, but they require the field to be
+single-valued and either be required or have a default value.
+-->
+<fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
+<fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
+<fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
+<fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
+<fieldType name="text_en" class="solr.TextField" positionIncrementGap="100" /> 
+
+<fieldType name="text_ch" class="solr.TextField" positionIncrementGap="100">
+	<analyzer type="index">
+	 <tokenizer class="solr.SmartChineseSentenceTokenizerFactory"/>
+	 <filter class="solr.SmartChineseWordTokenFilterFactory"/>
+	</analyzer>  
+</fieldType>
+</types>
+
+
+</schema>
+
