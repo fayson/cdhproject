@@ -10,4 +10,4 @@ done
 export CLASSPATH
 
 
-${JAVA_HOME}/bin/java com.cloudera.broker.ProducerTest
+${JAVA_HOME}/bin/java com.cloudera.kerberos.ProducerTest
