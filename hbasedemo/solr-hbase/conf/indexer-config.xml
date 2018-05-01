@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<indexer table="picHbase" mapper="com.ngdata.hbaseindexer.morphline.MorphlineResultToSolrMapper" mapping-type="row" >
+
+    <!-- The relative or absolute path on the local file system to the morphline configuration file. -->
+    <!-- Use relative path "morphlines.conf" for morphlines managed by Cloudera Manager -->
+    <param name="morphlineFile" value="/root/solr-hbase//conf/morphlines.conf"/>
+
+    <!-- The optional morphlineId identifies a morphline if there are multiple morphlines in morphlines.conf -->
+    <!-- <param name="morphlineId" value="morphline1"/> -->
+
+</indexer>
+
