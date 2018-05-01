@@ -1,0 +1,4 @@
+Downloading Apache Maven 3.5.3
+Apache Maven 3.5.3 is the latest release and recommended version for all users.
+
+The currently selected download mirror is http://mirrors.tuna.tsinghua.edu.cn/apache/. If you encounter a problem with this mirror, please select another mirror. If all mirrors are failing, there are backup mirrors (at the end of the mirrors list) that should be available. You may also consult the complete list of mirrors.

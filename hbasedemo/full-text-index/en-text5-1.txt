@@ -1,0 +1,35 @@
+Migrating Solr Replicas
+When you replace a host, migrating replicas on that host to the new host, instead of depending on failure recovery, can help ensure optimal performance.
+
+Where possible, the Solr service routes requests to the proper host. Both ADDREPLICA and DELETEREPLICA calls can be sent to any host in the cluster.
+For adding replicas, the node parameter ensures the new replica is created on the intended host. If no host is specified, Solr selects a host with relatively fewer replicas.
+For deleting replicas, the request is routed to the host that hosts the replica to be deleted.
+Adding replicas can be resource intensive. For best results, add replicas when the system is not under heavy load. For example, do not add additional replicas when heavy indexing is occurring or when MapReduceIndexerTool jobs are running.
+
+Cloudera recommends using API calls to create and unload cores. Do not use the Cloudera Manager Admin Console or the Solr Admin UI for these tasks.
+
+This procedure uses the following names:
+Host names:
+origin at the IP address 192.0.2.1.
+destination at the IP address 192.0.2.2.
+Collection name email
+Replicas:
+The original replica email_shard1_replica2, which is on origin.
+The new replica email_shard1_replica3, which will be on destination.
+To migrate a replica to a new host
+
+Create the new replica on destination server using the ADDREPLICA API:
+http://example.com:8983/solr/admin/collections?action=ADDREPLICA&collection=email&shard=email_shard1&node=192.0.2.2:7542_solr
+Verify that the replica creation succeeds and moves from recovery state to ACTIVE. You can check the replica status in the Cloud view, which can be found at a URL similar to: http://destination.example.com:8983/solr/#/~cloud.
+Note: Do not delete the original replica until the new one is in the ACTIVE state. When the newly added replica is listed as ACTIVE, the index has been fully replicated to the newly added replica. The total time to replicate an index varies according to factors such as network bandwidth and the size of the index. Replication times on the scale of hours are not uncommon and do not necessarily indicate a problem.
+Use the CLUSTERSTATUS API to retrieve information about the cluster, including current cluster status:
+http://example.com:8983/solr/admin/collections?action=clusterstatus&wt=json
+Review the returned information to find the correct replica to remove.
+
+Delete the old replica on origin server using the DELETEREPLICA API:
+http://example.com:8983/solr/admin/collections?action=DELETEREPLICA&collection=email&shard=shard1&replica=core_node2
+The DELTEREPLICA call removes the datadir.
+
+Categories: Administrators | Cloudera Manager | Cloudera Manager Services | Configuring | Deploying | ETL | Flume | Hue | Ingest | Migrating | Morphlines | Search | Solr | All Categories
+
+Scheduling in Oozie Using Cron-like Syntax

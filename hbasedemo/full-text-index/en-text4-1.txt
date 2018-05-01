@@ -1,0 +1,15 @@
+Deploying Solr with Hue
+Minimum Required Role: Configurator (also provided by Cluster Administrator, Full Administrator)
+
+In CDH 4.3 and lower, in order to use Solr with Hue, you must update the URL for the Solr Server in the Hue Server advanced configuration snippet.
+Go to the Hue service.
+Click the Configuration tab.
+Type the word "snippet" in the Search box.
+A set of Hue advanced configuration snippet properties displays.
+
+Add information about your Solr host to the Hue Server Configuration Advanced Configuration Snippet for hue_safety_valve_server.ini property. For example, if your hostname is SOLR_HOST, you might add the following:
+[search]
+## URL of the Solr Server
+solr_url=http://SOLR_HOST:8983/solr
+Click Save Changes to save your advanced configuration snippet changes.
+Restart the Hue Service.

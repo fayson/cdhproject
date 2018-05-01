@@ -1,0 +1,16 @@
+Configuring the Flume Morphline Solr Sink for Use with the Solr Service
+Minimum Required Role: Configurator (also provided by Cluster Administrator, Full Administrator)
+
+To use a Flume Morphline Solr sink, the Flume service must be running on your cluster. See the Flume Near Real-Time Indexing Reference (CDH 5) for information about the Flume Morphline Solr Sink and Managing Flume.
+
+Go to the Flume service.
+Click the Configuration tab.
+Select Scope > Agent
+Select Category > Flume-NG Solr Sink.
+Edit the following settings, which are templates that you must modify for your deployment:
+Morphlines File (morphlines.conf) - Configures Morphlines for Flume agents. You must use $ZK_HOST in this field instead of specifying a ZooKeeper quorum. Cloudera Manager automatically replaces the $ZK_HOST variable with the correct value during the Flume configuration deployment.
+Custom MIME-types File (custom-mimetypes.xml) - Configuration for the detectMimeTypes command. See the Cloudera Morphlines Reference Guide for details on this command.
+Grok Dictionary File (grok-dictionary.conf) - Configuration for the grok command. See the Cloudera Morphlines Reference Guide for details on this command.
+If more than one role group applies to this configuration, edit the value for the appropriate role group. See Modifying Configuration Properties Using Cloudera Manager.
+
+Once configuration is complete, Cloudera Manager automatically deploys the required files to the Flume agent process directory when it starts the Flume agent. Therefore, you can reference the files in the Flume agent configuration using their relative path names. For example, you can use the name morphlines.conf to refer to the location of the Morphlines configuration file.

@@ -1,0 +1,14 @@
+You can install the Solr service through the Cloudera Manager installation wizard, using either parcels or packages. See Installing Search.
+
+You can elect to have the service created and started as part of the Installation wizard. If you elect not to create the service using the Installation wizard, you can use the Add Service wizard to perform the installation. The wizard will automatically configure and start the dependent services and the Solr service. See Adding a Service for instructions.
+
+For further information on the Solr service, see Cloudera Search Guide.
+
+The following sections describe how to configure other CDH components to work with the Solr service.
+
+Continue reading:
+
+Configuring the Flume Morphline Solr Sink for Use with the Solr Service
+Deploying Solr with Hue
+Using a Load Balancer with Solr
+Migrating Solr Replicas
