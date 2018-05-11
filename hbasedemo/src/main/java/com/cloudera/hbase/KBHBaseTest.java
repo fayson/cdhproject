@@ -1,12 +1,13 @@
 package com.cloudera.hbase;
 
-import com.sun.javafx.font.freetype.HBGlyphLayout;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.security.UserGroupInformation;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -19,6 +20,8 @@ import java.io.IOException;
  * 公众号：Hadoop实操
  */
 public class KBHBaseTest {
+
+    private static String confPath = System.getProperty("user.dir") + File.separator + "hbasedemo" + File.separator + "config";
 
     public static void main(String[] args) {
 
@@ -42,6 +45,10 @@ public class KBHBaseTest {
                 System.out.println(r.toString());
             }
 
+            //释放连接
+            table.close();
+            connection.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,10 +61,9 @@ public class KBHBaseTest {
     public static Configuration getConfiguration() {
 
         Configuration configuration = HBaseConfiguration.create();
-        configuration.set("", "");
-        configuration.set("", "");
-        configuration.set("", "");
-        configuration.set("", "");
+        configuration.addResource(new Path(confPath + File.separator + "core-site.xml"));
+        configuration.addResource(new Path(confPath + File.separator + "hdfs-site.xml"));
+        configuration.addResource(new Path(confPath + File.separator + "hbase-site.xml"));
 
         return  configuration;
     }
