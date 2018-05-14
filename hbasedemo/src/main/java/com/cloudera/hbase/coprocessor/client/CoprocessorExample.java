@@ -1,4 +1,4 @@
-package com.cloudera.hbase.coprocessor;
+package com.cloudera.hbase.coprocessor.client;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
