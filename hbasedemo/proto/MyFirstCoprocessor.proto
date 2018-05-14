@@ -1,0 +1,23 @@
+syntax = "proto2";
+option java_package = "com.cloudera.hbase.coprocessor.server";
+option java_outer_classname = "MyFirstCoprocessor";
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+option optimize_for = SPEED;
+
+message MyCoprocessRequest {
+    required string family = 1;
+    required string columns = 2;
+}
+
+message MyCoprocessResponse {
+    required int64 count = 1;
+    required double maxnum = 3;
+    required double minnum = 4;
+    required double sumnum = 5;
+}
+
+service AggregationService {
+  rpc getAggregation(MyCoprocessRequest)
+    returns (MyCoprocessResponse);
+}
