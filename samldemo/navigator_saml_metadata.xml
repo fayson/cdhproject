@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:EntityDescriptor ID="https___ip-172-31-21-83.ap-southeast-1.compute.internal_idp_shibboleth" entityID="https://ip-172-31-21-83.ap-southeast-1.compute.internal/idp/shibboleth"
+                     xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
+    <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true"
+                        protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:KeyDescriptor use="signing">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIDqjCCApKgAwIBAgIUeu7203WxYb64Vfj7WXqbLe14qR8wDQYJKoZIhvcNAQELBQAwOjE4MDYG
+                        A1UEAwwvaXAtMTcyLTMxLTIxLTgzLmFwLXNvdXRoZWFzdC0xLmNvbXB1dGUuaW50ZXJuYWwwHhcN
+                        MTgwMjI3MDYzODM5WhcNMzgwMjI3MDYzODM5WjA6MTgwNgYDVQQDDC9pcC0xNzItMzEtMjEtODMu
+                        YXAtc291dGhlYXN0LTEuY29tcHV0ZS5pbnRlcm5hbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+                        AQoCggEBAIfpHF/YV4Dl40zxWVjMzuivWtnlTKo50xSKeFjC8kLtHbSEBGBZhv26eogt5/3eCZ2T
+                        NlY+E0nivj5hdUmNvDUzu/fWThRizlce6fE2+6dLTgbJz8r5HAEZk17Mt1YUKs5xiu/afMciIW2D
+                        81EiJeAPtK599tfSYj+koySAyatWzD5BFHl30/yRzpKSCpz71TGw0bObfprgvRRPOloTGaZ4lS+9
+                        GYVmgzMvDUX/51D3ZDi/3vdu8uC9FN7vtFaqCuKW8oK8nc0aMbaWJLFKJdxaQiDe9aM2GfZGgENk
+                        loXFgf6b+BAUPLSGkdH/U1N8CisYcINSxa80cJcMN3tdGO8CAwEAAaOBpzCBpDAdBgNVHQ4EFgQU
+                        bVpBu6hZQ0YzmKN84fXa3gafo9UwgYIGA1UdEQR7MHmCL2lwLTE3Mi0zMS0yMS04My5hcC1zb3V0
+                        aGVhc3QtMS5jb21wdXRlLmludGVybmFshkZodHRwczovL2lwLTE3Mi0zMS0yMS04My5hcC1zb3V0
+                        aGVhc3QtMS5jb21wdXRlLmludGVybmFsL2lkcC9zaGliYm9sZXRoMA0GCSqGSIb3DQEBCwUAA4IB
+                        AQBJqd0mUHwkEwoVvmcpvob07ok3aMomclDmJD/bwmTTau4L3Lbr8teLhJ7KBbnoTTetOzW948xU
+                        O748iupVd+fP9VLXQGV/5cTDphcPFS14Aybj3aG9fMy25LZW54W/QDjKQspCyD/9illjtOUKcdjb
+                        xqYod3MbZhk+y+N9qSS1kfKN7E3DX6IYZKxT3xTeFRtlm4oYw4BLaw9TRvVFbyjz3M+hRy7pcfOc
+                        MHaMGoChNZ0WY/tPiIl1IzLy/gFRhioih1/4Oq4Zk0qQ0nJTPDkL+JeGIOYuCBnaEd7GkOGRiT1H
+                        z2+W/ShFwiJ9pVECchQdWgYtxFJcMG7SNj8LDXA0
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:KeyDescriptor use="encryption">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIDqjCCApKgAwIBAgIUeu7203WxYb64Vfj7WXqbLe14qR8wDQYJKoZIhvcNAQELBQAwOjE4MDYG
+                        A1UEAwwvaXAtMTcyLTMxLTIxLTgzLmFwLXNvdXRoZWFzdC0xLmNvbXB1dGUuaW50ZXJuYWwwHhcN
+                        MTgwMjI3MDYzODM5WhcNMzgwMjI3MDYzODM5WjA6MTgwNgYDVQQDDC9pcC0xNzItMzEtMjEtODMu
+                        YXAtc291dGhlYXN0LTEuY29tcHV0ZS5pbnRlcm5hbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+                        AQoCggEBAIfpHF/YV4Dl40zxWVjMzuivWtnlTKo50xSKeFjC8kLtHbSEBGBZhv26eogt5/3eCZ2T
+                        NlY+E0nivj5hdUmNvDUzu/fWThRizlce6fE2+6dLTgbJz8r5HAEZk17Mt1YUKs5xiu/afMciIW2D
+                        81EiJeAPtK599tfSYj+koySAyatWzD5BFHl30/yRzpKSCpz71TGw0bObfprgvRRPOloTGaZ4lS+9
+                        GYVmgzMvDUX/51D3ZDi/3vdu8uC9FN7vtFaqCuKW8oK8nc0aMbaWJLFKJdxaQiDe9aM2GfZGgENk
+                        loXFgf6b+BAUPLSGkdH/U1N8CisYcINSxa80cJcMN3tdGO8CAwEAAaOBpzCBpDAdBgNVHQ4EFgQU
+                        bVpBu6hZQ0YzmKN84fXa3gafo9UwgYIGA1UdEQR7MHmCL2lwLTE3Mi0zMS0yMS04My5hcC1zb3V0
+                        aGVhc3QtMS5jb21wdXRlLmludGVybmFshkZodHRwczovL2lwLTE3Mi0zMS0yMS04My5hcC1zb3V0
+                        aGVhc3QtMS5jb21wdXRlLmludGVybmFsL2lkcC9zaGliYm9sZXRoMA0GCSqGSIb3DQEBCwUAA4IB
+                        AQBJqd0mUHwkEwoVvmcpvob07ok3aMomclDmJD/bwmTTau4L3Lbr8teLhJ7KBbnoTTetOzW948xU
+                        O748iupVd+fP9VLXQGV/5cTDphcPFS14Aybj3aG9fMy25LZW54W/QDjKQspCyD/9illjtOUKcdjb
+                        xqYod3MbZhk+y+N9qSS1kfKN7E3DX6IYZKxT3xTeFRtlm4oYw4BLaw9TRvVFbyjz3M+hRy7pcfOc
+                        MHaMGoChNZ0WY/tPiIl1IzLy/gFRhioih1/4Oq4Zk0qQ0nJTPDkL+JeGIOYuCBnaEd7GkOGRiT1H
+                        z2+W/ShFwiJ9pVECchQdWgYtxFJcMG7SNj8LDXA0
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                Location="http://ip-172-31-24-169.ap-southeast-1.compute.internal:7187/saml/SingleLogout"/>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                                Location="http://ip-172-31-24-169.ap-southeast-1.compute.internal:7187/saml/SingleLogout"/>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName</md:NameIDFormat>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                                     Location="http://ip-172-31-24-169.ap-southeast-1.compute.internal:7187/saml/SSO/alias/clouderaNavigator"
+                                     index="0" isDefault="true"/>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                     Location="http://ip-172-31-24-169.ap-southeast-1.compute.internal:7187/saml/SSO/alias/clouderaNavigator"
+                                     index="1"/>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+                                     Location="http://ip-172-31-24-169.ap-southeast-1.compute.internal:7187/saml/SSO/alias/clouderaNavigator"
+                                     index="2"/>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:profiles:holder-of-key:SSO:browser"
+                                     Location="http://ip-172-31-24-169.ap-southeast-1.compute.internal:7187/saml/HoKSSO/alias/clouderaNavigator"
+                                     hoksso:ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
+                                     index="3"
+                                     xmlns:hoksso="urn:oasis:names:tc:SAML:2.0:profiles:holder-of-key:SSO:browser"/>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:profiles:holder-of-key:SSO:browser"
+                                     Location="http://ip-172-31-24-169.ap-southeast-1.compute.internal:7187/saml/HoKSSO/alias/clouderaNavigator"
+                                     hoksso:ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" index="4"
+                                     xmlns:hoksso="urn:oasis:names:tc:SAML:2.0:profiles:holder-of-key:SSO:browser"/>
+    </md:SPSSODescriptor>
+</md:EntityDescriptor>
