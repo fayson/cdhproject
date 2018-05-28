@@ -13,14 +13,15 @@ import java.util.Properties;
 
 /**
  * package: com.cloudera.nokerberos
- * describe: 通过读取本地交易明细text文件将文件内容解析并组装为JSON发送到Kafka
+ * describe: 读取本地用户数据文件，接数据文件解析组装成JSON格式数据发送至指定的Topic
  * creat_user: Fayson
  * email: htechinfo@163.com
- * creat_date: 2018/4/27
- * creat_time: 下午4:42
+ * creat_date: 2018/5/28
+ * creat_time: 上午10:37
  * 公众号：Hadoop实操
  */
-public class ReadFileToKafka {
+public class ReadUserInfoFIleToKafka {
+
     public static String confPath = System.getProperty("user.dir") + File.separator + "conf";
 
     public static void main(String[] args) {
@@ -47,7 +48,7 @@ public class ReadFileToKafka {
             int line = 1;
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
-                String detailJson = parse_deal_daily_JSON(tempString);
+                String detailJson = parse_person_info_JSON(tempString);
                 ProducerRecord record = new ProducerRecord<String, String>(topic_name, detailJson);
                 producer.send(record);
                 line++;
@@ -76,7 +77,7 @@ public class ReadFileToKafka {
     private static String parse_person_info_JSON(String tempString) {
         if(tempString != null && tempString.length() > 0) {
             Map<String, String> resultMap = null;
-            String[] detail = tempString.split(",");
+            String[] detail = tempString.split("\001");
             resultMap = new HashMap<>();
             resultMap.put("id", detail[0]);
             resultMap.put("name", detail[1]);
@@ -89,30 +90,6 @@ public class ReadFileToKafka {
             resultMap.put("address", detail[8]);
             resultMap.put("marriage", detail[9]);
             resultMap.put("child_num", detail[10]);
-            return JSONObject.fromObject(resultMap).toString();
-        }
-        return null;
-    }
-
-
-    /**
-     * 将txt文件中的每行数据解析并组装为json字符串
-     * @param tempString
-     * @return
-     */
-    private static String parse_deal_daily_JSON(String tempString) {
-        if(tempString != null && tempString.length() > 0) {
-            Map<String, String> resultMap = null;
-            String[] detail = tempString.split(",");
-            resultMap = new HashMap<>();
-            resultMap.put("event_ts", detail[0]);
-            resultMap.put("id", detail[1]);
-            resultMap.put("card_id", detail[2]);
-            resultMap.put("money_type", detail[3]);
-            resultMap.put("money", detail[4]);
-            resultMap.put("balance", detail[5]);
-            resultMap.put("punching", detail[6]);
-            resultMap.put("memo", detail[7]);
             return JSONObject.fromObject(resultMap).toString();
         }
         return null;
