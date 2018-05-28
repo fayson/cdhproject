@@ -11,9 +11,4 @@ export CLASSPATH
 
 
 ${JAVA_HOME}/bin/java com.cloudera.streaming.Test
-
-
-spark-submit --class com.cloudera.streaming.SparkSteamingHBase \
-  --master yarn-client --num-executors 2 --driver-memory 1g \
-  --driver-cores 1 --executor-memory 1g --executor-cores 1 \
-  spark-demo-1.0-SNAPSHOT.jar
+export SPARK_DIST_CLASSPATH=$SPARK_DIST_CLASSPATH:/opt/cloudera/parcels/CDH/jars/spark-streaming-kafka_2.10-1.6.0-cdh5.12.1.jar

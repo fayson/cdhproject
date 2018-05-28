@@ -1,4 +1,4 @@
-package hbase
+package com.cloudera.hbase
 
 import com.cloudera.spark.hbase.HBaseContext
 import org.apache.hadoop.hbase.HBaseConfiguration
@@ -10,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * package: com.cloudera.streaming
-  * describe: 基于Cloudera-clabs提供的HbaseContext实现HBase的读写等操作
+  * describe: 基于Cloudera-clabs提供的HBaseContext实现HBase的读写等操作
   * creat_user: Fayson 
   * email: htechinfo@163.com
   * creat_date: 2018/1/7
@@ -19,7 +19,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object HBaseOperator {
 
-  val zkHost = "cdh.macro.com";
+  val zkHost = "cdh01.fayson.com";
   val zkPort = "2181"
 
   def main(args: Array[String]): Unit = {
