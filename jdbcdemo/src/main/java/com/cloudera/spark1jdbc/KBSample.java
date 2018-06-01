@@ -34,11 +34,11 @@ public class KBSample {
     public static void main(String[] args) throws Exception {
         System.out.println("通过JDBC连接Kerberos环境下的Spark1.6 Thrift Server");
         //登录Kerberos账号
-        System.setProperty("java.security.krb5.conf", "/Users/zoulihan/Documents/develop/kerberos/krb5.conf");
+        System.setProperty("java.security.krb5.conf", "/Users/fayson/Documents/develop/kerberos/krb5.conf");
         Configuration configuration = new Configuration();
         configuration.set("hadoop.security.authentication" , "Kerberos" );
         UserGroupInformation. setConfiguration(configuration);
-        UserGroupInformation.loginUserFromKeytab("fayson@FAYSON.COM", "/Users/zoulihan/Documents/develop/kerberos/fayson.keytab");
+        UserGroupInformation.loginUserFromKeytab("fayson@FAYSON.COM", "/Users/fayson/Documents/develop/kerberos/fayson.keytab");
         System.out.println(UserGroupInformation.getLoginUser());
 
         Connection connection = null;
