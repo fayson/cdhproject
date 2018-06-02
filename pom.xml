@@ -17,7 +17,12 @@
     <module>yarndemo</module>
     <module>livydemo</module>
     <module>ooziedemo</module>
-    <module>samldemo</module>
+    <module>hiveudfdemo</module>
+    <module>generatedata</module>
+    <module>kududemo</module>
+    <module>spark2demo</module>
+      <module>streamsetsdemo</module>
+      <module>flumesink</module>
   </modules>
   <packaging>pom</packaging>
 
