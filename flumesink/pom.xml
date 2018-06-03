@@ -68,10 +68,23 @@
             <version>${slf4j.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Kudu Sink 依赖包 -->
         <dependency>
             <groupId>org.apache.kudu</groupId>
             <artifactId>kudu-flume-sink</artifactId>
             <version>1.4.0-cdh5.12.1</version>
+        </dependency>
+        <!-- HBase Sink 依赖包 -->
+        <dependency>
+            <groupId>org.apache.flume.flume-ng-sinks</groupId>
+            <artifactId>flume-ng-hbase-sink</artifactId>
+            <version>1.6.0-cdh5.12.1</version>
+        </dependency>
+        <!-- HBase Client 依赖包 -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>1.2.0-cdh5.12.1</version>
         </dependency>
     </dependencies>
 
