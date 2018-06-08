@@ -63,7 +63,7 @@ public class HDFSUtils {
             Path srcPath = new Path(src); //原路径
             Path dstPath = new Path(dst); //目标路径
             //调用文件系统的文件复制函数,前面参数是指是否删除原文件，true为删除，默认为false
-            fs.copyFromLocalFile(false,srcPath, dstPath);
+            fs.copyFromLocalFile(false, srcPath, dstPath);
             //打印文件路径
             System.out.println("------------list files------------"+"\n");
             FileStatus[] fileStatus = fs.listStatus(dstPath);
