@@ -46,24 +46,6 @@ object Kafka2Spark2Hive {
   var confPath: String = System.getProperty("user.dir") + File.separator + "conf/0291.properties"
 
   /**
-    * 建表Schema定义
-    */
-  val userInfoSchema = StructType(
-    //         col name   type     nullable?
-    StructField("id", StringType , false) ::
-      StructField("name" , StringType, true ) ::
-      StructField("sex" , StringType, true ) ::
-      StructField("city" , StringType, true ) ::
-      StructField("occupation" , StringType, true ) ::
-      StructField("tel" , StringType, true ) ::
-      StructField("fixPhoneNum" , StringType, true ) ::
-      StructField("bankName" , StringType, true ) ::
-      StructField("address" , StringType, true ) ::
-      StructField("marriage" , StringType, true ) ::
-      StructField("childNum", StringType , true ) :: Nil
-  )
-
-  /**
     * 定义一个UserInfo对象
     */
   case class UserInfo (
