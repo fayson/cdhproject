@@ -16,11 +16,11 @@
   </property>
   <property>
     <name>hadoop.security.authentication</name>
-    <value>kerberos</value>
+    <value>simple</value>
   </property>
   <property>
     <name>hadoop.security.authorization</name>
-    <value>true</value>
+    <value>false</value>
   </property>
   <property>
     <name>hadoop.rpc.protection</name>
@@ -136,6 +136,14 @@
   </property>
   <property>
     <name>hadoop.proxyuser.sdc.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.presto.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.presto.groups</name>
     <value>*</value>
   </property>
 </configuration>

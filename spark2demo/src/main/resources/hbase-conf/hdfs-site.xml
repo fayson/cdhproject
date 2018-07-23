@@ -78,20 +78,4 @@
     <name>dfs.datanode.hdfs-blocks-metadata.enabled</name>
     <value>true</value>
   </property>
-  <property>
-    <name>dfs.block.access.token.enable</name>
-    <value>true</value>
-  </property>
-  <property>
-    <name>dfs.namenode.kerberos.principal</name>
-    <value>hdfs/_HOST@FAYSON.COM</value>
-  </property>
-  <property>
-    <name>dfs.namenode.kerberos.internal.spnego.principal</name>
-    <value>HTTP/_HOST@FAYSON.COM</value>
-  </property>
-  <property>
-    <name>dfs.datanode.kerberos.principal</name>
-    <value>hdfs/_HOST@FAYSON.COM</value>
-  </property>
 </configuration>

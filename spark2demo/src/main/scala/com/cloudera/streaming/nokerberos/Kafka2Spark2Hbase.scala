@@ -1,8 +1,9 @@
-package com.cloudera.streaming
+package com.cloudera.streaming.nokerberos
 
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
+import com.cloudera.utils.HBaseUtil
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.hbase.TableName
 import org.apache.hadoop.hbase.client.Put
@@ -13,32 +14,25 @@ import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.kafka010.{ConsumerStrategies, KafkaUtils, LocationStrategies}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import com.cloudera.utils.HBaseUtil
 
 import scala.util.Try
 import scala.util.parsing.json.JSON
 
 /**
   * package: com.cloudera.streaming
-  * describe: Kerberos环境中Spark2Streaming应用实时读取Kafka数据，解析后存入HBase
+  * describe: 非Kerberos环境中Spark2Streaming应用实时读取Kafka数据，解析后存入HBase
   * 使用spark2-submit的方式提交作业
-  * spark2-submit --class com.cloudera.streaming.Kafka2Spark2Hbase \
+  * spark2-submit --class com.cloudera.streaming.nokerberos.Kafka2Spark2Hbase \
     --master yarn \
     --deploy-mode client \
     --executor-memory 2g \
     --executor-cores 2 \
     --driver-memory 2g \
     --num-executors 2 \
-    --queue default  \
-    --principal fayson@FAYSON.COM \
-    --keytab /data/disk1/spark2streaming-kafka-hbase/conf/fayson.keytab \
-    --files "/data/disk1/spark2streaming-kafka-hbase/conf/jaas.conf#jaas.conf" \
-    --driver-java-options "-Djava.security.auth.login.config=/data/disk1/spark2streaming-kafka-hbase/conf/jaas.conf" \
-    --conf "spark.executor.extraJavaOptions=-Djava.security.auth.login.config=/data/disk1/spark2streaming-kafka-hbase/conf/jaas.conf" \
     spark2-demo-1.0-SNAPSHOT.jar
   * creat_user: Fayson 
   * email: htechinfo@163.com
-  * creat_date: 2018/6/25
+  * creat_date: 2018/07/23
   * creat_time: 下午10:40
   * 公众号：Hadoop实操
   */
@@ -51,9 +45,9 @@ object Kafka2Spark2Hbase {
   def main(args: Array[String]): Unit = {
     //加载配置文件
     val properties = new Properties()
-    val file = new File(confPath + File.separator + "0289.properties")
+    val file = new File(confPath + File.separator + "0293.properties")
     if(!file.exists()) {
-      val in = Kafka2Spark2Hbase.getClass.getClassLoader.getResourceAsStream("0289.properties")
+      val in = Kafka2Spark2Hbase.getClass.getClassLoader.getResourceAsStream("0293.properties")
       properties.load(in);
     } else {
       properties.load(new FileInputStream(file))
@@ -61,26 +55,27 @@ object Kafka2Spark2Hbase {
 
     val brokers = properties.getProperty("kafka.brokers")
     val topics = properties.getProperty("kafka.topics")
-    val principal = properties.getProperty("principal.account")
-    val keytabFilePath = properties.getProperty("keytab.filepath")
+    val testgroup = properties.getProperty("group.id")
     println("kafka.brokers:" + brokers)
     println("kafka.topics:" + topics)
 
-    if(StringUtils.isEmpty(brokers)|| StringUtils.isEmpty(topics) || StringUtils.isEmpty(principal) || StringUtils.isEmpty(keytabFilePath)) {
-      println("未配置Kafka和Kerberos信息")
+    if(StringUtils.isEmpty(brokers)|| StringUtils.isEmpty(topics) || StringUtils.isEmpty(testgroup)) {
+      println("未配置Kafka信息")
       System.exit(0)
     }
     val topicsSet = topics.split(",").toSet
 
-    val spark = SparkSession.builder().appName("Kafka2Spark2HBase-kerberos").config(new SparkConf()).getOrCreate()
+    val spark = SparkSession.builder()
+      .appName("Kafka2Spark2HBase-nokerberos")
+      .config(new SparkConf())
+      .getOrCreate()
+
     val ssc = new StreamingContext(spark.sparkContext, Seconds(5)) //设置Spark时间窗口，每5s处理一次
     val kafkaParams = Map[String, Object]("bootstrap.servers" -> brokers
       , "auto.offset.reset" -> "latest"
-      , "security.protocol" -> "SASL_PLAINTEXT"
-      , "sasl.kerberos.service.name" -> "kafka"
       , "key.deserializer" -> classOf[StringDeserializer]
       , "value.deserializer" -> classOf[StringDeserializer]
-      , "group.id" -> "testgroup"
+      , "group.id" -> testgroup
     )
 
     val dStream = KafkaUtils.createDirectStream[String, String](ssc,
@@ -89,7 +84,7 @@ object Kafka2Spark2Hbase {
 
     dStream.foreachRDD(rdd => {
       rdd.foreachPartition(partitionRecords => {
-        val connection = HBaseUtil.getHBaseConn(confPath, principal, keytabFilePath) // 获取Hbase连接
+        val connection = HBaseUtil.getNoKBHBaseCon(confPath) // 获取Hbase连接
         partitionRecords.foreach(line => {
           //将Kafka的每一条消息解析为JSON格式数据
           val jsonObj =  JSON.parseFull(line.value())
