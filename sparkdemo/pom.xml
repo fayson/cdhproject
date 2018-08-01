@@ -19,9 +19,19 @@
             <version>1.6.0-cdh5.12.1</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-spark</artifactId>
+            <version>1.2.0-cdh5.13.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_2.10</artifactId>
             <version>1.6.0-cdh5.12.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kudu</groupId>
+            <artifactId>kudu-spark_2.10</artifactId>
+            <version>1.2.0-cdh5.10.0</version>
         </dependency>
 
         <dependency>
