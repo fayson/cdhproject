@@ -1,0 +1,19 @@
+dn: uid=,
+uid: 
+cn: 
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+objectClass: shadowAccount
+userPassword: 
+loginShell: /bin/bash
+uidNumber: 
+gidNumber: 
+homeDirectory: /home/
+
+dn: cn=,
+objectClass: posixGroup
+objectClass: top
+cn: 
+userPassword: 
+gidNumber: 

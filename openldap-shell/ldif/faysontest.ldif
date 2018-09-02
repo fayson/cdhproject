@@ -1,0 +1,19 @@
+dn: uid=faysontest,ou=People,dc=fayson,dc=com
+uid: faysontest
+cn: faysontest
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+objectClass: shadowAccount
+userPassword: 123456
+loginShell: /bin/bash
+uidNumber: 1333
+gidNumber: 1333
+homeDirectory: /home/faysontest
+
+dn: cn=faysontest,ou=Group,dc=fayson,dc=com
+objectClass: posixGroup
+objectClass: top
+cn: faysontest
+userPassword: 123456
+gidNumber: 1333
