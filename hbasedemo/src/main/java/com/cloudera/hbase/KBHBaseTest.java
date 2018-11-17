@@ -25,7 +25,7 @@ public class KBHBaseTest {
 
     public static void main(String[] args) {
 
-        System.setProperty("java.security.krb5.conf", "/Volumes/Transcend/keytab/krb5.conf");
+        System.setProperty("java.security.krb5.conf", "/Users/xxxx/Desktop/hbase-test/conf/krb5.conf");
 
         Configuration configuration = getConfiguration();
         System.out.println(configuration.get("hbase.rootdir"));
@@ -33,12 +33,11 @@ public class KBHBaseTest {
 
         UserGroupInformation.setConfiguration(configuration);
         try {
-            UserGroupInformation.loginUserFromKeytab("fayson@CLOUDERA.COM", "/Volumes/Transcend/keytab/fayson.keytab");
+            UserGroupInformation.loginUserFromKeytab("fayson@FAYSON.COM", "/Users/xxxx/Desktop/hbase-test/conf/fayson.keytab");
 
             Connection connection = ConnectionFactory.createConnection(configuration);
             Table table = connection.getTable(TableName.valueOf("picHbase"));
             System.out.println(table.getName());
-
             Scan scan = new Scan();
             ResultScanner rs = table.getScanner(scan);
             for (Result r : rs) {
