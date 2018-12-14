@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://cdh01.fayson.com:8020</value>
+    <value>hdfs://nameservice1</value>
   </property>
   <property>
     <name>fs.trash.interval</name>
@@ -25,6 +25,26 @@
   <property>
     <name>hadoop.rpc.protection</name>
     <value>authentication</value>
+  </property>
+  <property>
+    <name>hadoop.ssl.require.client.cert</name>
+    <value>false</value>
+    <final>true</final>
+  </property>
+  <property>
+    <name>hadoop.ssl.keystores.factory.class</name>
+    <value>org.apache.hadoop.security.ssl.FileBasedKeyStoresFactory</value>
+    <final>true</final>
+  </property>
+  <property>
+    <name>hadoop.ssl.server.conf</name>
+    <value>ssl-server.xml</value>
+    <final>true</final>
+  </property>
+  <property>
+    <name>hadoop.ssl.client.conf</name>
+    <value>ssl-client.xml</value>
+    <final>true</final>
   </property>
   <property>
     <name>hadoop.security.auth_to_local</name>
@@ -111,31 +131,35 @@
     <value>false</value>
   </property>
   <property>
-    <name>hadoop.ssl.require.client.cert</name>
-    <value>false</value>
-    <final>true</final>
-  </property>
-  <property>
-    <name>hadoop.ssl.keystores.factory.class</name>
-    <value>org.apache.hadoop.security.ssl.FileBasedKeyStoresFactory</value>
-    <final>true</final>
-  </property>
-  <property>
-    <name>hadoop.ssl.server.conf</name>
-    <value>ssl-server.xml</value>
-    <final>true</final>
-  </property>
-  <property>
-    <name>hadoop.ssl.client.conf</name>
-    <value>ssl-client.xml</value>
-    <final>true</final>
-  </property>
-  <property>
     <name>hadoop.proxyuser.sdc.hosts</name>
     <value>*</value>
   </property>
   <property>
     <name>hadoop.proxyuser.sdc.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.presto.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.presto.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.livy.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.livy.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hiveadmin.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hiveadmin.groups</name>
     <value>*</value>
   </property>
 </configuration>

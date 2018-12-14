@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>hbase.rootdir</name>
-    <value>hdfs://cdh01.fayson.com:8020/hbase</value>
+    <value>hdfs://cdh1:8020/hbase</value>
   </property>
   <property>
     <name>hbase.client.write.buffer</name>
@@ -47,12 +47,8 @@
     <value>60000</value>
   </property>
   <property>
-    <name>hbase.coprocessor.master.classes</name>
-    <value>org.apache.hadoop.hbase.security.access.AccessController</value>
-  </property>
-  <property>
     <name>hbase.coprocessor.region.classes</name>
-    <value>org.apache.hadoop.hbase.security.access.AccessController,org.apache.hadoop.hbase.security.token.TokenProvider,org.apache.hadoop.hbase.security.access.SecureBulkLoadEndpoint</value>
+    <value>org.apache.hadoop.hbase.security.access.SecureBulkLoadEndpoint</value>
   </property>
   <property>
     <name>hbase.regionserver.thrift.http</name>
@@ -84,7 +80,7 @@
   </property>
   <property>
     <name>hbase.security.authentication</name>
-    <value>kerberos</value>
+    <value>simple</value>
   </property>
   <property>
     <name>hbase.rpc.protection</name>
@@ -104,27 +100,11 @@
   </property>
   <property>
     <name>hbase.zookeeper.quorum</name>
-    <value>cdh01.fayson.com,cdh03.fayson.com,cdh02.fayson.com</value>
+    <value>cdh3,cdh4,cdh2</value>
   </property>
   <property>
     <name>hbase.zookeeper.property.clientPort</name>
     <value>2181</value>
-  </property>
-  <property>
-    <name>hbase.master.kerberos.principal</name>
-    <value>hbase/_HOST@FAYSON.COM</value>
-  </property>
-  <property>
-    <name>hbase.regionserver.kerberos.principal</name>
-    <value>hbase/_HOST@FAYSON.COM</value>
-  </property>
-  <property>
-    <name>hbase.thrift.kerberos.principal</name>
-    <value>hbase/_HOST@FAYSON.COM</value>
-  </property>
-  <property>
-    <name>hadoop.security.authorization</name>
-    <value>true</value>
   </property>
   <property>
     <name>hbase.rest.ssl.enabled</name>

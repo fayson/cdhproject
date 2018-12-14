@@ -150,7 +150,7 @@ public class JsonHBaseEventSerializer implements FaysonHBaseEventSerializer {
         Map<String, String> resultMap = JsonStr2Map.jsonStr2Map(new String(payload, charset));
         try {
             byte[] rowKey;
-            if(!rowkeySet.isEmpty()) {  //如果rowkeySet集合不为空则使用自定义的rowkey
+            if(rowkeySet != null && !rowkeySet.isEmpty()) {  //如果rowkeySet集合不为空则使用自定义的rowkey
                 StringBuffer rowkeyBuff = new StringBuffer();
                 for(String rowkey : rowkeySet) {
                     rowkeyBuff.append(resultMap.get(rowkey) + "-");

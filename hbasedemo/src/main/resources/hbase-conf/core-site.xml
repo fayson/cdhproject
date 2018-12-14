@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://cdh01.fayson.com:8020</value>
+    <value>hdfs://cdh1:8020</value>
   </property>
   <property>
     <name>fs.trash.interval</name>
@@ -16,11 +16,11 @@
   </property>
   <property>
     <name>hadoop.security.authentication</name>
-    <value>kerberos</value>
+    <value>simple</value>
   </property>
   <property>
     <name>hadoop.security.authorization</name>
-    <value>true</value>
+    <value>false</value>
   </property>
   <property>
     <name>hadoop.rpc.protection</name>
@@ -129,13 +129,5 @@
     <name>hadoop.ssl.client.conf</name>
     <value>ssl-client.xml</value>
     <final>true</final>
-  </property>
-  <property>
-    <name>hadoop.proxyuser.sdc.hosts</name>
-    <value>*</value>
-  </property>
-  <property>
-    <name>hadoop.proxyuser.sdc.groups</name>
-    <value>*</value>
   </property>
 </configuration>

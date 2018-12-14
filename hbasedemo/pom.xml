@@ -33,5 +33,15 @@
             <artifactId>hbase-client</artifactId>
             <version>1.2.0-cdh5.11.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-examples</artifactId>
+            <version>1.2.0-cdh5.11.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>2.5.0</version>
+        </dependency>
     </dependencies>
 </project>
