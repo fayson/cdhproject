@@ -1,0 +1,6 @@
+hdfs-over-ftp脚本使用说明：
+1.进入conf目录修改相应配置信息
+
+2.执行sh bin/hdfs-over-ftp-run.sh start脚本启动hdfs-over-ftp服务
+
+3.执行sh bin/hdfs-over-ftp-run.sh stop脚本停止hdfs-over-ftp服务
