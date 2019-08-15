@@ -5,19 +5,19 @@
 
      This metadata is not dynamic - it will not change as your configuration changes.
 -->
-<md:EntityDescriptor  xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="https://cdh3.itc.cmbchina.cn/idp/shibboleth">
+<md:EntityDescriptor  xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="https://cdh3.itc.fayson.cn/idp/shibboleth">
 
     <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0">
 
         <md:Extensions>
-            <shibmd:Scope regexp="false">itc.cmbchina.cn</shibmd:Scope>
+            <shibmd:Scope regexp="false">itc.fayson.cn</shibmd:Scope>
 <!--
     Fill in the details for your IdP here 
 
             <mdui:UIInfo>
-                <mdui:DisplayName xml:lang="en">A Name for the IdP at cdh3.itc.cmbchina.cn</mdui:DisplayName>
-                <mdui:Description xml:lang="en">Enter a description of your IdP at cdh3.itc.cmbchina.cn</mdui:Description>
-                <mdui:Logo height="80" width="80">https://cdh3.itc.cmbchina.cn/Path/To/Logo.png</mdui:Logo>
+                <mdui:DisplayName xml:lang="en">A Name for the IdP at cdh3.itc.fayson.cn</mdui:DisplayName>
+                <mdui:Description xml:lang="en">Enter a description of your IdP at cdh3.itc.fayson.cn</mdui:Description>
+                <mdui:Logo height="80" width="80">https://cdh3.itc.fayson.cn/Path/To/Logo.png</mdui:Logo>
             </mdui:UIInfo>
 -->
         </md:Extensions>
@@ -104,20 +104,20 @@ geFtB1HMgH5JCk1bPnf1hw==
 
         </md:KeyDescriptor>
 
-        <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="http://cdh3.itc.cmbchina.cn:8443/idp/profile/SAML1/SOAP/ArtifactResolution" index="1"/>
-        <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="http://cdh3.itc.cmbchina.cn:8443/idp/profile/SAML2/SOAP/ArtifactResolution" index="2"/>
+        <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="http://cdh3.itc.fayson.cn:8443/idp/profile/SAML1/SOAP/ArtifactResolution" index="1"/>
+        <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="http://cdh3.itc.fayson.cn:8443/idp/profile/SAML2/SOAP/ArtifactResolution" index="2"/>
 
         <!--
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://cdh3.itc.cmbchina.cn/idp/profile/SAML2/Redirect/SLO"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://cdh3.itc.cmbchina.cn/idp/profile/SAML2/POST/SLO"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://cdh3.itc.cmbchina.cn/idp/profile/SAML2/POST-SimpleSign/SLO"/>
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://cdh3.itc.cmbchina.cn:8443/idp/profile/SAML2/SOAP/SLO"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://cdh3.itc.fayson.cn/idp/profile/SAML2/Redirect/SLO"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://cdh3.itc.fayson.cn/idp/profile/SAML2/POST/SLO"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://cdh3.itc.fayson.cn/idp/profile/SAML2/POST-SimpleSign/SLO"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://cdh3.itc.fayson.cn:8443/idp/profile/SAML2/SOAP/SLO"/>
         -->
 
-        <md:SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest" Location="http://cdh3.itc.cmbchina.cn/idp/profile/Shibboleth/SSO"/>
-        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://cdh3.itc.cmbchina.cn/idp/profile/SAML2/POST/SSO"/>
-        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="http://cdh3.itc.cmbchina.cn/idp/profile/SAML2/POST-SimpleSign/SSO"/>
-        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="http://cdh3.itc.cmbchina.cn/idp/profile/SAML2/Redirect/SSO"/>
+        <md:SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest" Location="http://cdh3.itc.fayson.cn/idp/profile/Shibboleth/SSO"/>
+        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://cdh3.itc.fayson.cn/idp/profile/SAML2/POST/SSO"/>
+        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="http://cdh3.itc.fayson.cn/idp/profile/SAML2/POST-SimpleSign/SSO"/>
+        <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="http://cdh3.itc.fayson.cn/idp/profile/SAML2/Redirect/SSO"/>
 
     </md:IDPSSODescriptor>
 
@@ -125,7 +125,7 @@ geFtB1HMgH5JCk1bPnf1hw==
     <md:AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol">
 
         <md:Extensions>
-            <shibmd:Scope regexp="false">itc.cmbchina.cn</shibmd:Scope>
+            <shibmd:Scope regexp="false">itc.fayson.cn</shibmd:Scope>
         </md:Extensions>
 
         <md:KeyDescriptor use="signing">
@@ -210,8 +210,8 @@ geFtB1HMgH5JCk1bPnf1hw==
 
         </md:KeyDescriptor>
 
-        <md:AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="http://cdh3.itc.cmbchina.cn:8443/idp/profile/SAML1/SOAP/AttributeQuery"/>
-        <!-- <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://cdh3.itc.cmbchina.cn:8443/idp/profile/SAML2/SOAP/AttributeQuery"/> -->
+        <md:AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="http://cdh3.itc.fayson.cn:8443/idp/profile/SAML1/SOAP/AttributeQuery"/>
+        <!-- <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://cdh3.itc.fayson.cn:8443/idp/profile/SAML2/SOAP/AttributeQuery"/> -->
         <!-- If you uncomment the above you should add urn:oasis:names:tc:SAML:2.0:protocol to the protocolSupportEnumeration above -->
 
     </md:AttributeAuthorityDescriptor>

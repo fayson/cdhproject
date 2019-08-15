@@ -1,0 +1,9 @@
+Exception in thread "main" java.io.FileNotFoundException: file:/Users/zoulihan/Desktop/hdfs-over-ftp-run/lib/hdfs-over-ftp-1.0.jar!/hdfs-over-ftp.properties (No such file or directory)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at org.apache.hadoop.contrib.ftp.HdfsOverFtpServer.loadConfig(HdfsOverFtpServer.java:46)
+	at org.apache.hadoop.contrib.ftp.HdfsOverFtpServer.main(HdfsOverFtpServer.java:28)
+2019-04-10 16:08:40,194 : INFO : HdfsOverFtpServer : port is set. ftp server will be started
+2019-04-10 16:08:40,195 : INFO : HdfsOverFtpServer : ssl-port is not set. so ssl server will not be started
+2019-04-10 16:08:40,204 : INFO : HdfsOverFtpServer : Starting Hdfs-Over-Ftp server. port: 2222 data-ports: 2223-2225 hdfs-uri: hdfs://cdh01.fayson.net:8020
+2019-04-10 16:08:40,354 : INFO : FtpServer : FTP server started
