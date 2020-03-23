@@ -4,6 +4,25 @@
 
 Flink2HBaseSample 示例主要是通过实时读取Socket数据,使用CountWindow创建将数据批量的转换为List\<Put>，再通过自定义的Sink实时的写入Kerberos环境的HBase
 
+- 创建HBase表并授予测试用户对表的操作权限
+```shell script
+[root@cdh1 ~]# kinit hbase/admin
+Password for hbase/admin@PREST.COM: 
+[root@cdh1 ~]# hbase shell                                                                                                                
+hbase(main):001:0> grant 'cdhadmin','RWCXA'
+Took 0.6101 seconds                                                                                                                   
+hbase(main):002:0> create 'flink_hbase','info'
+Created table flink_hbase
+Took 1.5389 seconds                                                                                                                   
+=> Hbase::Table - flink_hbase
+hbase(main):004:0> scan 'flink_hbase'
+ROW                                COLUMN+CELL                                                                                        
+0 row(s)
+Took 0.2107 seconds                                                                                                                   
+hbase(main):005:0> 
+
+```
+
 - 在模拟Socket的服务器上安装nc命令，执行nc命令模拟一个Socket服务
 ```shell script
 yum -y install nmap-ncat
