@@ -59,6 +59,8 @@ kafka-console-consumer --topic test_topic --from-beginning --bootstrap-server 19
 
 ```
 
+- 将Kafka节点的host信息添加到Flink集群的hosts中
+
 - 创建HBase表并授予测试用户对表的操作权限
 ```shell script
 [root@cdh1 ~]# kinit hbase/admin
