@@ -11,7 +11,7 @@ import org.apache.hadoop.hbase.util.Bytes
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka.KafkaUtils
-import utils.HBaseUtil
+import com.cloudera.utils.HBaseUtil
 
 import scala.util.Try
 import scala.util.parsing.json.JSON

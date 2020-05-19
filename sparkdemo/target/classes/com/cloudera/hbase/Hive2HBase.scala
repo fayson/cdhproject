@@ -80,6 +80,7 @@ object Hive2HBase {
     val hbTableName = TableName.valueOf(hBaseTempTable.getBytes())
     val regionLocator = new HRegionLocator(hbTableName, classOf[ClusterConnection].cast(conn))
     val realTable = conn.getTable(hbTableName)
+
     HFileOutputFormat2.configureIncrementalLoad(Job.getInstance(), realTable, regionLocator)
 
     // bulk load start

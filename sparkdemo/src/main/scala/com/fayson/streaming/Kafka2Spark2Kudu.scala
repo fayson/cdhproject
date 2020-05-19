@@ -22,7 +22,7 @@ import scala.util.parsing.json.JSON
   * package: com.cloudera.streaming
   * describe: SparkStreaming 应用实时读取Kafka数据，解析后存入Kudu
   * 使用spark-submit的方式提交作业
-    spark-submit --class com.cloudera.streaming.Kafka2Spark2Kudu \
+    spark-submit --class com.fayson.streaming.Kafka2Spark2Kudu \
     --master yarn-client --num-executors 3 --driver-memory 1g \
     --driver-cores 1 --executor-memory 1g --executor-cores 1 \
     spark-demo-1.0-SNAPSHOT.jar

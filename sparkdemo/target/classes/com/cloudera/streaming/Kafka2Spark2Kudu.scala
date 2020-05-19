@@ -107,7 +107,7 @@ object Kafka2Spark2Kudu {
     //引入隐式
     val sqlContext = new SQLContext(sc)
     import sqlContext.implicits._
-    val kuduContext = new KuduContext(kuduMaster, sc)
+    val kuduContext = new KuduContext(kuduMaster)
 
     //判断表是否存在
     if(!kuduContext.tableExists("user_info")) {

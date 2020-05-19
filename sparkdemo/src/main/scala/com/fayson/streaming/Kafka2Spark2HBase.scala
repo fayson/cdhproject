@@ -11,7 +11,7 @@ import org.apache.hadoop.hbase.util.Bytes
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.kafka.KafkaUtils
-import com.cloudera.utils.HBaseUtil
+import com.fayson.utils.HBaseUtil
 
 import scala.util.Try
 import scala.util.parsing.json.JSON
@@ -20,7 +20,7 @@ import scala.util.parsing.json.JSON
   * package: com.cloudera.streaming
   * describe: SparkStreaming 应用实时读取Kafka数据，解析后存入HBase
   * 使用spark-submit的方式提交作业
-    spark-submit --class com.cloudera.streaming.Kafka2Spark2HBase \
+    spark-submit --class com.fayson.streaming.Kafka2Spark2HBase \
     --master yarn-client --num-executors 1 --driver-memory 1g \
     --driver-cores 1 --executor-memory 1g --executor-cores 1 \
     spark-demo-1.0-SNAPSHOT.jar
