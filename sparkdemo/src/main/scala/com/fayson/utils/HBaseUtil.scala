@@ -1,10 +1,10 @@
-package utils
+package com.fayson.utils
 
 import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.hadoop.hbase.client.{Connection, ConnectionFactory}
 
 /**
-  * package: utils
+  * package: com.cloudera.utils
   * describe: HBase工具类
   * creat_user: Fayson 
   * email: htechinfo@163.com

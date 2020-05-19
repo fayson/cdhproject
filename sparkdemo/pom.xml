@@ -34,18 +34,6 @@
             <version>1.2.0-cdh5.10.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.cloudera</groupId>
-            <artifactId>spark-hbase</artifactId>
-            <version>0.0.3-clabs-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- -->
         <dependency>
             <groupId>org.apache.spark</groupId>
