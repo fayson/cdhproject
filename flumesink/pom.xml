@@ -21,7 +21,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <avro.version>1.8.1</avro.version>
         <flume.version>1.6.0</flume.version>
-        <hadoop.version>2.6.0-cdh5.11.2</hadoop.version>
+        <hadoop.version>2.7.0</hadoop.version>
         <kudu.version>1.4.0-cdh5.12.1</kudu.version>
         <slf4j.version>1.7.12</slf4j.version>
 
