@@ -1,0 +1,83 @@
+---
+clusters:
+  - name: Data Mart Cluster
+    services: [ATLAS, HBASE, HDFS, HIVE, HUE, IMPALA, INFRA_SOLR, KAFKA, RANGER, ZOOKEEPER]
+    repositories:
+      - https://archive.cloudera.com/p/cdh7/7.1.3.0/parcels/
+    security:
+      kerberos: true
+    configs:
+      HDFS:
+        SERVICEWIDE:
+          dfs_ha_fencing_methods: 'shell(true)'
+          dfs_namenode_acls_enabled: true
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+        NAMENODE:
+          autofailover_enabled: true
+          dfs_federation_namenode_nameservice: nameservice1
+          dfs_name_dir_list: /dfs/nn
+          dfs_namenode_quorum_journal_name: nameservice1
+        JOURNALNODE:
+          dfs_journalnode_edits_dir: /dfs/jn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      HIVE:
+        HIVEMETASTORE:
+          hive_enable_db_notification: true
+          hive_metastore_delegation_token_store: org.apache.hadoop.hive.thrift.DBTokenStore
+      IMPALA:
+        IMPALAD:
+          enable_audit_event_log: true
+          scratch_dirs: /tmp/impala
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    host_templates:
+      Master1:
+        ATLAS: [ATLAS_SERVER]
+        HBASE: [MASTER]
+        HDFS: [NAMENODE, JOURNALNODE, FAILOVERCONTROLLER]
+        HIVE: [HIVEMETASTORE]
+        IMPALA: [STATESTORE, CATALOGSERVER]
+        INFRA_SOLR: [SOLR_SERVER]
+        RANGER: [RANGER_ADMIN]
+        ZOOKEEPER: [SERVER]
+      Master2:
+        HBASE: [MASTER]
+        HDFS: [NAMENODE, JOURNALNODE, FAILOVERCONTROLLER]
+        HIVE: [HIVEMETASTORE]
+        INFRA_SOLR: [SOLR_SERVER]
+        RANGER: [RANGER_ADMIN]
+        ZOOKEEPER: [SERVER]
+      Master3:
+        HDFS: [JOURNALNODE, BALANCER]
+        HBASE: [MASTER]
+        INFRA_SOLR: [SOLR_SERVER]
+        RANGER: [RANGER_TAGSYNC, RANGER_USERSYNC]
+        ZOOKEEPER: [SERVER]
+      Edge:
+        HBASE: [HBASERESTSERVER, HBASETHRIFTSERVER]
+        HDFS: [HTTPFS]
+        HIVE: [GATEWAY]
+        HUE: [HUE_SERVER, HUE_LOAD_BALANCER]
+      Workers:
+        HBASE: [REGIONSERVER]
+        HDFS: [DATANODE]
+        HIVE: [GATEWAY]
+        IMPALA: [IMPALAD]
+        KAFKA: [KAFKA_BROKER]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, REPORTSMANAGER, SERVICEMONITOR]
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

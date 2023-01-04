@@ -1,0 +1,116 @@
+---
+clusters:
+  - name: CDH Cluster
+    services: [HDFS, HIVE, HUE, IMPALA, OOZIE, SPARK_ON_YARN, YARN, ZOOKEEPER]
+    repositories:
+      - https://archive.cloudera.com/p/cdh6/6.3.3/parcels/
+    configs:
+      HDFS:
+        SERVICEWIDE:
+          hdfs_verify_ec_with_topology_enabled: false
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+          dfs_datanode_max_locked_memory: 0
+        NAMENODE:
+          dfs_name_dir_list: /dfs/nn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      IMPALA:
+        IMPALAD:
+          scratch_dirs: /tmp/impala
+      YARN:
+        RESOURCEMANAGER:
+          yarn_scheduler_maximum_allocation_mb: 4096
+          yarn_scheduler_maximum_allocation_vcores: 4
+        NODEMANAGER:
+          yarn_nodemanager_resource_memory_mb: 4096
+          yarn_nodemanager_resource_cpu_vcores: 4
+          yarn_nodemanager_local_dirs:  /tmp/nm
+          yarn_nodemanager_log_dirs: /var/log/nm
+        GATEWAY:
+          mapred_submit_replication: 3
+          mapred_reduce_tasks: 6
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    databases:
+      HIVE:
+        host: db.example.com
+        port: 3306
+        type: mysql
+        name: metastore
+        user: hive
+        password: "{{ vault__cloudera_database_passwords.hive }}"
+      HUE:
+        host: db.example.com
+        port: 3306
+        type: mysql
+        name: hue
+        user: hue
+        password: "{{ vault__cloudera_database_passwords.hue }}"
+      OOZIE:
+        host: db.example.com
+        port: 3306
+        type: mysql
+        name: oozie
+        user: oozie
+        password: "{{ vault__cloudera_database_passwords.oozie }}"
+      SENTRY:
+        host: db.example.com
+        port: 3306
+        type: mysql
+        name: sentry
+        user: sentry
+        password: "{{ vault__cloudera_database_passwords.sentry }}"
+    host_templates:
+      Master1:
+        HDFS: [NAMENODE, SECONDARYNAMENODE]
+        HIVE: [HIVEMETASTORE, HIVESERVER2, GATEWAY]
+        HUE: [HUE_SERVER, HUE_LOAD_BALANCER]
+        IMPALA: [STATESTORE, CATALOGSERVER]
+        OOZIE: [OOZIE_SERVER]
+        SPARK_ON_YARN: [SPARK_YARN_HISTORY_SERVER]
+        YARN: [RESOURCEMANAGER, JOBHISTORY]
+        ZOOKEEPER: [SERVER]
+      Workers:
+        HDFS: [DATANODE]
+        HIVE: [GATEWAY]
+        IMPALA: [IMPALAD]
+        SPARK_ON_YARN: [GATEWAY]
+        YARN: [NODEMANAGER]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, NAVIGATOR, NAVIGATORMETASERVER, REPORTSMANAGER, SERVICEMONITOR]
+  databases:
+    NAVIGATOR:
+      host: db.example.com
+      port: 3306
+      type: mysql
+      name: nav
+      user: nav
+      password: "{{ vault__cloudera_database_passwords.nav }}"
+    NAVIGATORMETASERVER:
+      host: db.example.com
+      port: 3306
+      type: mysql
+      name: navms
+      user: navms
+      password: "{{ vault__cloudera_database_passwords.navms }}"
+    REPORTSMANAGER:
+      host: db.example.com
+      port: 3306
+      type: mysql
+      name: rman
+      user: rman
+      password: "{{ vault__cloudera_database_passwords.rman }}"
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

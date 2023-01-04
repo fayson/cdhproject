@@ -1,0 +1,48 @@
+---
+clusters:
+  - name: Flow Management Cluster
+    services: [HDFS, NIFI, NIFIREGISTRY, NIFITOOLKITCA, ZOOKEEPER]
+    security:
+      kerberos: true
+    repositories:
+      - https://archive.cloudera.com/p/cdh6/6.3.3/parcels/
+      - https://archive.cloudera.com/p/CFM/centos7/1.x/updates/1.1.0.0/tars/parcel/
+    configs:
+      HDFS:
+        SERVICEWIDE:
+          hdfs_verify_ec_with_topology_enabled: false
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+        NAMENODE:
+          dfs_name_dir_list: /dfs/nn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      NIFITOOLKITCA:
+        SERVICEWIDE:
+          nifi.toolkit.tls.ca.server.token: "{{ lookup('password', '/tmp/nificatoken length=24 chars=ascii_letters,digits') }}"
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    host_templates:
+      Master1:
+        HDFS: [NAMENODE, SECONDARYNAMENODE]
+        NIFIREGISTRY: [NIFI_REGISTRY_SERVER]
+        NIFITOOLKITCA: [NIFI_TOOLKIT_SERVER]
+      Workers:
+        HDFS: [DATANODE]
+        NIFI: [NIFI_NODE]
+        ZOOKEEPER: [SERVER]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, NAVIGATOR, NAVIGATORMETASERVER, REPORTSMANAGER, SERVICEMONITOR]
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

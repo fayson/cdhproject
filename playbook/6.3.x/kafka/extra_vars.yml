@@ -1,0 +1,12 @@
+---
+cluster_definition: definitions/6.3.x/kafka
+cloudera_manager_version: 6.3.3
+cloudera_manager_repo_username: "{{ vault__cloudera_manager_repo_username }}"
+cloudera_manager_repo_password: "{{ vault__cloudera_manager_repo_password }}"
+cloudera_manager_license_type: enterprise
+cloudera_manager_license_file: testing/license.txt
+cloudera_manager_options:
+  CUSTOM_BANNER_HTML: "Cloudera Ansible Playbook v2 - {{ cluster_definition }}"
+
+database_type: mariadb
+database_version: 10.1

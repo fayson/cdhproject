@@ -1,0 +1,65 @@
+---
+clusters:
+  - name: CDH Cluster
+    services: [HDFS, HIVE, HUE, IMPALA, OOZIE, SPARK_ON_YARN, YARN, ZOOKEEPER]
+    repositories:
+      - https://archive.cloudera.com/p/cdh6/6.3.3/parcels/
+    configs:
+      HDFS:
+        SERVICEWIDE:
+          hdfs_verify_ec_with_topology_enabled: false
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+          dfs_datanode_max_locked_memory: 0
+        NAMENODE:
+          dfs_name_dir_list: /dfs/nn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      IMPALA:
+        IMPALAD:
+          scratch_dirs: /tmp/impala
+      YARN:
+        RESOURCEMANAGER:
+          yarn_scheduler_maximum_allocation_mb: 4096
+          yarn_scheduler_maximum_allocation_vcores: 4
+        NODEMANAGER:
+          yarn_nodemanager_resource_memory_mb: 4096
+          yarn_nodemanager_resource_cpu_vcores: 4
+          yarn_nodemanager_local_dirs:  /tmp/nm
+          yarn_nodemanager_log_dirs: /var/log/nm
+        GATEWAY:
+          mapred_submit_replication: 3
+          mapred_reduce_tasks: 6
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    host_templates:
+      Master1:
+        HDFS: [NAMENODE, SECONDARYNAMENODE]
+        HIVE: [HIVEMETASTORE, HIVESERVER2, GATEWAY]
+        HUE: [HUE_SERVER, HUE_LOAD_BALANCER]
+        IMPALA: [STATESTORE, CATALOGSERVER]
+        OOZIE: [OOZIE_SERVER]
+        SPARK_ON_YARN: [SPARK_YARN_HISTORY_SERVER]
+        YARN: [RESOURCEMANAGER, JOBHISTORY]
+        ZOOKEEPER: [SERVER]
+      Workers:
+        HDFS: [DATANODE]
+        HIVE: [GATEWAY]
+        IMPALA: [IMPALAD]
+        SPARK_ON_YARN: [GATEWAY]
+        YARN: [NODEMANAGER]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, NAVIGATOR, NAVIGATORMETASERVER, REPORTSMANAGER, SERVICEMONITOR]
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

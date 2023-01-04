@@ -1,0 +1,11 @@
+---
+cluster_definition: definitions/5.16.2/accumulo
+cloudera_manager_version: 5.16.2
+cloudera_manager_repo_url: https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/5.16.2/
+cloudera_manager_repo_key: https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/RPM-GPG-KEY-cloudera
+cloudera_manager_database_prepare_script: /usr/share/cmf/schema/scm_prepare_database.sh
+cloudera_manager_csds:
+  - https://archive.cloudera.com/spark2/csd/SPARK2_ON_YARN-2.4.0.cloudera2.jar
+  - https://archive.cloudera.com/cdsw1/1.7.2/csd/CLOUDERA_DATA_SCIENCE_WORKBENCH-CDH5-1.7.2.jar
+cloudera_manager_options:
+  CUSTOM_BANNER_HTML: "Cloudera Ansible Playbook v2 - {{ cluster_definition }}"

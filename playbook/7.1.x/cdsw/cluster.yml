@@ -1,0 +1,83 @@
+---
+clusters:
+  - name: CDP PvC Base Cluster
+    services: [CDSW, HBASE, HDFS, HIVE, HUE, IMPALA, OOZIE, QUEUEMANAGER, SPARK_ON_YARN, YARN, ZOOKEEPER]
+    repositories:
+      - https://archive.cloudera.com/p/cdh7/7.1.3.0/parcels/
+      - https://archive.cloudera.com/cdsw1/1.7.2/parcels/
+    configs:
+      CDSW:
+        SERVICEWIDE:
+          cdsw.domain.config: "root.hwx.site"
+        CDSW_APPLICATION:
+        CDSW_DOCKER:
+        CDSW_MASTER:
+        CDSW_WORKER:
+      HDFS:
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+        NAMENODE:
+          dfs_name_dir_list: /dfs/nn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      IMPALA:
+        IMPALAD:
+          scratch_dirs: /tmp/impala
+      YARN:
+        RESOURCEMANAGER:
+          yarn_scheduler_maximum_allocation_mb: 4096
+          yarn_scheduler_maximum_allocation_vcores: 4
+        NODEMANAGER:
+          yarn_nodemanager_resource_memory_mb: 4096
+          yarn_nodemanager_resource_cpu_vcores: 4
+          yarn_nodemanager_local_dirs:  /tmp/nm
+          yarn_nodemanager_log_dirs: /var/log/nm
+        GATEWAY:
+          mapred_submit_replication: 3
+          mapred_reduce_tasks: 6
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    host_templates:
+      Master1:
+        HBASE: [MASTER,HBASERESTSERVER, HBASETHRIFTSERVER]
+        HDFS: [NAMENODE, SECONDARYNAMENODE, HTTPFS]
+        HIVE: [HIVEMETASTORE,HIVESERVER2, GATEWAY]
+        HUE: [HUE_SERVER, HUE_LOAD_BALANCER]
+        IMPALA: [STATESTORE, CATALOGSERVER]
+        OOZIE: [OOZIE_SERVER]
+        QUEUEMANAGER: [QUEUEMANAGER_STORE, QUEUEMANAGER_WEBAPP]
+        SPARK_ON_YARN: [SPARK_YARN_HISTORY_SERVER]
+        YARN: [RESOURCEMANAGER, JOBHISTORY]
+        ZOOKEEPER: [SERVER]
+      Workers:
+        HBASE: [REGIONSERVER]
+        HDFS: [DATANODE]
+        HIVE: [GATEWAY]
+        IMPALA: [IMPALAD]
+        SPARK_ON_YARN: [GATEWAY]
+        YARN: [NODEMANAGER]
+      CDSW-Master:
+        CDSW: [CDSW_APPLICATION, CDSW_MASTER, CDSW_DOCKER]
+        HDFS: [GATEWAY]
+        HIVE: [GATEWAY]
+        SPARK_ON_YARN: [GATEWAY]
+      CDSW-Workers:
+        CDSW: [CDSW_WORKER, CDSW_DOCKER]
+        HDFS: [GATEWAY]
+        HIVE: [GATEWAY]
+        SPARK_ON_YARN: [GATEWAY]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, REPORTSMANAGER, SERVICEMONITOR]
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

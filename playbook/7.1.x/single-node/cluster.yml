@@ -1,0 +1,134 @@
+---
+clusters:
+  - name: CDP PvC Base Single-node Cluster
+    services: [HDFS, HIVE, HUE, IMPALA, INFRA_SOLR, OOZIE, RANGER, SPARK_ON_YARN, YARN, ZOOKEEPER]
+    security:
+      kerberos: true
+      hdfs_encryption: true
+    repositories:
+      - https://archive.cloudera.com/p/cdh7/7.1.3.0/parcels/
+    configs:
+      HDFS:
+        SERVICEWIDE:
+          hdfs_verify_ec_with_topology_enabled: false
+          dfs_replication: 1
+          dfs_replication_max: 1
+          service_config_suppression_datanode_count_validator: true
+        BALANCER:
+          balancer_java_heapsize: 134217728
+        DATANODE:
+          datanode_java_heapsize: 134217728
+          dfs_data_dir_list: /dfs/dn
+          dfs_datanode_max_locked_memory: 0
+        FAILOVERCONTROLLER:
+          failover_controller_java_heapsize: 134217728
+        GATEWAY:
+          hdfs_client_java_heapsize: 134217728
+        HTTPFS:
+          httpfs_java_heapsize: 134217728
+        JOURNALNODE:
+          journalNode_java_heapsize: 134217728
+        NAMENODE:
+          dfs_name_dir_list: /dfs/nn
+          namenode_java_heapsize: 134217728
+          role_config_suppression_namenode_java_heapsize_minimum_validator: true
+        NFSGATEWAY:
+          nfsgateway_java_heapsize: 134217728
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+          secondary_namenode_java_heapsize: 134217728
+      HIVE:
+        GATEWAY:
+          hive_client_java_heapsize: 134217728
+        HIVEMETASTORE:
+          hive_metastore_java_heapsize: 134217728
+        HIVESERVER2:
+          hiveserver2_java_heapsize: 134217728
+      IMPALA:
+        CATALOGSERVER:
+          catalogd_embedded_jvm_heapsize: 134217728
+        IMPALAD:
+          impalad_embedded_jvm_heapsize: 134217728
+          impalad_memory_limit: 268435456
+          scratch_dirs: /tmp/impala
+      OOZIE:
+        OOZIE_SERVER:
+          oozie_java_heapsize: 134217728
+      RANGER:
+        RANGER_ADMIN:
+          ranger_admin_max_heap_size: 256
+          role_config_suppression_ranger_admin_max_heap_size: true
+        RANGER_TAGSYNC:
+          ranger_tagsync_max_heap_size: 256
+          role_config_suppression_ranger_tagsync_max_heap_size: true
+        RANGER_USERSYNC:
+          ranger_usersync_max_heap_size: 256
+          role_config_suppression_ranger_usersync_max_heap_size: true
+      SPARK_ON_YARN:
+        SPARK_YARN_HISTORY_SERVER:
+          history_server_max_heapsize: 67108864
+      YARN:
+        JOBHISTORY:
+          mr2_jobhistory_java_heapsize: 134217728
+        NODEMANAGER:
+          node_manager_java_heapsize: 134217728
+          yarn_nodemanager_local_dirs:  /tmp/nm
+          yarn_nodemanager_log_dirs: /var/log/nm
+          yarn_nodemanager_resource_memory_mb: 1024
+          yarn_nodemanager_resource_cpu_vcores: 1
+        RESOURCEMANAGER:
+          resource_manager_java_heapsize: 134217728
+          yarn_scheduler_maximum_allocation_mb: 1024
+          yarn_scheduler_maximum_allocation_vcores: 1
+        GATEWAY:
+          mapred_submit_replication: 1
+          mapred_reduce_tasks: 1
+      ZOOKEEPER:
+        SERVICEWIDE:
+          service_config_suppression_server_count_validator: true
+          zookeeper_datadir_autocreate: true
+        SERVER:
+          zookeeper_server_java_heapsize: 134217728
+    host_templates:
+      Cluster:
+        HDFS: [NAMENODE, SECONDARYNAMENODE, DATANODE]
+        HIVE: [HIVEMETASTORE, HIVESERVER2, GATEWAY]
+        HUE: [HUE_SERVER, HUE_LOAD_BALANCER]
+        IMPALA: [STATESTORE, CATALOGSERVER, IMPALAD]
+        INFRA_SOLR: [SOLR_SERVER]
+        OOZIE: [OOZIE_SERVER]
+        RANGER: [RANGER_ADMIN, RANGER_TAGSYNC, RANGER_USERSYNC]
+        SPARK_ON_YARN: [SPARK_YARN_HISTORY_SERVER]
+        YARN: [RESOURCEMANAGER, JOBHISTORY, NODEMANAGER]
+        ZOOKEEPER: [SERVER]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, REPORTSMANAGER, SERVICEMONITOR]
+  configs:
+    EVENTSERVER:
+      event_server_heapsize: 134217728
+    HOSTMONITOR:
+      firehose_heapsize: 536870912
+      firehose_non_java_memory_bytes: 805306368
+      role_config_suppression_firehose_host_monitor_heap_role_validator: true
+      role_config_suppression_firehose_host_monitor_non_java_memory_role_validator: true
+    REPORTSMANAGER:
+      headlamp_heapsize: 536870912
+    SERVICEMONITOR:
+      firehose_heapsize: 536870912
+      firehose_non_java_memory_bytes: 805306368
+      role_config_suppression_firehose_service_monitor_heap_role_validator: true
+      role_config_suppression_firehose_service_monitor_non_java_memory_role_validator: true
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true
+    host_config_suppression_memory_overcommitted_validator: true
+

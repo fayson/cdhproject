@@ -1,0 +1,15 @@
+[cloudera_manager]
+host-1.example.com
+
+[krb5_server]
+host-1.example.com
+
+[db_server]
+host-1.example.com
+
+[cluster]
+host-1.example.com  host_template=Cluster
+
+[infrastructure:children]
+krb5_server
+db_server

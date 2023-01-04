@@ -1,0 +1,48 @@
+---
+clusters:
+  - name: Stream Processing Cluster
+    services: [HDFS, KAFKA, SCHEMAREGISTRY, SENTRY, STREAMS_MESSAGING_MANAGER, ZOOKEEPER]
+    security:
+      kerberos: true
+    repositories:
+      - https://archive.cloudera.com/p/cdh6/6.3.3/parcels/
+      - https://archive.cloudera.com/vault/CSP/parcels/2.0.1.0/
+    configs:
+      HDFS:
+        SERVICEWIDE:
+          dfs_replication: 1
+          hdfs_verify_ec_with_topology_enabled: false
+          service_config_suppression_datanode_count_validator: true
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+        NAMENODE:
+          dfs_name_dir_list: /dfs/nn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    host_templates:
+      Master1:
+        HDFS: [NAMENODE, SECONDARYNAMENODE, DATANODE]
+        SCHEMAREGISTRY: [SCHEMA_REGISTRY_SERVER]
+        SENTRY: [SENTRY_SERVER]
+        STREAMS_MESSAGING_MANAGER: [STREAMS_MESSAGING_MANAGER_UI, STREAMS_MESSAGING_MANAGER_SERVER]
+      Workers:
+        KAFKA: [KAFKA_BROKER]
+        ZOOKEEPER: [SERVER]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, NAVIGATOR, NAVIGATORMETASERVER, REPORTSMANAGER, SERVICEMONITOR]
+
+hosts:
+  configs:
+    host_agent_safety_valve: "kafka_broker_topic_partition_metrics_for_smm_enabled=true"
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

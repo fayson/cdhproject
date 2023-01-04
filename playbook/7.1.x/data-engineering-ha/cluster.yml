@@ -1,0 +1,119 @@
+---
+clusters:
+  - name: Data Engineering Cluster
+    services: [ATLAS, DAS, HBASE, HDFS, HIVE, HIVE_ON_TEZ, HUE, IMPALA, INFRA_SOLR, KAFKA, OOZIE, RANGER, QUEUEMANAGER, SOLR, SPARK_ON_YARN, TEZ, YARN, ZOOKEEPER]
+    repositories:
+      - https://archive.cloudera.com/p/cdh7/7.1.3.0/parcels/
+    security:
+      kerberos: true
+    configs:
+      HDFS:
+        SERVICEWIDE:
+          dfs_ha_fencing_methods: 'shell(true)'
+          dfs_namenode_acls_enabled: true
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+        NAMENODE:
+          autofailover_enabled: true
+          dfs_federation_namenode_nameservice: nameservice1
+          dfs_name_dir_list: /dfs/nn
+          dfs_namenode_quorum_journal_name: nameservice1
+        JOURNALNODE:
+          dfs_journalnode_edits_dir: /dfs/jn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      HIVE:
+        HIVEMETASTORE:
+          hive_enable_db_notification: true
+          hive_metastore_delegation_token_store: org.apache.hadoop.hive.thrift.DBTokenStore
+      IMPALA:
+        IMPALAD:
+          enable_audit_event_log: true
+          scratch_dirs: /tmp/impala
+      OOZIE:
+        SERVICEWIDE:
+          oozie_load_balancer: "{{ groups['haproxy'][0] }}"
+          oozie_load_balancer_http_port: 11000
+          oozie_load_balancer_https_port: 11443
+        OOZIE_SERVER:
+          oozie_plugins_list: org.apache.oozie.service.ZKLocksService,org.apache.oozie.service.ZKXLogStreamingService,org.apache.oozie.service.ZKJobsConcurrencyService,org.apache.oozie.service.ZKUUIDService
+      YARN:
+        RESOURCEMANAGER:
+          yarn_scheduler_maximum_allocation_mb: 4096
+          yarn_scheduler_maximum_allocation_vcores: 4
+        NODEMANAGER:
+          yarn_nodemanager_resource_memory_mb: 4096
+          yarn_nodemanager_resource_cpu_vcores: 4
+          yarn_nodemanager_local_dirs:  /tmp/nm
+          yarn_nodemanager_log_dirs: /var/log/nm
+        GATEWAY:
+          mapred_submit_replication: 3
+          mapred_reduce_tasks: 6
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    host_templates:
+      Master1:
+        ATLAS: [ATLAS_SERVER]
+        DAS: [DAS_EVENT_PROCESSOR, DAS_WEBAPP]
+        HBASE: [MASTER]
+        HDFS: [NAMENODE, JOURNALNODE, FAILOVERCONTROLLER]
+        HIVE: [HIVEMETASTORE]
+        IMPALA: [STATESTORE, CATALOGSERVER]
+        INFRA_SOLR: [SOLR_SERVER]
+        RANGER: [RANGER_ADMIN]
+        TEZ: [GATEWAY]
+        YARN: [RESOURCEMANAGER]
+        ZOOKEEPER: [SERVER]
+      Master2:
+        HBASE: [MASTER]
+        HDFS: [NAMENODE, JOURNALNODE, FAILOVERCONTROLLER]
+        HIVE: [HIVEMETASTORE]
+        INFRA_SOLR: [SOLR_SERVER]
+        QUEUEMANAGER: [QUEUEMANAGER_STORE, QUEUEMANAGER_WEBAPP]
+        RANGER: [RANGER_ADMIN]
+        TEZ: [GATEWAY]
+        YARN: [RESOURCEMANAGER]
+        ZOOKEEPER: [SERVER]
+      Master3:
+        HDFS: [JOURNALNODE, BALANCER]
+        HBASE: [MASTER]
+        INFRA_SOLR: [SOLR_SERVER]
+        RANGER: [RANGER_TAGSYNC, RANGER_USERSYNC]
+        SPARK_ON_YARN: [SPARK_YARN_HISTORY_SERVER]
+        TEZ: [GATEWAY]
+        YARN: [JOBHISTORY]
+        ZOOKEEPER: [SERVER]
+      Edge:
+        HBASE: [HBASERESTSERVER, HBASETHRIFTSERVER]
+        HDFS: [HTTPFS]
+        HIVE: [GATEWAY]
+        HIVE_ON_TEZ: [HIVESERVER2]
+        HUE: [HUE_SERVER, HUE_LOAD_BALANCER]
+        OOZIE: [OOZIE_SERVER]
+        SPARK_ON_YARN: [GATEWAY]
+      Workers:
+        HBASE: [REGIONSERVER]
+        HDFS: [DATANODE]
+        HIVE: [GATEWAY]
+        HIVE_ON_TEZ: [GATEWAY]
+        IMPALA: [IMPALAD]
+        KAFKA: [KAFKA_BROKER]
+        SOLR: [SOLR_SERVER]
+        SPARK_ON_YARN: [GATEWAY]
+        TEZ: [GATEWAY]
+        YARN: [NODEMANAGER]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, REPORTSMANAGER, SERVICEMONITOR]
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

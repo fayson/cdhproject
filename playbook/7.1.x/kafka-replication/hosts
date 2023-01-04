@@ -1,0 +1,28 @@
+[cloudera_manager]
+host-1.example.com
+
+[primary_master_nodes]
+host-2.example.com host_template=Master11
+
+[primary_broker_nodes]
+host-3.example.com host_template=Broker11
+host-4.example.com host_template=Broker12
+host-5.example.com host_template=Broker12
+
+
+[secondary_master_nodes]
+host-6.example.com host_template=Master21
+
+[secondary_broker_nodes]
+host-7.example.com host_template=Broker21
+host-8.example.com host_template=Broker22
+host-9.example.com host_template=Broker22
+
+[cluster:children]
+primary_master_nodes
+primary_broker_nodes
+secondary_master_nodes
+secondary_broker_nodes
+
+[db_server]
+host-1.example.com

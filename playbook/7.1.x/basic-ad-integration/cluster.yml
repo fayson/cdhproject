@@ -1,0 +1,77 @@
+---
+clusters:
+  - name: Basic Cluster (AD Integration)
+    services: [HDFS, YARN, ZOOKEEPER]
+    security:
+      kerberos: true
+    repositories:
+      - https://archive.cloudera.com/p/cdh7/7.1.3.0/parcels/
+    configs:
+      ATLAS:
+        ATLAS_SERVER:
+          atlas_authentication_method_ldap: true
+          atlas_authentication_method_ldap_ad_base_dn: "{{ auth_provider.ldap_base_dn }}"
+          atlas_authentication_method_ldap_ad_bind_dn: "{{ auth_provider.ldap_bind_user_dn }}"
+          atlas_authentication_method_ldap_ad_bind_password: "{{ auth_provider.ldap_bind_password }}"
+          atlas_authentication_method_ldap_ad_domain: "{{ auth_provider.domain }}"
+          atlas_authentication_method_ldap_ad_url: "{{ auth_provider.ldap_url }}"
+          atlas_authentication_method_ldap_type: "{{ auth_provider.type }}"
+      HDFS:
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+        NAMENODE:
+          dfs_name_dir_list: /dfs/nn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      HUE:
+        SERVICEWIDE:
+          auth_backend: desktop.auth.backend.LdapBackend
+          bind_dn: "{{ auth_provider.ldap_base_dn }}"
+          bind_password: "{{ auth_provider.ldap_bind_password }}"
+          create_users_on_login: true
+          group_filter: (objectClass=group)
+          group_member_attr: member
+          group_name_attr: cn
+          ldap_url: "{{ auth_provider.ldap_url }}"
+          nt_domain: "{{ auth_provider.domain }}"
+          search_bind_authentication: true
+          use_start_tls: true
+          user_filter: (objectClass=user)
+          user_name_attr: sAMAccountName
+      YARN:
+        RESOURCEMANAGER:
+          yarn_scheduler_maximum_allocation_mb: 4096
+          yarn_scheduler_maximum_allocation_vcores: 4
+        NODEMANAGER:
+          yarn_nodemanager_resource_memory_mb: 4096
+          yarn_nodemanager_resource_cpu_vcores: 4
+          yarn_nodemanager_local_dirs:  /tmp/nm
+          yarn_nodemanager_log_dirs: /var/log/nm
+        GATEWAY:
+          mapred_submit_replication: 3
+          mapred_reduce_tasks: 6
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    host_templates:
+      Master1:
+        HDFS: [NAMENODE, SECONDARYNAMENODE]
+        YARN: [RESOURCEMANAGER, JOBHISTORY]
+        ZOOKEEPER: [SERVER]
+      Workers:
+        HDFS: [DATANODE]
+        YARN: [NODEMANAGER]
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, REPORTSMANAGER, SERVICEMONITOR]
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

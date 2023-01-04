@@ -1,0 +1,106 @@
+---
+clusters:
+  - name: CDH Cluster
+    services: [HDFS, HIVE, HUE, IMPALA, OOZIE, SENTRY, SPARK_ON_YARN, YARN, ZOOKEEPER]
+    security:
+      kerberos: true
+      hdfs_encryption: true
+      tls: true
+    repositories:
+      - https://archive.cloudera.com/p/cdh6/6.3.3/parcels/
+      - http://{{ groups.custom_repo | first }}/keytrustee-kms/6.3.0/parcels/
+    configs:
+      HDFS:
+        SERVICEWIDE:
+          hdfs_verify_ec_with_topology_enabled: false
+          dfs_ha_fencing_methods: 'shell(true)'
+          dfs_namenode_acls_enabled: true
+        DATANODE:
+          dfs_data_dir_list: /dfs/dn
+          dfs_datanode_max_locked_memory: 0
+        NAMENODE:
+          autofailover_enabled: true
+          dfs_federation_namenode_nameservice: nameservice1
+          dfs_name_dir_list: /dfs/nn
+          dfs_namenode_quorum_journal_name: nameservice1
+        JOURNALNODE:
+          dfs_journalnode_edits_dir: /dfs/jn
+        SECONDARYNAMENODE:
+          fs_checkpoint_dir_list: /dfs/snn
+      HIVE:
+        HIVEMETASTORE:
+          hive_enable_db_notification: true
+          hive_metastore_delegation_token_store: org.apache.hadoop.hive.thrift.DBTokenStore
+      IMPALA:
+        IMPALAD:
+          scratch_dirs: /tmp/impala
+      YARN:
+        RESOURCEMANAGER:
+          yarn_scheduler_maximum_allocation_mb: 4096
+          yarn_scheduler_maximum_allocation_vcores: 4
+        NODEMANAGER:
+          yarn_nodemanager_resource_memory_mb: 4096
+          yarn_nodemanager_resource_cpu_vcores: 4
+          yarn_nodemanager_local_dirs:  /tmp/nm
+          yarn_nodemanager_log_dirs: /var/log/nm
+        GATEWAY:
+          mapred_submit_replication: 3
+          mapred_reduce_tasks: 6
+      ZOOKEEPER:
+        SERVICEWIDE:
+          zookeeper_datadir_autocreate: true
+    host_templates:
+      Master1:
+        HDFS: [NAMENODE, JOURNALNODE, FAILOVERCONTROLLER]        
+        HIVE: [HIVEMETASTORE, GATEWAY]
+        OOZIE: [OOZIE_SERVER]
+        SPARK_ON_YARN: [SPARK_YARN_HISTORY_SERVER]
+        YARN: [RESOURCEMANAGER]
+        ZOOKEEPER: [SERVER]
+      Master2:
+        HDFS: [NAMENODE, JOURNALNODE, FAILOVERCONTROLLER]
+        HIVE: [HIVEMETASTORE, GATEWAY]
+        SENTRY: [SENTRY_SERVER]
+        SPARK_ON_YARN: [GATEWAY]
+        ZOOKEEPER: [SERVER]
+      Master3:
+        HDFS: [JOURNALNODE, BALANCER]
+        IMPALA: [STATESTORE, CATALOGSERVER]
+        SENTRY: [SENTRY_SERVER]
+        
+        YARN: [RESOURCEMANAGER, JOBHISTORY]
+        ZOOKEEPER: [SERVER]
+      Edge:
+        HDFS: [HTTPFS]
+        HIVE: [GATEWAY, HIVESERVER2]
+        HUE: [HUE_SERVER, HUE_LOAD_BALANCER]
+        SPARK_ON_YARN: [GATEWAY]     
+      Workers:
+        HDFS: [DATANODE]
+        HIVE: [GATEWAY]
+        IMPALA: [IMPALAD]
+        SPARK_ON_YARN: [GATEWAY]
+        YARN: [NODEMANAGER]
+
+  - name: KTS Cluster
+    type: kts
+    repositories:
+      - https://archive.cloudera.com/p/cdh6/6.3.3/parcels/
+      - http://{{ groups.custom_repo | first }}/keytrustee-server/6.1.0/parcels/
+
+
+mgmt:
+  name: Cloudera Management Service
+  services: [ALERTPUBLISHER, EVENTSERVER, HOSTMONITOR, NAVIGATOR, NAVIGATORMETASERVER, REPORTSMANAGER, SERVICEMONITOR]
+  security:
+    tls: true
+
+hosts:
+  configs:
+    host_default_proc_memswap_thresholds:
+      warning: never
+      critical: never
+    host_memswap_thresholds:
+      warning: never
+      critical: never
+    host_config_suppression_agent_system_user_group_validator: true

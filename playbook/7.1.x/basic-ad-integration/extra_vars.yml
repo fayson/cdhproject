@@ -1,0 +1,62 @@
+---
+cluster_definition: definitions/7.1.x/basic-ad-integration
+cloudera_manager_version: 7.1.3
+cloudera_manager_repo_username: "{{ vault__cloudera_manager_repo_username }}"
+cloudera_manager_repo_password: "{{ vault__cloudera_manager_repo_password }}"
+cloudera_manager_license_type: enterprise
+cloudera_manager_license_file: testing/license.txt
+cloudera_manager_options:
+  CUSTOM_BANNER_HTML: "Cloudera Ansible Playbook v2 - {{ cluster_definition }}"
+
+krb5_realm: AD.HALXG.CLOUDERA.COM
+krb5_kdc_admin_user: ansible-test-admin@AD.HALXG.CLOUDERA.COM
+krb5_kdc_admin_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63623364616630386365376537313735383962626264313035623162646161343366643462636537
+          3666366333373535623964646466366133626238396536610a646465313030636433613065396338
+          62336530386337323235333437393838653361633364663064306366383936313239633631363266
+          3638313031376564320a633663623935386164653537353162306433383639656231323064633263
+          6438
+krb5_kdc_host: scale-ad.ad.halxg.cloudera.com
+krb5_kdc_type: Active Directory
+krb5_kdc_active_directory_prefix: ansible
+krb5_kdc_active_directory_suffix: OU=Clusters,OU=Ansible,OU=dbeech,DC=ad,DC=halxg,DC=cloudera,DC=com
+krb5_enc_types: rc4-hmac
+
+auth_providers:
+  ClouderaScaleAD:
+    type: Active Directory
+    ldap_url: ldap://scale-ad.ad.halxg.cloudera.com
+    ldap_base_dn: DC=ad,DC=halxg,DC=cloudera,DC=com
+    ldap_bind_user_dn: CN=Ansible Bind User,OU=Users,OU=Ansible,OU=dbeech,DC=ad,DC=halxg,DC=cloudera,DC=com
+    ldap_bind_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63623364616630386365376537313735383962626264313035623162646161343366643462636537
+          3666366333373535623964646466366133626238396536610a646465313030636433613065396338
+          62336530386337323235333437393838653361633364663064306366383936313239633631363266
+          3638313031376564320a633663623935386164653537353162306433383639656231323064633263
+          6438
+    ldap_search_base:
+      user: DC=ad,DC=halxg,DC=cloudera,DC=com
+      group: DC=ad,DC=halxg,DC=cloudera,DC=com
+    ldap_search_filter:
+      user: (sAMAccountName={0})
+      group: (member={0})
+    ldap_attr_user_name: sAMAccountName
+    ldap_attr_group_name: cn
+    ldap_attr_group_membership: member
+    domain: ad.halxg.cloudera.com
+
+auth_provider: "{{ auth_providers[cloudera_manager_external_auth.provider] }}"
+
+cloudera_manager_external_auth:
+  provider: ClouderaScaleAD
+  external_first: yes
+  external_only: no
+  role_mappings:
+  - group: CMTestGroup1
+    roles: [ROLE_ADMIN]
+  - group: CMTestGroup2
+    roles: [ROLE_CONFIGURATOR]
+  - group: CMTestGroup3
+    roles: [ROLE_AUDITOR, ROLE_LIMITED]
