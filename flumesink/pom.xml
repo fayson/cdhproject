@@ -86,6 +86,12 @@
             <artifactId>hbase-client</artifactId>
             <version>1.2.0-cdh5.12.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.7</version>
+        </dependency>
     </dependencies>
 
     <build>
